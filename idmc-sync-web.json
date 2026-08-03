@@ -1,0 +1,53 @@
+{
+  "users": [
+    {
+      "usuario": "Aaron Antonio Gordillo Lopez",
+      "email": "mecanicaclasicainstituto@gmail.com",
+      "formacion": "Director",
+      "cursos": [
+        "Mecánica Clásica Nivel I",
+        "Mecánica Clásica Nivel II",
+        "Mecánica Clásica Nivel III",
+        "Electromagnetismo Clásico Nivel I",
+        "Mecánica de Fluidos I",
+        "Mecánica de Fluidos II",
+        "Mecánica de Fluidos III",
+        "Matemática Aplicada a la Física e Ingeniería"
+      ],
+      "progreso": {
+        "mecanica_nivel1": {
+          "sesionesCompletadas": {
+            "mecanica_nivel1|m1|s1": true,
+            "mecanica_nivel1|m2|s1": true,
+            "mecanica_nivel1|m2|s2": true,
+            "mecanica_nivel1|m2|s3": true,
+            "mecanica_nivel1|m2|s4": true,
+            "mecanica_nivel1|m2|s5": true,
+            "mecanica_nivel1|m2|s6": true,
+            "mecanica_nivel1|m2|s7": true,
+            "mecanica_nivel1|m2|s8": true,
+            "mecanica_nivel1|m2|s9": true,
+            "mecanica_nivel1|m3|s1": true,
+            "mecanica_nivel1|m3|s2": true,
+            "mecanica_nivel1|m3|s3": true,
+            "mecanica_nivel1|m3|s4": true,
+            "mecanica_nivel1|m4|s1": true,
+            "mecanica_nivel1|m5|s1": true,
+            "mecanica_nivel1|m6|s1": true,
+            "mecanica_nivel1|m7|s1": true,
+            "mecanica_nivel1|m8|s1": true
+          }
+        }
+      }
+    },
+    {
+      "usuario": "Carlos Trejo",
+      "email": "aarongordillo44@gmail.com",
+      "password": "1976Aaron",
+      "formacion": "Estudiante",
+      "cursos": []
+    }
+  ],
+  "posts": [],
+  "comments": []
+}

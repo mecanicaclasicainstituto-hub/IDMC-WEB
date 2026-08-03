@@ -1,0 +1,461 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Redes Sociales</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        (function() {
+            var logged = localStorage.getItem('sesion') === 'activa' || !!localStorage.getItem('sesionUsuario') || !!localStorage.getItem('usuario');
+            document.documentElement.classList.add(logged ? 'preauth-in' : 'preauth-out');
+        })();
+    </script>
+    <style>
+        .topbar { position: sticky; top: 0; z-index: 100; background: #fff; box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08); }
+        .topbar .profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; cursor: pointer; }
+        .topbar .cart-button { position: relative; }
+        .topbar .cart-count { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: #ff5c5c; color: #fff; font-size: 0.7rem; padding: 0 5px; }
+        .profile-dropdown { min-width: 170px; }
+
+        .social-shell {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .social-hero {
+            background: linear-gradient(130deg, #1e3a8a, #2563eb 65%, #38bdf8);
+            color: #fff;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
+        }
+
+        .social-hero h3 {
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+        }
+
+        .social-hero p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.92rem;
+        }
+
+        .redes-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .redes-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+        }
+
+        .redes-card h3 {
+            color: #1e3a8a;
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+        }
+
+        .redes-card p {
+            color: #475569;
+            font-size: 0.92rem;
+            margin-bottom: 12px;
+        }
+
+        .redes-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 12px;
+        }
+
+        .red-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #0f172a;
+            font-weight: 500;
+            word-break: break-word;
+            width: 100%;
+            min-height: 68px;
+            padding: 14px;
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            background: #f8fbff;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+        }
+
+        .red-link:hover {
+            transform: translateY(-1px);
+            border-color: #93c5fd;
+            box-shadow: 0 6px 14px rgba(59, 130, 246, 0.15);
+        }
+
+        .red-link i {
+            width: 18px;
+            text-align: center;
+            color: #2563eb;
+            font-size: 1rem;
+        }
+
+        .red-link span {
+            display: block;
+            font-size: 1rem;
+        }
+
+        .sin-redes {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .feeds-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .feed-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+            min-height: 560px;
+        }
+
+        .feed-card-facebook {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fb-wrap {
+            flex: 1;
+            min-height: 480px;
+        }
+
+        .fb-page,
+        .fb-page span,
+        .fb-page iframe {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .feed-card h4 {
+            font-size: 1rem;
+            color: #1e3a8a;
+            margin-bottom: 8px;
+        }
+
+        .feed-card p {
+            color: #64748b;
+            font-size: 0.88rem;
+            margin-bottom: 10px;
+        }
+
+        .ig-posts {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 10px 0;
+            max-height: 430px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .ig-posts li {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+            padding: 6px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .ig-posts .instagram-media {
+            margin: 0 auto !important;
+            min-width: 260px !important;
+            max-width: 330px !important;
+            width: 100% !important;
+        }
+
+        .btn-instagram {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            background: #0f172a;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 0.88rem;
+        }
+
+        .btn-instagram:hover {
+            background: #1f2937;
+        }
+
+        .btn-social-small {
+            padding: 7px 10px;
+            font-size: 0.8rem;
+            border-radius: 7px;
+            margin-top: 10px;
+            width: fit-content;
+        }
+
+        .ig-profile-box {
+            border: 1px solid #dbeafe;
+            background: #f8fbff;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .ig-profile-box strong {
+            color: #1e3a8a;
+            font-size: 0.92rem;
+        }
+
+        @media (max-width: 980px) {
+            .redes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feeds-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+</head>
+
+<body onload="if (typeof mostrarUsuario === 'function') mostrarUsuario(); if (typeof updateAuthButtons === 'function') updateAuthButtons();">
+<div id="fb-root"></div>
+
+<div class="container">
+
+    <aside class="sidebar">
+        <h2><a href="index.html" style="color:inherit;text-decoration:none;cursor:pointer;">Plataforma</a></h2>
+
+        <ul>
+            <li><a href="lobby.html">Lobby</a></li>
+            <li><a href="cursos.html">Cursos</a></li>
+            <li><a href="tu_progreso.html">Tu progreso</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+            <li><a href="redes_sociales.html" class="active">Redes Sociales</a></li>
+            <li><a href="comunidad.html">Comunidad</a></li>
+            <li><a href="contactanos.html">Contáctanos</a></li>
+        </ul>
+
+        <div class="sidebar-auth-slot">
+            <div class="sidebar-auth-buttons" id="sidebarAuthButtons">
+                <a href="home.html" class="sidebar-btn-signin">Iniciar sesión</a>
+                <a href="registro.html" class="sidebar-btn-signup">Crear cuenta</a>
+            </div>
+
+            <button class="sidebar-logout" id="sidebarLogoutBtn" onclick="logout()">Cerrar sesión</button>
+        </div>
+    </aside>
+
+    <div style="width:100%;">
+
+        <header class="topbar">
+            <div class="topbar-left"><h2>Redes Sociales</h2></div>
+            <div class="topbar-right">
+                <div class="course-search-wrap">
+                    <input id="topbarCourseInput" list="topbarCourseList" type="text" placeholder="Escribe un curso...">
+                    <datalist id="topbarCourseList">
+                        <option value="Mecánica Clásica">
+                        <option value="Mecánica de Fluidos">
+                        <option value="Matemática Básica">
+                    </datalist>
+                    <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
+                </div>
+                <div class="profile-menu">
+                    <img id="topbarAvatar" src="avatar-default.svg" alt="Perfil" class="profile-avatar" onclick="toggleProfileMenu()" onerror="this.onerror=null;this.src='avatar-default.svg'">
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <a href="cursos.html">Todos los cursos</a>
+                        <a href="perfil.html#mis-cursos">Mis Cursos</a>
+                        <a href="lista_deseados.html">Lista de deseados</a>
+                        <a href="perfil.html">Editar perfil</a>
+                        <button type="button" onclick="logout()">Cerrar sesión</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="contenido fade-in">
+            <div class="social-shell">
+                <section class="social-hero">
+                    <h3>Conecta con IDMC y con tu comunidad</h3>
+                    <p>Encuentra nuestros canales oficiales y tus perfiles configurados en un solo lugar.</p>
+                </section>
+
+                <div class="redes-grid">
+                    <section class="redes-card">
+                        <h3>Canales oficiales de IDMC</h3>
+                        <p>Usa estos enlaces para contacto y novedades del instituto.</p>
+                        <ul class="redes-list">
+                            <li><a class="red-link" href="https://www.facebook.com/Institutodemecanicaclasica" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i><span>Facebook IDMC</span></a></li>
+                            <li><a class="red-link" href="https://www.instagram.com/idmc09" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i><span>Instagram IDMC</span></a></li>
+                            <li><a class="red-link" href="https://x.com/idmc09" target="_blank" rel="noopener"><i class="fa-brands fa-x-twitter"></i><span>X IDMC</span></a></li>
+                            <li><a class="red-link" href="https://www.youtube.com/channel/UCTFCYiSyeHSh6utMNDbwrug" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i><span>YouTube IDMC</span></a></li>
+                            <li><a class="red-link" href="https://vimeo.com/idmc09" target="_blank" rel="noopener"><i class="fa-brands fa-vimeo-v"></i><span>Vimeo IDMC</span></a></li>
+                            <li><a class="red-link" href="https://wa.me/526647672067" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i><span>WhatsApp IDMC</span></a></li>
+                            <li><a class="red-link" href="mailto:mecanicaclasicainstituto@gmail.com"><i class="fa-solid fa-envelope"></i><span>Correo no laboral</span></a></li>
+                            <li><a class="red-link" href="mailto:aarongordillo44@gmail.com"><i class="fa-solid fa-envelope"></i><span>Correo personal</span></a></li>
+                            <li><a class="red-link" href="mailto:contacto@institutodemecanicaclasica.com"><i class="fa-solid fa-envelope"></i><span>Correo institucional</span></a></li>
+                            <li><a class="red-link" href="comunidad.html"><i class="fa-solid fa-users"></i><span>Comunidad IDMC</span></a></li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+
+            <div class="feeds-grid">
+                <section class="feed-card feed-card-facebook">
+                    <h4><i class="fa-brands fa-facebook"></i> Publicaciones de Facebook</h4>
+                    <p>Vista en vivo de la pagina de Facebook de IDMC.</p>
+                    <div class="fb-wrap">
+                        <div class="fb-page"
+                             data-href="https://www.facebook.com/Institutodemecanicaclasica"
+                             data-tabs="timeline"
+                             data-width="900"
+                             data-height="520"
+                             data-small-header="true"
+                             data-adapt-container-width="true"
+                             data-hide-cover="false"
+                             data-show-facepile="false">
+                            <blockquote cite="https://www.facebook.com/Institutodemecanicaclasica" class="fb-xfbml-parse-ignore">
+                                <a href="https://www.facebook.com/Institutodemecanicaclasica">Instituto de Mecanica Clasica</a>
+                            </blockquote>
+                        </div>
+                    </div>
+                    <a class="btn-instagram btn-social-small" href="https://www.facebook.com/Institutodemecanicaclasica" target="_blank" rel="noopener">
+                        <i class="fa-brands fa-facebook"></i> Ver perfil de Facebook
+                    </a>
+                </section>
+
+                <section class="feed-card">
+                    <h4><i class="fa-brands fa-instagram"></i> Publicaciones de Instagram</h4>
+                    <p>Perfil publico oficial: @idmc09. Instagram no permite embeber el perfil completo como Facebook, pero si posts individuales.</p>
+                    <div class="ig-profile-box">
+                        <strong>https://www.instagram.com/idmc09/</strong>
+                        <a class="btn-instagram" href="https://www.instagram.com/idmc09/" target="_blank" rel="noopener">
+                            <i class="fa-brands fa-instagram"></i> Abrir perfil publico
+                        </a>
+                    </div>
+                    <ul class="ig-posts" id="igPostsList">
+                        <li class="sin-redes">Sin publicaciones embebidas por ahora.</li>
+                    </ul>
+                    <a class="btn-instagram" href="https://www.instagram.com/idmc09/" target="_blank" rel="noopener">
+                        <i class="fa-brands fa-instagram"></i> Ver perfil de Instagram
+                    </a>
+                </section>
+            </div>
+        </main>
+
+    </div>
+
+</div>
+
+<script src="app.js" defer></script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v20.0"></script>
+<script async src="https://www.instagram.com/embed.js"></script>
+
+<script>
+(function() {
+    var IG_POSTS_DEFAULT = [
+        'https://www.instagram.com/p/DUdGcYmDsIQ/',
+        'https://www.instagram.com/p/DUdJK6RDiYk/'
+    ];
+
+    function cargarPublicacionesInstagram() {
+        var list = document.getElementById('igPostsList');
+        if (!list) return;
+
+        var posts = [];
+        try {
+            posts = JSON.parse(localStorage.getItem('idmcInstagramPosts') || '[]');
+            if (!Array.isArray(posts)) posts = [];
+        } catch (_e) {
+            posts = [];
+        }
+
+        if (!posts.length) {
+            posts = IG_POSTS_DEFAULT.slice();
+        }
+
+        if (!posts.length) {
+            list.innerHTML = '<li class="sin-redes">Sin publicaciones embebidas por ahora.</li>';
+            return;
+        }
+
+        var valid = posts
+            .map(function(url) { return String(url || '').trim(); })
+            .filter(function(url) {
+                return /^https?:\/\/www\.instagram\.com\/(p|reel|tv)\//i.test(url);
+            })
+            .slice(0, 5)
+            .map(function(url) {
+                return '<li><blockquote class="instagram-media" data-instgrm-permalink="' + url + '" data-instgrm-version="14"></blockquote></li>';
+            });
+
+        list.innerHTML = valid.length ? valid.join('') : '<li class="sin-redes">Sin publicaciones embebidas por ahora.</li>';
+
+        if (window.instgrm && window.instgrm.Embeds && typeof window.instgrm.Embeds.process === 'function') {
+            window.instgrm.Embeds.process();
+        }
+    }
+
+    function loadTopbarAvatar() {
+        var topbarAvatar = document.getElementById('topbarAvatar');
+        if (!topbarAvatar) return;
+        var avatar = localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar') || localStorage.getItem('userAvatar') || localStorage.getItem('profilePhoto') || localStorage.getItem('profileImage') || localStorage.getItem('avatarUrl');
+        if (typeof aplicarAvatarSeguro === 'function') aplicarAvatarSeguro(topbarAvatar, avatar);
+    }
+
+
+    window.addEventListener('DOMContentLoaded', function() {
+        loadTopbarAvatar();
+        cargarPublicacionesInstagram();
+        window.updateAuthButtons();
+    });
+
+    window.logout = function() {
+        localStorage.removeItem('perfilAvatar');
+        localStorage.removeItem('avatar');
+        localStorage.removeItem('userAvatar');
+        localStorage.removeItem('profilePhoto');
+        localStorage.removeItem('profileImage');
+        localStorage.removeItem('avatarUrl');
+        localStorage.removeItem('usuario');
+        localStorage.removeItem('sesion');
+        localStorage.removeItem('sesionUsuario');
+        location.reload();
+    };
+})();
+</script>
+</body>
+</html>
+
+
+
+

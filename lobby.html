@@ -1,0 +1,510 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobby</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        (function() {
+            var logged = localStorage.getItem('sesion') === 'activa' || !!localStorage.getItem('sesionUsuario') || !!localStorage.getItem('usuario');
+            document.documentElement.classList.add(logged ? 'preauth-in' : 'preauth-out');
+        })();
+    </script>
+    <style>
+        .topbar { position: sticky; top: 0; z-index: 100; background: #fff; box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08); }
+        .topbar .profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background:#fff; border: 2px solid #fff; cursor: pointer; }
+        .topbar .cart-button { position: relative; }
+        .topbar .cart-count { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: #ff5c5c; color: #fff; font-size: 0.7rem; padding: 0 5px; }
+        .profile-dropdown { min-width: 170px; }
+
+        .lobby-wrap {
+            height: calc(100vh - 82px);
+            display: flex;
+            align-items: stretch;
+            justify-content: stretch;
+            padding: 0;
+            background: #eef4ff;
+        }
+
+        .lobby-card {
+            width: 100%;
+            height: 100%;
+            background: #eef4ff;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .lobby-card h1 {
+            font-size: 1.8rem;
+            color: #1e3a8a;
+            margin: 0 0 10px;
+        }
+
+        .lobby-card p {
+            color: #475569;
+            margin: 0 0 10px;
+        }
+
+        .lobby-logo {
+            width: 100%;
+            height: 100%;
+            display: block;
+            margin: 0 auto;
+            object-fit: contain;
+            object-position: center;
+            background: transparent;
+            border-radius: 0;
+            padding: 0;
+            border: none;
+            transition: filter 0.3s;
+        }
+
+        .lobby-logo-svg {
+            object-fit: contain;
+            background: transparent;
+        }
+        .lobby-logo-light {
+            object-fit: contain;
+            background: #eef4ff;
+        }
+        @media (min-width: 769px) {
+            .lobby-logo-light { transform: scale(1.09); }
+        }
+
+        .lobby-signin {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .lobby-signin.visible {
+            display: flex;
+        }
+
+        .lobby-signin h2 {
+            font-size: 2rem;
+            color: #1e3a8a;
+            margin: 0 0 10px;
+        }
+
+        .lobby-signin p {
+            font-size: 1.1rem;
+            color: #475569;
+            margin: 0 0 30px;
+        }
+
+        .lobby-signin-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .lobby-signin-buttons a, .lobby-signin-buttons button {
+            padding: 14px 32px;
+            border-radius: 50px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .btn-signin {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-signin:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .btn-signup {
+            background: #ffffff;
+            color: #2563eb;
+            border: 2px solid #2563eb;
+        }
+
+        .btn-signup:hover {
+            background: #eef4ff;
+            transform: translateY(-2px);
+        }
+
+        /* === Secciones informativas del lobby === */
+        .lobby-info-section {
+            padding: 64px 40px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .lobby-info-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .lobby-info-section .section-eyebrow {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: #2563eb;
+            margin-bottom: 8px;
+        }
+        .lobby-info-section h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 12px;
+            line-height: 1.2;
+        }
+        .lobby-info-section .section-lead {
+            color: #475569;
+            font-size: 1rem;
+            line-height: 1.75;
+            max-width: 720px;
+            margin: 0 0 40px;
+        }
+        /* Objetivos */
+        .objetivos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+        .objetivo-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px 20px;
+            box-shadow: 0 4px 20px rgba(15,23,42,0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .objetivo-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 28px rgba(37,99,235,0.10);
+        }
+        .objetivo-icon { font-size: 1.9rem; line-height: 1; }
+        .objetivo-card h3 { font-size: 0.96rem; font-weight: 700; color: #1e3a8a; margin: 0; }
+        .objetivo-card p { font-size: 0.85rem; color: #64748b; margin: 0; line-height: 1.6; }
+        /* Acreditación */
+        .acreditacion-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #2563eb 100%);
+            border-top: none;
+        }
+        .acreditacion-section h2 { color: #fff; }
+        .acreditacion-section .section-eyebrow { color: #93c5fd; }
+        .acreditacion-section .section-lead { color: rgba(255,255,255,0.78); max-width: 740px; }
+        .acreditacion-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .acreditacion-card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 20px;
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            transition: background 0.2s ease;
+        }
+        .acreditacion-card:hover { background: rgba(255,255,255,0.11); }
+        .badge-pronto {
+            display: inline-block;
+            background: rgba(251,191,36,0.14);
+            border: 1px solid rgba(251,191,36,0.38);
+            color: #fbbf24;
+            font-size: 0.67rem;
+            font-weight: 700;
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+            border-radius: 999px;
+            padding: 3px 11px;
+            width: fit-content;
+            margin-bottom: 4px;
+        }
+        .ac-icon { font-size: 2rem; line-height: 1; }
+        .badge-disponible {
+            display: inline-block;
+            background: rgba(34,197,94,0.14);
+            border: 1px solid rgba(34,197,94,0.38);
+            color: #22c55e;
+            font-size: 0.67rem;
+            font-weight: 700;
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+            border-radius: 999px;
+            padding: 3px 11px;
+            width: fit-content;
+            margin-bottom: 4px;
+        }
+        .acreditacion-card h3 { font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0; }
+        .acreditacion-card p { font-size: 0.86rem; color: rgba(255,255,255,0.72); margin: 0; line-height: 1.65; }
+        @media (max-width: 768px) {
+            .lobby-info-section { padding: 44px 22px; }
+            .lobby-info-section h2 { font-size: 1.4rem; }
+            .lobby-wrap {
+                height: calc(100vh - 110px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
+            .lobby-card {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding-bottom: 16vh;
+            }
+            .lobby-card picture {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .lobby-logo {
+                width: 96vw;
+                height: auto;
+                max-height: 72vh;
+                object-fit: contain;
+            }
+        }
+        @media (max-width: 480px) {
+            .lobby-logo {
+                max-height: 50vh;
+                padding: 16px;
+            }
+        }
+
+        /* Scroll hint */
+        .lobby-wrap { position: relative; }
+        .scroll-hint {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: #475569;
+            opacity: 0.75;
+            transition: opacity 0.2s ease;
+            animation: scrollBounce 2s ease-in-out infinite;
+        }
+        .scroll-hint:hover { opacity: 1; }
+        .scroll-hint-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; }
+        .scroll-hint-arrow { font-size: 1.3rem; line-height: 1; }
+        @keyframes scrollBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(6px); }
+        }
+
+    </style>
+</head>
+
+<body onload="if (typeof mostrarUsuario === 'function') mostrarUsuario(); if (typeof updateAuthButtons === 'function') updateAuthButtons();">
+
+<div class="container">
+
+    <aside class="sidebar">
+        <h2><a href="index.html" style="color:inherit;text-decoration:none;cursor:pointer;">Plataforma</a></h2>
+
+        <ul>
+            <li><a href="lobby.html">Lobby</a></li>
+            <li><a href="cursos.html">Cursos</a></li>
+            <li><a href="tu_progreso.html">Tu progreso</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+            <li><a href="redes_sociales.html">Redes Sociales</a></li>
+            <li><a href="comunidad.html">Comunidad</a></li>
+            <li><a href="contactanos.html">Contáctanos</a></li>
+        </ul>
+
+        <div class="sidebar-auth-slot">
+            <div class="sidebar-auth-buttons" id="sidebarAuthButtons">
+                <a href="home.html" class="sidebar-btn-signin">Iniciar sesión</a>
+                <a href="registro.html" class="sidebar-btn-signup">Crear cuenta</a>
+            </div>
+
+            <button class="sidebar-logout" id="sidebarLogoutBtn" onclick="logout()">Cerrar sesión</button>
+        </div>
+    </aside>
+
+    <div style="width:100%;">
+
+        <header class="topbar">
+            <div class="topbar-left" style="display:flex;align-items:center;gap:10px;">
+                <img src="Icono IDMC.png" alt="IDMC" style="width:36px;height:auto;">
+                <h2>Instituto de Mecánica Clásica</h2>
+            </div>
+            <div class="topbar-right">
+                <div class="course-search-wrap">
+                    <input id="topbarCourseInput" list="topbarCourseList" type="text" placeholder="Escribe un curso...">
+                    <datalist id="topbarCourseList">
+                        <option value="Mecánica Clásica">
+                        <option value="Mecánica de Fluidos">
+                        <option value="Matemática Básica">
+                    </datalist>
+                    <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
+                </div>
+                <div class="profile-menu">
+                    <img id="topbarAvatar" src="avatar-default.svg" alt="Perfil" class="profile-avatar" onclick="toggleProfileMenu()" onerror="this.onerror=null;this.src='avatar-default.svg'">
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <a href="cursos.html">Todos los cursos</a>
+                        <a href="perfil.html#mis-cursos">Mis Cursos</a>
+                        <a href="lista_deseados.html">Lista de deseados</a>
+                        <a href="perfil.html">Editar perfil</a>
+                        <button type="button" onclick="logout()">Cerrar sesión</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="lobby-wrap fade-in">
+            <section class="lobby-card">
+                <picture>
+                    <source media="(max-width: 768px)" srcset="logo-idmc.svg" type="image/svg+xml">
+                    <img class="lobby-logo lobby-logo-light" src="NEW%20LOGO%20-%20copia.png" alt="Logo Instituto de Mecánica Clásica" onerror="this.onerror=null;this.src='avatar-default.svg'">
+                </picture>
+            </section>
+            <!-- Indicador de scroll -->
+            <a href="#objetivos" class="scroll-hint" aria-label="Ver más contenido">
+                <span class="scroll-hint-label">Descubre más</span>
+                <span class="scroll-hint-arrow">&#8595;</span>
+            </a>
+        </main>
+
+        <!-- OBJETIVOS PROFESIONALES -->
+        <section class="lobby-info-section" id="objetivos" style="background:#f8fafc;">
+            <div class="lobby-info-inner">
+                <p class="section-eyebrow">¿Qué lograrás?</p>
+                <h2>Objetivos Profesionales</h2>
+                <p class="section-lead">Formamos profesionales capaces de analizar, modelar y resolver problemas reales en física e ingeniería. Cada curso está diseñado con una progresión clara que te lleva del fundamento al dominio aplicado.</p>
+                <div class="objetivos-grid">
+                    <div class="objetivo-card">
+                        <span class="objetivo-icon">⚙️</span>
+                        <h3>Dominio técnico riguroso</h3>
+                        <p>Comprende la física clásica con el nivel matemático que exige el mundo profesional e industrial.</p>
+                    </div>
+                    <div class="objetivo-card">
+                        <span class="objetivo-icon">🧠</span>
+                        <h3>Pensamiento analítico</h3>
+                        <p>Desarrolla la capacidad de modelar sistemas físicos y resolverlos con métodos estructurados y eficientes.</p>
+                    </div>
+                    <div class="objetivo-card">
+                        <span class="objetivo-icon">📈</span>
+                        <h3>Crecimiento escalonado</h3>
+                        <p>Avanza de nivel básico a avanzado con una ruta clara y progresiva dentro de cada área de estudio.</p>
+                    </div>
+                    <div class="objetivo-card">
+                        <span class="objetivo-icon">🏭</span>
+                        <h3>Aplicación industrial</h3>
+                        <p>Conecta la teoría con sectores reales: manufactura, automatización, diseño mecánico y mucho más.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACREDITACIÓN PROFESIONAL -->
+        <section class="lobby-info-section acreditacion-section">
+            <div class="lobby-info-inner">
+                <p class="section-eyebrow">Reconocimiento oficial</p>
+                <h2>Acreditación Profesional</h2>
+                <p class="section-lead">Tu esfuerzo merece ser reconocido formalmente. Trabajamos para que cada curso completado tenga un respaldo documentado, tanto para tu desarrollo personal como para tu vida laboral y profesional.</p>
+                <div class="acreditacion-grid">
+                    <div class="acreditacion-card">
+                        <span class="badge-pronto">Próximamente</span>
+                        <span class="ac-icon">📋</span>
+                        <h3>Constancias DC-3</h3>
+                        <p>Documentos avalados por la Secretaría del Trabajo y Previsión Social (STPS). Respaldo oficial de las habilidades técnicas adquiridas, válido para tu expediente laboral en cualquier empresa en México.</p>
+                    </div>
+                    <div class="acreditacion-card">
+                        <span class="badge-disponible">Disponibles</span>
+                        <span class="ac-icon">🎓</span>
+                        <h3>Certificados de Culminación</h3>
+                        <p>Al concluir cada nivel recibirás un certificado digital personalizado que acredita tu dominio del programa, con verificación de autenticidad en línea.</p>
+                    </div>
+                    <div class="acreditacion-card">
+                        <span class="badge-pronto">En desarrollo</span>
+                        <span class="ac-icon">🏅</span>
+                        <h3>Insignias de Competencia</h3>
+                        <p>Sistema de micro-credenciales digitales por módulo completado. Agrega tus logros a tu perfil de LinkedIn y CV con un solo clic.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+<script src="app.js" defer></script>
+
+<footer style="text-align:center; padding:20px 16px; color:#94a3b8; font-size:0.82rem; border-top:1px solid #e2e8f0; background:#fff; font-family:'Poppins',system-ui,sans-serif;">
+    <p>© 2026 Instituto de Mecánica Clásica. Todos los derechos reservados.</p>
+    <p style="margin-top:6px;">
+        <a href="contactanos.html" style="color:#2563eb; text-decoration:none;">Contacto</a>
+        &nbsp;·&nbsp;
+        <a href="politicas-privacidad.html" style="color:#2563eb; text-decoration:none;">Políticas de Privacidad</a>
+    </p>
+</footer>
+
+<script>
+(function() {
+    // Hamburger menu — gestionado globalmente por app.js
+
+    function loadTopbarAvatar() {
+        var topbarAvatar = document.getElementById('topbarAvatar');
+        if (!topbarAvatar) return;
+        var avatar = localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar') || localStorage.getItem('userAvatar') || localStorage.getItem('profilePhoto') || localStorage.getItem('profileImage') || localStorage.getItem('avatarUrl');
+        if (typeof aplicarAvatarSeguro === 'function') aplicarAvatarSeguro(topbarAvatar, avatar);
+    }
+
+
+    window.addEventListener('DOMContentLoaded', function() {
+        if (localStorage.getItem('sesion') === 'activa' || localStorage.getItem('sesionUsuario') || localStorage.getItem('usuario')) {
+            loadTopbarAvatar();
+        }
+        updateAuthButtons();
+    });
+
+    window.logout = function() {
+        localStorage.removeItem('perfilAvatar');
+        localStorage.removeItem('avatar');
+        localStorage.removeItem('userAvatar');
+        localStorage.removeItem('profilePhoto');
+        localStorage.removeItem('profileImage');
+        localStorage.removeItem('avatarUrl');
+        localStorage.removeItem('usuario');
+        localStorage.removeItem('sesion');
+        localStorage.removeItem('sesionUsuario');
+        location.reload();
+    };
+})();
+</script>
+</body>
+</html>
+
+

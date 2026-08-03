@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" role="img" aria-labelledby="title desc">
+  <title id="title">Portada predeterminada</title>
+  <desc id="desc">Fondo gris para portada de perfil</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#edf1f5"/>
+      <stop offset="100%" stop-color="#cfd8e3"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="320" rx="36" fill="url(#bg)"/>
+  <circle cx="160" cy="126" r="44" fill="#a0acb9" opacity="0.65"/>
+  <path d="M90 232c10-42 40-64 70-64s60 22 70 64" fill="#a0acb9" opacity="0.65"/>
+  <rect x="280" y="108" width="370" height="22" rx="11" fill="#b2bcc8" opacity="0.55"/>
+  <rect x="280" y="150" width="510" height="18" rx="9" fill="#b2bcc8" opacity="0.4"/>
+  <rect x="280" y="184" width="430" height="18" rx="9" fill="#b2bcc8" opacity="0.35"/>
+</svg>

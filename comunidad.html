@@ -1,0 +1,1564 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Comunidad</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .topbar { position: sticky; top: 0; z-index: 100; background: #fff; box-shadow: 0 1px 12px rgba(0,0,0,0.08); }
+        .topbar .profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; cursor: pointer; }
+        .topbar .cart-button { position: relative; }
+        .topbar .cart-count { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: #ff5c5c; color: #fff; font-size: 0.7rem; padding: 0 5px; }
+        .profile-dropdown { min-width: 170px; }
+
+        /* --- Animacion entrada Chat sidebar --- */
+        .sidebar-chat-link {
+            display: inline-block;
+        }
+        /* --- Boton Chat en vivo --- */
+        .chat-en-vivo-btn {
+        }
+        /* --- */
+        .comunidad-layout {
+            display: flex;
+            position: relative;
+            gap: 20px;
+            padding: 0 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: calc(100vh - 70px);
+        }
+        /* --- */
+        .miembros-sidebar {
+            flex: 0 0 260px;
+            position: sticky;
+            top: 70px;
+            height: fit-content;
+            max-height: calc(100vh - 100px);
+        }
+        .feed-container {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 28px 0;
+        }
+        .feed-container h1 { font-size: 1.6rem; margin-bottom: 6px; }
+        .destacados-sidebar {
+            flex: 0 0 260px;
+            position: sticky;
+            top: 70px;
+            height: fit-content;
+            max-height: calc(100vh - 100px);
+        }
+        /* --- */
+        .comunidad-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .comunidad-wrap h1 { font-size: 1.6rem; margin-bottom: 6px; }
+        /* --- */
+        .nuevo-post {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .nuevo-post-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nuevo-post-top img {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #fff;
+            border: 2px solid #e0e0e0;
+        }
+        .nuevo-post textarea {
+            flex: 1;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: none;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .nuevo-post textarea:focus { border-color: #4a90d9; }
+        .nuevo-post-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .nuevo-post-actions .media-btns {
+            display: flex; gap: 8px;
+        }
+        .nuevo-post-actions .media-btns button {
+            background: #f0f4ff;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 14px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .nuevo-post-actions .media-btns button:hover { background: #dce8ff; }
+        .btn-publicar {
+            background: #4a90d9;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 9px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-publicar:hover { background: #357abd; }
+        .draft-status {
+            font-size: 0.78rem;
+            color: #7d8aa3;
+            margin-top: -2px;
+            min-height: 16px;
+            text-align: right;
+        }
+        /* --- */
+        .feed { display: flex; flex-direction: column; gap: 18px; }
+
+        .post-card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .post-header img {
+            width: 46px; height: 46px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+        }
+        .post-header img:hover { border-color: #4a90d9; }
+        .post-user { display: flex; flex-direction: column; }
+        .post-user strong { font-size: 0.97rem; cursor: pointer; }
+        .post-user strong:hover { color: #4a90d9; text-decoration: underline; }
+        .post-user span { font-size: 0.8rem; color: #888; }
+        .post-badge {
+            margin-left: auto;
+            background: #e7f2ff;
+            color: #4a90d9;
+            border-radius: 20px;
+            padding: 3px 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .post-text { font-size: 0.95rem; line-height: 1.55; color: #333; }
+        .post-progress {
+            background: #f0f4ff;
+            border-radius: 10px;
+            padding: 10px 14px;
+        }
+        .post-progress p { font-size: 0.82rem; margin-bottom: 6px; color: #555; }
+        .progress-bar-wrap {
+            background: #dce8ff;
+            border-radius: 99px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, #4a90d9, #6fb3ef);
+            transition: width 0.5s;
+        }
+        .post-img {
+            width: 100%;
+            border-radius: 10px;
+            object-fit: cover;
+            max-height: 320px;
+        }
+        .post-footer {
+            display: flex;
+            gap: 18px;
+            padding-top: 4px;
+            border-top: 1px solid #f0f0f0;
+        }
+        .post-footer button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+        .post-footer button:hover { color: #4a90d9; }
+        .post-footer button.liked { color: #e05050; }
+        /* --- */
+        .user-modal-backdrop {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .user-modal-backdrop.open { display: flex; }
+        .user-modal {
+            background: #fff;
+            border-radius: 20px;
+            width: min(460px, 96vw);
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 12px 50px rgba(0,0,0,0.22);
+            text-align: left;
+        }
+        /* --- */
+        .modal-banner {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 20px 20px 0 0;
+            display: block;
+            background: linear-gradient(135deg,#4a90d9 0%,#6fb3ef 100%);
+        }
+        .modal-banner-placeholder {
+            width: 100%;
+            height: 130px;
+            border-radius: 20px 20px 0 0;
+            background: linear-gradient(135deg,#4a90d9 0%,#6fb3ef 100%);
+        }
+        /* --- */
+        .modal-close {
+            position: absolute; top: 12px; right: 14px;
+            background: rgba(0,0,0,0.35); border: none;
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            font-size: 1rem; cursor: pointer;
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .modal-close:hover { background: rgba(0,0,0,0.6); }
+        /* --- */
+        .modal-body {
+            padding: 0 24px 24px;
+        }
+        .modal-avatar-wrap {
+            margin-top: -34px;
+            margin-bottom: 10px;
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: #fff;
+            padding: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+        .modal-avatar-wrap img {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            object-fit: contain;
+            padding: 4px;
+            background: #fff;
+            border: none;
+            box-shadow: none;
+        }
+        .modal-name { font-size: 1.25rem; font-weight: 700; margin: 0 0 2px; color: #111; }
+        .modal-formacion { font-size: 0.83rem; color: #4a90d9; font-weight: 600; margin-bottom: 6px; }
+        .modal-since { font-size: 0.75rem; color: #bbb; margin-bottom: 10px; }
+        .modal-bio {
+            font-size: 0.9rem; color: #555; line-height: 1.5;
+            background: #f7f9ff; border-radius: 10px;
+            padding: 10px 14px; margin-bottom: 14px;
+        }
+        .modal-bio:empty { display: none; }
+        /* --- */
+        .modal-stats {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .modal-stats .stat-box {
+            flex: 1;
+            background: #f0f4ff;
+            border-radius: 12px;
+            padding: 10px 6px;
+            text-align: center;
+        }
+        .modal-stats .stat-box strong {
+            display: block;
+            font-size: 1.3rem;
+            color: #4a90d9;
+        }
+        .modal-stats .stat-box span { font-size: 0.75rem; color: #777; }
+        /* --- */
+        .modal-social {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .modal-social a {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #f0f4ff;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.82rem;
+            color: #4a90d9;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .modal-social a:hover { background: #dce8ff; }
+        /* --- */
+        .modal-cursos-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-bottom: 16px;
+        }
+        .modal-curso-item {
+            background: #f7f9ff;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-curso-item .curso-icon { font-size: 1rem; }
+        .modal-ver-perfil {
+            display: block;
+            text-align: center;
+            background: #4a90d9;
+            color: #fff;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .modal-ver-perfil:hover { background: #357abd; }
+
+        .perfil-completo {
+            margin-top: 14px;
+            padding: 14px;
+            border: 1px solid #e5edff;
+            border-radius: 12px;
+            background: #fbfdff;
+            display: none;
+        }
+        .perfil-completo.open { display: block; }
+        .perfil-completo-seccion {
+            margin: 16px 0 0;
+            background: #fff;
+            border: 1px solid #e8eefc;
+            border-radius: 18px;
+            box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+            padding: 18px;
+        }
+        .perfil-completo-titulo {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 10px;
+        }
+        .perfil-completo h5 {
+            margin: 0 0 8px;
+            color: #2d4f7c;
+            font-size: 0.9rem;
+        }
+        .perfil-completo p {
+            margin: 0 0 10px;
+            color: #4b5563;
+            font-size: 0.86rem;
+        }
+        .perfil-completo .comentarios-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+            max-height: 160px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .perfil-completo .comentario-item {
+            background: #f1f6ff;
+            border-radius: 10px;
+            padding: 8px 10px;
+        }
+        .perfil-completo .comentario-item strong {
+            display: block;
+            font-size: 0.78rem;
+            color: #245a9d;
+            margin-bottom: 3px;
+        }
+        .perfil-completo .comentario-item p {
+            margin: 0;
+            font-size: 0.83rem;
+            color: #344054;
+            line-height: 1.45;
+        }
+        .perfil-completo .comentario-item span {
+            display: block;
+            margin-top: 4px;
+            font-size: 0.7rem;
+            color: #8a94a6;
+        }
+        .perfil-completo .comentario-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 6px;
+        }
+        .perfil-completo .btn-like-comentario {
+            background: #e8f1ff;
+            color: #2e5f99;
+            border: 1px solid #c8dbff;
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .perfil-completo .btn-like-comentario:hover {
+            background: #d6e8ff;
+        }
+        .perfil-completo .btn-like-comentario.liked {
+            background: #ffe8ee;
+            color: #b3345a;
+            border-color: #ffc8d7;
+        }
+        .perfil-completo textarea {
+            width: 100%;
+            border: 1px solid #cfe0ff;
+            border-radius: 10px;
+            padding: 9px 10px;
+            min-height: 72px;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 0.86rem;
+            box-sizing: border-box;
+            margin-bottom: 8px;
+        }
+        .perfil-completo button {
+            background: #4a90d9;
+            color: #fff;
+            border: none;
+            border-radius: 9px;
+            padding: 8px 12px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .perfil-completo button:hover { background: #357abd; }
+        /* --- */
+        .miembros-dropdown {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e8eefc;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .miembros-toggle {
+            width: 100%;
+            background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 100%);
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-bottom: 1px solid #e5edff;
+            flex-shrink: 0;
+        }
+        .miembros-count {
+            font-size: 0.78rem;
+            color: #2563eb;
+            background: #dbeafe;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-weight: 700;
+        }
+        .miembros-panel-inline {
+            display: flex;
+            flex-direction: column;
+            padding: 14px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .miembros-panel-inline::-webkit-scrollbar {
+            width: 6px;
+        }
+        .miembros-panel-inline::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .miembros-panel-inline::-webkit-scrollbar-thumb {
+            background: #d0d0d0;
+            border-radius: 3px;
+        }
+        .miembros-panel-inline::-webkit-scrollbar-thumb:hover {
+            background: #b0b0b0;
+        }
+        /* --- */
+        .miembros-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .miembro-card {
+            background: #f8fbff;
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #e4edff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+            text-align: left;
+        }
+        .miembro-card:hover {
+            background: #eef5ff;
+            border-color: #bcd7ff;
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12);
+        }
+        .miembro-card img {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #fff;
+            border: 2px solid #4a90d9;
+            flex-shrink: 0;
+        }
+        .miembro-info { display: flex; flex-direction: column; min-width: 0; }
+        .miembro-card strong { font-size: 0.87rem; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .miembro-card .miembro-rol { font-size: 0.74rem; color: #888; }
+        .miembro-card .miembro-fecha { font-size: 0.7rem; color: #bbb; }
+
+        /* --- AMIGOS PANEL --- */
+        .amigos-panel-wrap {
+            margin-top: 14px;
+        }
+        .amigos-dropdown {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e8eefc;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .amigos-toggle {
+            width: 100%;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-bottom: 1px solid #bbf7d0;
+            cursor: pointer;
+            border: none;
+            flex-shrink: 0;
+        }
+        .amigos-count {
+            font-size: 0.78rem;
+            color: #16a34a;
+            background: #dcfce7;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-weight: 700;
+        }
+        .amigos-panel-inline {
+            display: flex;
+            flex-direction: column;
+            padding: 12px 14px;
+            gap: 8px;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+        .amigos-panel-inline::-webkit-scrollbar { width: 6px; }
+        .amigos-panel-inline::-webkit-scrollbar-track { background: transparent; }
+        .amigos-panel-inline::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 3px; }
+        .amigo-card {
+            background: #f0fdf4;
+            border-radius: 12px;
+            padding: 10px 12px;
+            border: 1px solid #bbf7d0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+        }
+        .amigo-card:hover {
+            background: #dcfce7;
+            border-color: #86efac;
+            box-shadow: 0 4px 12px rgba(22,163,74,0.13);
+        }
+        .amigo-card img {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #fff;
+            border: 2px solid #4ade80;
+            flex-shrink: 0;
+        }
+        .amigo-info { display: flex; flex-direction: column; min-width: 0; }
+        .amigo-card strong { font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .amigo-card .amigo-estado { font-size: 0.72rem; color: #16a34a; }
+        .amigos-empty {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.83rem;
+            padding: 16px 0;
+        }
+        .amigos-buscar-btn {
+            display: block;
+            text-align: center;
+            margin: 6px 14px 12px;
+            padding: 8px;
+            background: linear-gradient(135deg,#22c55e,#16a34a);
+            color: #fff;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            font-family: Poppins,sans-serif;
+            transition: opacity 0.15s;
+        }
+        .amigos-buscar-btn:hover { opacity: 0.88; }
+        /* --- DESTACADOS PANEL --- */
+        .destacados-dropdown {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e8eefc;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .destacados-toggle {
+            width: 100%;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffedea 100%);
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-bottom: 1px solid #fce5e1;
+            flex-shrink: 0;
+        }
+        .destacados-panel-inline {
+            display: flex;
+            flex-direction: column;
+            padding: 14px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .destacados-panel-inline::-webkit-scrollbar {
+            width: 6px;
+        }
+        .destacados-panel-inline::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .destacados-panel-inline::-webkit-scrollbar-thumb {
+            background: #d0d0d0;
+            border-radius: 3px;
+        }
+        .destacados-panel-inline::-webkit-scrollbar-thumb:hover {
+            background: #b0b0b0;
+        }
+        .destacado-card {
+            background: #fffbf8;
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #fce4de;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+        }
+        .destacado-card:hover {
+            background: #fff3ee;
+            border-color: #ffb8a3;
+            box-shadow: 0 6px 16px rgba(255, 107, 53, 0.12);
+        }
+        .destacado-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .destacado-header img {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .destacado-author {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            flex: 1;
+        }
+        .destacado-author strong {
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .destacado-author span {
+            font-size: 0.7rem;
+            color: #999;
+        }
+        .destacado-text {
+            font-size: 0.85rem;
+            line-height: 1.35;
+            color: #333;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .destacado-stats {
+            display: flex;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        @media (max-width: 600px) {
+            .comunidad-layout {
+                flex-direction: column;
+                padding: 0 14px;
+                gap: 14px;
+            }
+            .miembros-sidebar, .destacados-sidebar {
+                flex: none;
+                position: static;
+                max-height: none;
+            }
+            .feed-container { padding: 14px 0; }
+            .comunidad-wrap { padding: 0; }
+        }
+    </style>
+</head>
+
+<body onload="verificarSesion(); if(typeof mostrarUsuario==='function')mostrarUsuario(); cargarAvatarTopbar();">
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2><a href="index.html" style="color:inherit;text-decoration:none;cursor:pointer;">Plataforma</a></h2>
+        <ul>
+            <li><a href="lobby.html">Lobby</a></li>
+            <li><a href="cursos.html">Cursos</a></li>
+            <li><a href="tu_progreso.html">Tu progreso</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+            <li><a href="redes_sociales.html">Redes Sociales</a></li>
+            <li><a href="comunidad.html" class="active">Comunidad</a></li>
+            <li><a href="contactanos.html">Contáctanos</a></li>
+        </ul>
+        <div class="sidebar-auth-slot">
+            <div class="sidebar-auth-buttons" id="sidebarAuthButtons">
+                <a href="home.html" class="sidebar-btn-signin">Iniciar sesión</a>
+                <a href="registro.html" class="sidebar-btn-signup">Crear cuenta</a>
+            </div>
+            <button class="sidebar-logout" id="sidebarLogoutBtn" onclick="logout()">Cerrar sesión</button>
+        </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div style="width:100%;">
+
+        <header class="topbar">
+            <div class="topbar-left"><h2>Comunidad</h2></div>
+            <div class="topbar-right">
+                                <div class="course-search-wrap">
+                    <input id="topbarCourseInput" list="topbarCourseList" type="text" placeholder="Escribe un curso...">
+                    <datalist id="topbarCourseList">
+                        <option value="Mecánica Clásica">
+                        <option value="Mecánica de Fluidos">
+                        <option value="Matemática Básica">
+                    </datalist>
+                    <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
+                </div>
+                <div class="profile-menu">
+                    <img id="topbarAvatar" src="avatar-default.svg" alt="Perfil" class="profile-avatar" onclick="toggleProfileMenu()" onerror="this.onerror=null;this.src='avatar-default.svg'">
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <a href="cursos.html">Todos los cursos</a>
+                        <a href="perfil.html#mis-cursos">Mis Cursos</a>
+                        <a href="lista_deseados.html">Lista de deseados</a>
+                        <a href="perfil.html">Editar perfil</a>
+                        <button type="button" onclick="logout()">Cerrar sesión</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="contenido fade-in">
+            <div class="comunidad-layout">
+
+                <!-- SIDEBAR IZQUIERDO - MIEMBROS + AMIGOS -->
+                <aside class="miembros-sidebar">
+                    <section class="miembros-dropdown">
+                        <div class="miembros-toggle">
+                            <span>&#128101; Miembros</span>
+                            <span class="miembros-count" id="miembrosCount">0</span>
+                        </div>
+                        <div class="miembros-panel-inline" id="miembrosPanel">
+                            <div class="miembros-grid" id="miembrosGrid">
+                                <!-- renderizado por JS -->
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- PANEL AMIGOS -->
+                    <div class="amigos-panel-wrap">
+                        <div class="amigos-dropdown">
+                            <div class="amigos-toggle">
+                                <span>&#128100; Amigos</span>
+                                <span class="amigos-count" id="amigosCount">0</span>
+                            </div>
+                            <div class="amigos-panel-inline" id="amigosPanel">
+                                <!-- renderizado por JS -->
+                            </div>
+                            <a href="comunidad.html" class="amigos-buscar-btn">+ Buscar amigos</a>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- CENTRO - FEED PRINCIPAL -->
+                <div class="feed-container">
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:4px;">
+                        <h1 style="margin:0;">Comunidad</h1>
+                        <a href="chat_comunidad.html" class="chat-en-vivo-btn"
+                           style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-family:Poppins,sans-serif;font-size:0.83rem;font-weight:600;padding:9px 18px;border-radius:50px;text-decoration:none;box-shadow:0 3px 10px rgba(37,99,235,0.3);transition:box-shadow 0.15s;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            Chat en vivo
+                        </a>
+                    </div>
+                    <p style="color:#666; font-size:0.92rem; margin-bottom:2px;">Comparte tu progreso, logros y avances con otros estudiantes.</p>
+
+                    <!-- NUEVA PUBLICACION -->
+                    <div class="nuevo-post">
+                        <div class="nuevo-post-top">
+                            <img id="postAvatar" src="avatar-default.svg" alt="Tu foto" onerror="this.onerror=null;this.src='avatar-default.svg'">
+                            <textarea id="postTexto" rows="3" placeholder="¿Qué estás aprendiendo hoy? Comparte tu avance..."></textarea>
+                        </div>
+                        <div class="nuevo-post-actions">
+                            <div class="media-btns">
+                                <button onclick="adjuntarImagen()">&#128247; Imagen</button>
+                                <button onclick="agregarProgreso()">&#128202; Progreso</button>
+                                <button onclick="guardarBorradorPublicacion()">&#128190; Guardar borrador</button>
+                            </div>
+                            <button class="btn-publicar" onclick="publicar()">Publicar</button>
+                        </div>
+                        <p class="draft-status" id="draftStatus">Borrador no guardado</p>
+                        <!-- panel de progreso (oculto por defecto) -->
+                        <div id="panelProgreso" style="display:none; flex-direction:column; gap:8px;">
+                            <label style="font-size:0.88rem; color:#555;">Curso: <input id="progresoCurso" type="text" placeholder="Ej: Mecánica Clásica" style="border:1.5px solid #ddd; border-radius:8px; padding:5px 10px; font-family:inherit; font-size:0.9rem;"></label>
+                            <label style="font-size:0.88rem; color:#555;">Avance %: <input id="progresoValor" type="number" min="0" max="100" value="50" style="width:70px; border:1.5px solid #ddd; border-radius:8px; padding:5px 10px; font-family:inherit; font-size:0.9rem;"></label>
+                        </div>
+                        <input type="file" id="inputImagen" accept="image/*" style="display:none" onchange="previsualizarImagen(event)">
+                        <div id="previewImagen" style="display:none;">
+                            <img id="imgPreview" src="" alt="Preview" style="width:100%; border-radius:10px; max-height:260px; object-fit:cover; margin-top:4px;">
+                            <button onclick="quitarImagen()" style="background:none; border:none; color:#e05050; cursor:pointer; font-size:0.85rem; margin-top:4px;">Quitar imagen</button>
+                        </div>
+                    </div>
+
+                    <!-- FEED -->
+                    <div class="feed" id="feedPosts">
+                        <!-- Las publicaciones se renderizan aquí por JS -->
+                    </div>
+                </div>
+
+                <!-- SIDEBAR DERECHO - DESTACADOS -->
+                <aside class="destacados-sidebar">
+                    <section class="destacados-dropdown">
+                        <div class="destacados-toggle">
+                            <span>⭐ Destacados</span>
+                        </div>
+                        <div class="destacados-panel-inline" id="destacadosPanel">
+                            <div class="destacados-grid" id="destacadosGrid">
+                                <!-- renderizado por JS -->
+                            </div>
+                        </div>
+                    </section>
+                </aside>
+
+            </div><!-- /comunidad-layout -->
+        </main>
+    </div>
+</div>
+
+<!-- MODAL PERFIL DE USUARIO -->
+<div class="user-modal-backdrop" id="userModalBackdrop" onclick="cerrarModal(event)">
+    <div class="user-modal">
+        <button class="modal-close" onclick="cerrarModalDirecto()">X</button>
+        <!-- Banner -->
+        <div id="modalBannerWrap"></div>
+        <div class="modal-body">
+            <!-- Avatar -->
+            <div class="modal-avatar-wrap">
+                <img id="modalAvatar" src="avatar-default.svg" alt="Avatar" onerror="this.onerror=null;this.src='avatar-default.svg'">
+            </div>
+            <p class="modal-name" id="modalNombre"></p>
+            <p class="modal-formacion" id="modalFormacion"></p>
+            <p class="modal-since" id="modalSince"></p>
+            <!-- Bio -->
+            <p class="modal-bio" id="modalBio"></p>
+            <!-- Stats -->
+            <div class="modal-stats">
+                <div class="stat-box"><strong id="modalPublicaciones">0</strong><span>Publicaciones</span></div>
+                <div class="stat-box"><strong id="modalCursos">0</strong><span>Cursos</span></div>
+            </div>
+            <!-- Cursos inscritos -->
+            <div class="modal-cursos-lista" id="modalCursosLista"></div>
+            <!-- Redes sociales -->
+            <div class="modal-social" id="modalSocial"></div>
+            <!-- Ver perfil -->
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button type="button" class="modal-ver-perfil" id="btnPerfilCompleto" onclick="irPerfilCompletoPagina()">Ver perfil completo</button>
+                <button type="button" id="btnToggleAmigo" onclick="toggleAmigoDesdeModal()" style="padding:9px 18px;border-radius:50px;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:0.82rem;font-weight:600;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;transition:opacity 0.15s;">+ Agregar amigo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="app.js" defer></script>
+<script>
+    // ---
+function cargarAvatarTopbar() {
+    var topbarAvatar = document.getElementById('topbarAvatar');
+    var postAvatar   = document.getElementById('postAvatar');
+    var avatar = localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar') ||
+                 localStorage.getItem('userAvatar')   || localStorage.getItem('profilePhoto') ||
+                 localStorage.getItem('profileImage') || localStorage.getItem('avatarUrl');
+    if (typeof aplicarAvatarSeguro === 'function') {
+        aplicarAvatarSeguro(topbarAvatar, avatar);
+        aplicarAvatarSeguro(postAvatar, avatar);
+    }
+}
+    // ---
+function getPosts() {
+    return JSON.parse(localStorage.getItem('comunidadPosts') || '[]');
+}
+function savePosts(posts) {
+    localStorage.setItem('comunidadPosts', JSON.stringify(posts));
+}
+    // ---
+function getDraftPost() {
+    return JSON.parse(localStorage.getItem('comunidadDraftPost') || '{}');
+}
+
+function saveDraftPost(draft) {
+    localStorage.setItem('comunidadDraftPost', JSON.stringify(draft));
+}
+
+function setDraftStatus(texto) {
+    var el = document.getElementById('draftStatus');
+    if (el) el.textContent = texto;
+}
+
+function guardarBorradorPublicacion() {
+    var texto = document.getElementById('postTexto').value || '';
+    var imagen = document.getElementById('imgPreview').src || '';
+    var panelAbierto = document.getElementById('panelProgreso').style.display !== 'none';
+    var curso = document.getElementById('progresoCurso').value || '';
+    var valor = document.getElementById('progresoValor').value || '50';
+
+    var draft = {
+        texto: texto,
+        imagen: imagen && imagen !== window.location.href ? imagen : '',
+        panelAbierto: panelAbierto,
+        curso: curso,
+        valor: valor,
+        actualizado: new Date().toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })
+    };
+
+    saveDraftPost(draft);
+    setDraftStatus('Borrador guardado a las ' + draft.actualizado);
+}
+
+function cargarBorradorPublicacion() {
+    var draft = getDraftPost();
+    if (!draft || Object.keys(draft).length === 0) {
+        setDraftStatus('Borrador no guardado');
+        return;
+    }
+
+    document.getElementById('postTexto').value = draft.texto || '';
+    document.getElementById('progresoCurso').value = draft.curso || '';
+    document.getElementById('progresoValor').value = draft.valor || 50;
+
+    var panel = document.getElementById('panelProgreso');
+    panel.style.display = draft.panelAbierto ? 'flex' : 'none';
+
+    if (draft.imagen) {
+        document.getElementById('imgPreview').src = draft.imagen;
+        document.getElementById('previewImagen').style.display = 'block';
+    } else {
+        document.getElementById('imgPreview').src = '';
+        document.getElementById('previewImagen').style.display = 'none';
+    }
+
+    setDraftStatus('Borrador recuperado' + (draft.actualizado ? ' (' + draft.actualizado + ')' : ''));
+}
+
+function limpiarBorradorPublicacion() {
+    localStorage.removeItem('comunidadDraftPost');
+    setDraftStatus('Borrador no guardado');
+}
+    // ---
+function adjuntarImagen() {
+    document.getElementById('inputImagen').click();
+}
+function previsualizarImagen(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+        document.getElementById('imgPreview').src = ev.target.result;
+        document.getElementById('previewImagen').style.display = 'block';
+        guardarBorradorPublicacion();
+    };
+    reader.readAsDataURL(file);
+}
+function quitarImagen() {
+    document.getElementById('inputImagen').value = '';
+    document.getElementById('imgPreview').src = '';
+    document.getElementById('previewImagen').style.display = 'none';
+    guardarBorradorPublicacion();
+}
+function agregarProgreso() {
+    var panel = document.getElementById('panelProgreso');
+    panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+    guardarBorradorPublicacion();
+}
+
+function publicar() {
+    var texto = document.getElementById('postTexto').value.trim();
+    var imgSrc = document.getElementById('imgPreview').src || '';
+    var panelAbierto = document.getElementById('panelProgreso').style.display !== 'none';
+    var cursoProg = document.getElementById('progresoCurso').value.trim();
+    var porc      = parseInt(document.getElementById('progresoValor').value) || 0;
+
+    if (!texto && !imgSrc && !cursoProg) {
+        alert('Escribe algo antes de publicar.');
+        return;
+    }
+
+    var usuario = localStorage.getItem('usuario') || localStorage.getItem('userName') || 'Estudiante';
+    var avatar  = typeof obtenerAvatarSeguro === 'function'
+        ? obtenerAvatarSeguro(localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar'))
+        : 'avatar-default.svg';
+
+    var post = {
+        id: Date.now(),
+        usuario: usuario,
+        avatar: avatar,
+        texto: texto,
+        imagen: imgSrc && imgSrc !== window.location.href ? imgSrc : '',
+        progreso: panelAbierto && cursoProg ? { curso: cursoProg, porc: porc } : null,
+        fecha: new Date().toLocaleDateString('es', { day:'2-digit', month:'short', year:'numeric' }),
+        likes: 0,
+        likedByMe: false
+    };
+
+    var posts = getPosts();
+    posts.unshift(post);
+    savePosts(posts);
+    renderFeed();
+    renderDestacados();
+    // ---
+    document.getElementById('postTexto').value = '';
+    quitarImagen();
+    document.getElementById('progresoCurso').value = '';
+    document.getElementById('progresoValor').value = 50;
+    document.getElementById('panelProgreso').style.display = 'none';
+    limpiarBorradorPublicacion();
+}
+    // ---
+function renderFeed() {
+    var posts = getPosts();
+    var feed = document.getElementById('feedPosts');
+    var usuarioActual = String(localStorage.getItem('usuario') || localStorage.getItem('userName') || '').toLowerCase();
+    var usuariosData = getUsuarios();
+
+    if (!posts.length) {
+        feed.innerHTML = '<p style="text-align:center; color:#aaa; padding:30px 0;">Se el primero en publicar.</p>';
+        return;
+    }
+
+    feed.innerHTML = posts.map(function(p) {
+        var progressHtml = '';
+        if (p.progreso) {
+            progressHtml = '<div class="post-progress"><p>Progreso en <strong>' + escHtml(p.progreso.curso) + '</strong></p>' +
+                '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:' + p.progreso.porc + '%"></div></div>' +
+                '<p style="text-align:right; font-size:0.8rem; margin-top:4px; color:#4a90d9;">' + p.progreso.porc + '%</p></div>';
+        }
+        var imgHtml = p.imagen ? '<img src="' + escHtml(p.imagen) + '" class="post-img" alt="imagen">' : '';
+        var likedClass = p.likedByMe ? ' liked' : '';
+        var esMia = usuarioActual && String(p.usuario || '').toLowerCase() === usuarioActual;
+        var deleteButtonHtml = esMia
+            ? '<button onclick="eliminarPublicacion(' + p.id + ')" style="color:#e05050;">Eliminar</button>'
+            : '';
+        var uData = usuariosData.find(function(u) { return u.usuario === p.usuario; });
+        var nombrePost = uData ? (uData.nombre || p.usuario) : p.usuario;
+
+        return '<div class="post-card">' +
+            '<div class="post-header">' +
+                '<img src="' + escHtml((typeof obtenerAvatarSeguro === 'function' ? obtenerAvatarSeguro(p.avatar) : 'avatar-default.svg')) + '" alt="avatar" onclick="verPerfil(' + p.id + ')" onerror="this.src=\'avatar-default.svg\'">' +
+                '<div class="post-user">' +
+                    '<strong onclick="verPerfil(' + p.id + ')">' + escHtml(nombrePost) + '</strong>' +
+                    '<span>' + escHtml(p.fecha) + '</span>' +
+                '</div>' +
+                '<span class="post-badge">Estudiante</span>' +
+            '</div>' +
+            (p.texto ? '<p class="post-text">' + escHtml(p.texto).replace(/\n/g,'<br>') + '</p>' : '') +
+            progressHtml +
+            imgHtml +
+            '<div class="post-footer">' +
+                '<button class="' + likedClass.trim() + '" onclick="toggleLike(' + p.id + ')">❤️ ' + p.likes + ' Me gusta</button>' +
+                '<button onclick="compartir(\'' + escHtml(p.usuario) + '\')">Compartir</button>' +
+                deleteButtonHtml +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+
+function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+    // ---
+function toggleLike(id) {
+    var posts = getPosts();
+    var post = posts.find(function(p){ return p.id === id; });
+    if (!post) return;
+    if (post.likedByMe) { post.likes--; post.likedByMe = false; }
+    else                { post.likes++; post.likedByMe = true;  }
+    savePosts(posts);
+    renderFeed();
+    renderDestacados();
+}
+    // ---
+function compartir(usuario) {
+    if (navigator.share) {
+        navigator.share({ title: 'Comunidad IMC', text: 'Mira el avance de ' + usuario + ' en el Instituto de Mecánica Clásica.' });
+    } else {
+        alert('Enlace copiado al portapapeles (simulado)');
+    }
+}
+
+function eliminarPublicacion(id) {
+    var posts = getPosts();
+    var usuarioActual = String(localStorage.getItem('usuario') || localStorage.getItem('userName') || '').toLowerCase();
+    var post = posts.find(function(p) { return p.id === id; });
+    if (!post) return;
+
+    if (String(post.usuario || '').toLowerCase() !== usuarioActual) {
+        alert('Solo puedes eliminar tus propias publicaciones.');
+        return;
+    }
+
+    if (!confirm('¿Deseas eliminar esta publicación?')) return;
+
+    posts = posts.filter(function(p) { return p.id !== id; });
+    savePosts(posts);
+    renderFeed();
+    renderDestacados();
+}
+    // ---
+function getUsuarios() {
+    return JSON.parse(localStorage.getItem('comunidadUsuarios') || '[]');
+}
+
+function getComentariosPerfil() {
+    return JSON.parse(localStorage.getItem('comunidadComentariosPerfil') || '[]');
+}
+
+function saveComentariosPerfil(comentarios) {
+    localStorage.setItem('comunidadComentariosPerfil', JSON.stringify(comentarios));
+}
+
+var perfilUsuarioActual = '';
+
+
+
+function renderDestacados() {
+    var posts = getPosts();
+    var grid = document.getElementById('destacadosGrid');
+    if (!grid) return;
+    var usuariosData = getUsuarios();
+    
+    // FILTRAR POSTS CON MÁS LIKES Y LIMITAR A 8
+    var destacados = posts
+        .sort(function(a, b) { return (b.likes || 0) - (a.likes || 0); })
+        .slice(0, 8);
+    
+    if (!destacados.length) {
+        grid.innerHTML = '<p style="color:#bbb; font-size:0.88rem;">Aún no hay publicaciones.</p>';
+        return;
+    }
+    
+    grid.innerHTML = destacados.map(function(p) {
+        var avatarSrc = typeof obtenerAvatarSeguro === 'function' ? obtenerAvatarSeguro(p.avatar) : 'avatar-default.svg';
+        var textPreview = (p.texto || '').substring(0, 60) + (p.texto && p.texto.length > 60 ? '...' : '');
+        var uData = usuariosData.find(function(u) { return u.usuario === p.usuario; });
+        var nombreDest = uData ? (uData.nombre || p.usuario) : p.usuario;
+        
+        return '<div class="destacado-card" onclick="document.getElementById(\'feedPosts\').scrollIntoView({behavior:\'smooth\'})">' +
+            '<div class="destacado-header">' +
+                '<img src="' + escHtml(avatarSrc) + '" alt="avatar" onerror="this.src=\'avatar-default.svg\'">' +
+                '<div class="destacado-author">' +
+                    '<strong>' + escHtml(nombreDest) + '</strong>' +
+                    '<span>' + escHtml(p.fecha) + '</span>' +
+                '</div>' +
+            '</div>' +
+            (textPreview ? '<p class="destacado-text">' + escHtml(textPreview) + '</p>' : '') +
+            '<div class="destacado-stats">' +
+                '<span>❤️ ' + (p.likes || 0) + '</span>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+
+function renderMiembros() {
+    // ---
+    if (typeof sincronizarUsuarioComunidad === 'function') sincronizarUsuarioComunidad();
+    var usuarios = getUsuarios();
+    var grid = document.getElementById('miembrosGrid');
+    var count = document.getElementById('miembrosCount');
+    
+    // LIMITAR A 10 MIEMBROS MÁXIMO
+    var usuariosLimitados = usuarios.slice(0, 10);
+    if (count) count.textContent = String(usuariosLimitados.length || 0);
+    if (!grid) return;
+    if (!usuariosLimitados.length) {
+        grid.innerHTML = '<p style="color:#bbb; font-size:0.88rem;">Aún no hay miembros registrados.</p>';
+        return;
+    }
+    grid.innerHTML = usuariosLimitados.map(function(u) {
+        var avatarSrc = typeof obtenerAvatarSeguro === 'function' ? obtenerAvatarSeguro(u.avatar) : 'avatar-default.svg';
+        var username = u.usuario || '';
+        return '<div class="miembro-card" data-username="' + escHtml(username) + '" onclick="verPerfilUsuario(this.dataset.username)">' +
+            '<img src="' + escHtml(avatarSrc) + '" alt="avatar" onerror="this.src=\'avatar-default.svg\'">' +
+            '<div class="miembro-info">' +
+                '<strong>' + escHtml(u.nombre || u.usuario) + '</strong>' +
+                '<span class="miembro-rol">' + escHtml(u.formacion || 'Estudiante') + '</span>' +
+                (u.fechaRegistro ? '<span class="miembro-fecha">Desde ' + escHtml(u.fechaRegistro) + '</span>' : '') +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+
+function verPerfilUsuario(username) {
+    var usuarios = getUsuarios();
+    var u = usuarios.find(function(u) { return u.usuario === username; }) || { usuario: username };
+    var posts = getPosts();
+    var userPosts = posts.filter(function(p) { return p.usuario === username; }).length;
+    abrirModalPerfil(u, userPosts);
+}
+
+function getAmigos() {
+    var session = JSON.parse(localStorage.getItem('session') || '{}');
+    var currentUser = session.usuario || '';
+    if (!currentUser) return [];
+    return JSON.parse(localStorage.getItem('amigos_' + currentUser) || '[]');
+}
+
+function toggleAmigo(username) {
+    var session = JSON.parse(localStorage.getItem('session') || '{}');
+    var currentUser = session.usuario || '';
+    if (!currentUser || username === currentUser) return;
+    var amigos = getAmigos();
+    var idx = amigos.indexOf(username);
+    if (idx === -1) { amigos.push(username); } else { amigos.splice(idx, 1); }
+    localStorage.setItem('amigos_' + currentUser, JSON.stringify(amigos));
+    renderAmigos();
+}
+
+function renderAmigos() {
+    var panel = document.getElementById('amigosPanel');
+    var count = document.getElementById('amigosCount');
+    if (!panel) return;
+    var amigosUsernames = getAmigos();
+    var usuarios = getUsuarios();
+    var amigos = amigosUsernames.map(function(u) {
+        return usuarios.find(function(x) { return x.usuario === u; }) || { usuario: u };
+    });
+    if (count) count.textContent = String(amigos.length);
+    if (!amigos.length) {
+        panel.innerHTML = '<div class="amigos-empty">Aún no has agregado amigos.<br>¡Explora la comunidad!</div>';
+        return;
+    }
+    panel.innerHTML = amigos.map(function(u) {
+        var avatarSrc = typeof obtenerAvatarSeguro === 'function' ? obtenerAvatarSeguro(u.avatar) : 'avatar-default.svg';
+        var username = u.usuario || '';
+        return '<div class="amigo-card" data-username="' + escHtml(username) + '" onclick="verPerfilUsuario(this.dataset.username)">' +
+            '<img src="' + escHtml(avatarSrc) + '" alt="avatar" onerror="this.src=\'avatar-default.svg\'">' +
+            '<div class="amigo-info">' +
+                '<strong>' + escHtml(u.nombre || u.usuario) + '</strong>' +
+                '<span class="amigo-estado">&#128994; Amigo</span>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+    // ---
+function verPerfil(postId) {
+    var posts = getPosts();
+    var post = posts.find(function(p){ return p.id === postId; });
+    if (!post) return;
+    var userPosts = posts.filter(function(p){ return p.usuario === post.usuario; }).length;
+    var usuarios  = getUsuarios();
+    var u = usuarios.find(function(u){ return u.usuario === post.usuario; }) ||
+            { usuario: post.usuario, avatar: post.avatar };
+    abrirModalPerfil(u, userPosts);
+}
+    // ---
+function abrirModalPerfil(u, numPosts) {
+    perfilUsuarioActual = u.usuario || '';
+    // ---
+    var bannerWrap = document.getElementById('modalBannerWrap');
+    bannerWrap.innerHTML = '<img class="modal-banner" src="' + escHtml((typeof obtenerCoverSeguro === 'function' ? obtenerCoverSeguro(u.cover) : 'cover-default.svg')) + '" alt="banner" onerror="this.src=\'cover-default.svg\'">';
+    // ---
+    if (typeof aplicarAvatarSeguro === 'function') {
+        aplicarAvatarSeguro(document.getElementById('modalAvatar'), u.avatar);
+    }
+    // ---
+    document.getElementById('modalNombre').textContent    = u.nombre || u.usuario;
+    document.getElementById('modalFormacion').textContent = u.formacion || 'Estudiante';
+    document.getElementById('modalSince').textContent     = u.fechaRegistro ? 'Miembro desde ' + u.fechaRegistro : '';
+    document.getElementById('modalBio').textContent       = u.bio || '';
+    // ---
+    document.getElementById('modalPublicaciones').textContent = numPosts;
+    var cursos = Array.isArray(u.cursos) ? u.cursos : [];
+    if (!cursos.length && u.usuario) {
+        var perfiles = JSON.parse(localStorage.getItem('perfilesUsuarios') || '{}');
+        var perfilUsuario = perfiles[u.usuario] || {};
+        if (Array.isArray(perfilUsuario.cursos)) cursos = perfilUsuario.cursos;
+    }
+    document.getElementById('modalCursos').textContent        = String(cursos.length);
+    // ---
+    var cursosLista = document.getElementById('modalCursosLista');
+    if (!cursos.length) {
+        cursosLista.innerHTML = '<div class="modal-curso-item"><span class="curso-icon">-</span>Sin cursos inscritos.</div>';
+    } else {
+        cursosLista.innerHTML = cursos.map(function(nombreCurso) {
+            return '<div class="modal-curso-item"><span class="curso-icon">-</span>' + escHtml(nombreCurso) + '</div>';
+        }).join('');
+    }
+    // ---
+    var social = document.getElementById('modalSocial');
+    var redes = [];
+    if (u.facebook) redes.push('<a href="' + escHtml(u.facebook) + '" target="_blank" rel="noopener">Facebook</a>');
+    if (u.twitter)  redes.push('<a href="' + escHtml(u.twitter)  + '" target="_blank" rel="noopener">Twitter/X</a>');
+    if (u.youtube)  redes.push('<a href="' + escHtml(u.youtube)  + '" target="_blank" rel="noopener">YouTube</a>');
+    if (u.linkedin) redes.push('<a href="' + escHtml(u.linkedin) + '" target="_blank" rel="noopener">LinkedIn</a>');
+    social.innerHTML = redes.join('');
+    // ---
+    document.getElementById('btnPerfilCompleto').textContent = 'Ver perfil completo';
+    // --- Botón amigo
+    var session = JSON.parse(localStorage.getItem('session') || '{}');
+    var currentUser = session.usuario || '';
+    var btnAmigo = document.getElementById('btnToggleAmigo');
+    if (btnAmigo) {
+        if (!currentUser || (u.usuario === currentUser)) {
+            btnAmigo.style.display = 'none';
+        } else {
+            btnAmigo.style.display = '';
+            var amigos = getAmigos();
+            var esAmigo = amigos.indexOf(u.usuario) !== -1;
+            btnAmigo.textContent = esAmigo ? '✓ Amigo' : '+ Agregar amigo';
+            btnAmigo.style.background = esAmigo ? 'linear-gradient(135deg,#64748b,#475569)' : 'linear-gradient(135deg,#22c55e,#16a34a)';
+        }
+    }
+    // ---
+    document.getElementById('userModalBackdrop').classList.add('open');
+}
+
+function irPerfilCompletoPagina() {
+    if (!perfilUsuarioActual) return;
+    window.location.href = 'perfil_miembro.html?user=' + encodeURIComponent(perfilUsuarioActual);
+}
+
+function toggleAmigoDesdeModal() {
+    if (!perfilUsuarioActual) return;
+    toggleAmigo(perfilUsuarioActual);
+    var amigos = getAmigos();
+    var esAmigo = amigos.indexOf(perfilUsuarioActual) !== -1;
+    var btnAmigo = document.getElementById('btnToggleAmigo');
+    if (btnAmigo) {
+        btnAmigo.textContent = esAmigo ? '✓ Amigo' : '+ Agregar amigo';
+        btnAmigo.style.background = esAmigo ? 'linear-gradient(135deg,#64748b,#475569)' : 'linear-gradient(135deg,#22c55e,#16a34a)';
+    }
+}
+
+function renderComentariosPerfil(username) {
+    var lista = document.getElementById('comentariosLista');
+    if (!lista) return;
+    var usuarioActual = localStorage.getItem('usuario') || 'Estudiante';
+    var comentarios = getComentariosPerfil().filter(function(c) {
+        return c.destino === username;
+    });
+
+    if (!comentarios.length) {
+        lista.innerHTML = '<p style="margin:0; color:#8a94a6; font-size:0.82rem;">Aún no hay comentarios para este perfil.</p>';
+        return;
+    }
+
+    lista.innerHTML = comentarios.map(function(c) {
+        var likes = Number(c.likes || 0);
+        var likedBy = Array.isArray(c.likedBy) ? c.likedBy : [];
+        var likedClass = likedBy.indexOf(usuarioActual) !== -1 ? ' liked' : '';
+        return '<div class="comentario-item">' +
+            '<strong>' + escHtml(c.autor || 'Usuario') + '</strong>' +
+            '<p>' + escHtml(c.texto).replace(/\\n/g, '<br>') + '</p>' +
+            '<span>' + escHtml(c.fecha || '') + '</span>' +
+            '<div class="comentario-actions">' +
+                '<button type="button" class="btn-like-comentario' + likedClass + '" onclick="toggleLikeComentario(' + c.id + ')">❤️ Me gusta (' + likes + ')</button>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+
+function toggleLikeComentario(commentId) {
+    if (!perfilUsuarioActual) return;
+
+    var usuarioActual = localStorage.getItem('usuario') || 'Estudiante';
+    var comentarios = getComentariosPerfil();
+    var comentario = comentarios.find(function(c) { return c.id === commentId; });
+    if (!comentario) return;
+
+    if (!Array.isArray(comentario.likedBy)) comentario.likedBy = [];
+    if (typeof comentario.likes !== 'number') comentario.likes = Number(comentario.likes || 0);
+
+    var idx = comentario.likedBy.indexOf(usuarioActual);
+    if (idx >= 0) {
+        comentario.likedBy.splice(idx, 1);
+        comentario.likes = Math.max(0, comentario.likes - 1);
+    } else {
+        comentario.likedBy.push(usuarioActual);
+        comentario.likes += 1;
+    }
+
+    saveComentariosPerfil(comentarios);
+    renderComentariosPerfil(perfilUsuarioActual);
+}
+
+function agregarComentarioPerfil() {
+    if (!perfilUsuarioActual) return;
+
+    var input = document.getElementById('nuevoComentario');
+    var texto = (input.value || '').trim();
+    if (!texto) {
+        alert('Escribe un comentario antes de publicar.');
+        return;
+    }
+
+    var autor = localStorage.getItem('usuario') || 'Estudiante';
+    var comentarios = getComentariosPerfil();
+    comentarios.unshift({
+        id: Date.now(),
+        destino: perfilUsuarioActual,
+        autor: autor,
+        texto: texto,
+        fecha: new Date().toLocaleDateString('es', { day:'2-digit', month:'short', year:'numeric' }),
+        likes: 0,
+        likedBy: []
+    });
+
+    saveComentariosPerfil(comentarios);
+    input.value = '';
+    renderComentariosPerfil(perfilUsuarioActual);
+}
+
+function cerrarModal(e) {
+    if (e.target === document.getElementById('userModalBackdrop')) cerrarModalDirecto();
+}
+function cerrarModalDirecto() {
+    document.getElementById('userModalBackdrop').classList.remove('open');
+    document.getElementById('btnPerfilCompleto').textContent = 'Ver perfil completo';
+}
+    // ---
+window.addEventListener('DOMContentLoaded', function() {
+    cargarAvatarTopbar();
+    renderMiembros();
+    renderAmigos();
+    renderFeed();
+    renderDestacados();
+    cargarBorradorPublicacion();
+
+    var postTexto = document.getElementById('postTexto');
+    var progresoCurso = document.getElementById('progresoCurso');
+    var progresoValor = document.getElementById('progresoValor');
+    if (postTexto) postTexto.addEventListener('input', guardarBorradorPublicacion);
+    if (progresoCurso) progresoCurso.addEventListener('input', guardarBorradorPublicacion);
+    if (progresoValor) progresoValor.addEventListener('input', guardarBorradorPublicacion);
+});
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,252 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Módulo 3 - Sesión 4</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .topbar { position: sticky; top: 0; z-index: 100; background: #fff; box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08); }
+        .topbar .profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; cursor: pointer; }
+        .profile-dropdown { min-width: 170px; }
+        .modulo-page { padding: 26px; display: flex; flex-direction: column; gap: 16px; }
+        .modulo-hero { background: linear-gradient(135deg, #0f172a, #1e3a8a 60%, #2563eb); color: #fff; border-radius: 16px; padding: 22px; box-shadow: 0 12px 24px rgba(30, 58, 138, 0.24); }
+        .modulo-hero h1 { margin: 0 0 8px 0; font-size: 1.35rem; }
+        .modulo-hero p { margin: 0; color: rgba(255, 255, 255, 0.9); line-height: 1.5; max-width: 860px; }
+        .sesiones-list { display: grid; grid-template-columns: 1fr; gap: 14px; }
+        .sesion-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06); width: 100%; max-width: 1480px; margin: 0 auto; }
+        .sesion-card h3 { margin: 0 0 8px; color: #1e3a8a; font-size: 1rem; }
+        .sesion-card p { margin: 0 0 10px; color: #475569; font-size: 0.9rem; line-height: 1.45; }
+        .sesion-meta { margin-bottom: 12px; font-size: 0.8rem; color: #64748b; font-weight: 600; }
+        .video-embed-wrap { border: 1px solid #dbeafe; border-radius: 12px; overflow: hidden; background: #0f172a; margin-bottom: 10px; }
+        .video-embed { position: relative; width: 100%; aspect-ratio: 21 / 9; min-height: 340px; max-height: 720px; }
+        .video-embed video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: contain; background: #000; }
+        .video-controls-lite { display: flex; align-items: center; gap: 10px; padding: 10px; background: #f8fbff; border: 1px solid #dbeafe; border-radius: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+        .btn-video { border: none; background: #2563eb; color: #fff; border-radius: 8px; padding: 7px 12px; font-size: 0.8rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+        .btn-video:hover { background: #1d4ed8; }
+        .btn-video.fullscreen { background: #1e3a8a; }
+        .btn-video.fullscreen:hover { background: #1d4ed8; }
+        .video-controls-lite label { font-size: 0.82rem; font-weight: 700; color: #1e3a8a; white-space: nowrap; }
+        .video-controls-lite input[type="range"] { flex: 1; accent-color: #2563eb; }
+        .video-controls-lite span { font-size: 0.8rem; color: #334155; min-width: 34px; text-align: right; font-weight: 600; }
+        .seek-wrap { width: 100%; display: flex; align-items: center; gap: 10px; margin-top: 2px; }
+        .seek-wrap input[type="range"] { flex: 1; accent-color: #1d4ed8; }
+        .seek-time { font-size: 0.76rem; color: #475569; min-width: 92px; text-align: right; font-variant-numeric: tabular-nums; }
+        .progreso-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06); }
+        .progreso-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+        .progreso-head h3 { margin: 0; color: #0f172a; font-size: 0.88rem; }
+        .progreso-head span { font-size: 0.8rem; font-weight: 700; color: #1d4ed8; }
+        .progreso-bar { width: 100%; height: 6px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
+        .progreso-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #2563eb, #60a5fa); transition: width 0.3s ease; }
+        .progreso-desc { margin: 6px 0 0; font-size: 0.74rem; color: #64748b; }
+        .modulo-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-modulo { border: none; border-radius: 8px; padding: 10px 14px; font-weight: 600; font-size: 0.88rem; text-decoration: none; cursor: pointer; display: inline-block; }
+        .btn-modulo-primary { background: #2563eb; color: #fff; }
+        .btn-modulo-primary:hover { background: #1d4ed8; }
+        .btn-modulo-sec { background: #e2e8f0; color: #0f172a; }
+        .btn-modulo-sec:hover { background: #cbd5e1; }
+        @media (max-width: 900px) { .video-embed { aspect-ratio: 16 / 9; min-height: 220px; max-height: none; } }
+
+        /* === EJERCICIO === */
+        .ejercicio-card { border-left: 4px solid #2563eb; }
+        .ejercicio-card > h3 { font-size: 1.05rem; color: #1e3a8a; margin-bottom: 10px; }
+        .ejercicio-enunciado { background: #f0f6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 16px; color: #1e3a8a; font-size: 0.92rem; line-height: 1.6; margin-bottom: 18px; }
+        .ejercicio-steps { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+        .paso { display: flex; gap: 14px; align-items: flex-start; }
+        .paso-num { flex-shrink: 0; width: 32px; height: 32px; background: #2563eb; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; margin-top: 2px; }
+        .paso-body { flex: 1; }
+        .paso-body h4 { margin: 0 0 6px; font-size: 0.9rem; color: #0f172a; }
+        .paso-body p { margin: 6px 0 0; font-size: 0.85rem; color: #475569; line-height: 1.5; }
+        .formula-box { background: #0f172a; color: #60a5fa; font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: 700; padding: 10px 18px; border-radius: 8px; display: inline-block; letter-spacing: 0.04em; }
+        .formula-box.resultado { background: linear-gradient(90deg, #1e3a8a, #2563eb); color: #fff; font-size: 1.2rem; }
+        .dato-interesante { display: flex; gap: 14px; align-items: flex-start; background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 14px 16px; margin-top: 4px; }
+        .dato-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+        .dato-interesante div { font-size: 0.88rem; color: #78350f; line-height: 1.6; }
+        .dato-interesante strong { color: #92400e; }
+    </style>
+</head>
+<body onload="verificarSesion();">
+<div class="container">
+    <aside class="sidebar">
+        <h2><a href="index.html" style="color:inherit;text-decoration:none;cursor:pointer;">Plataforma</a></h2>
+        <ul>
+            <li><a href="lobby.html">Lobby</a></li>
+            <li><a href="cursos.html">Cursos</a></li>
+            <li><a href="tu_progreso.html">Tu progreso</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+            <li><a href="redes_sociales.html">Redes Sociales</a></li>
+            <li><a href="comunidad.html">Comunidad</a></li>
+            <li><a href="contactanos.html">Contáctanos</a></li>
+        </ul>
+        <button onclick="logout()">Cerrar sesión</button>
+    </aside>
+    <div style="width:100%;">
+<header class="topbar">
+    <div class="topbar-left"><h2>Módulo 3 - Sesión 4</h2></div>
+    <div class="topbar-right">
+        <div class="course-search-wrap">
+            <input id="topbarCourseInput" list="topbarCourseList" type="text" placeholder="Escribe un curso...">
+            <datalist id="topbarCourseList">
+                <option value="Mecánica Clásica">
+                <option value="Mecánica de Fluidos">
+                <option value="Matemática Básica">
+            </datalist>
+            <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
+        </div>
+        <div class="profile-menu">
+            <img id="topbarAvatar" src="avatar-default.svg" alt="Perfil" class="profile-avatar" onclick="toggleProfileMenu()" onerror="this.onerror=null;this.src='avatar-default.svg'">
+            <div class="profile-dropdown" id="profileDropdown">
+                <a href="cursos.html">Todos los cursos</a>
+                <a href="perfil.html#mis-cursos">Mis cursos</a>
+                <a href="lista_deseados.html">Lista de deseados</a>
+                <a href="perfil.html">Editar perfil</a>
+                <button type="button" onclick="logout()">Cerrar sesión</button>
+            </div>
+        </div>
+    </div>
+</header>
+<main class="modulo-page fade-in">
+    <section class="modulo-hero">
+        <h1>Módulo 3 - Sesión 4</h1>
+        <p>Aquí irá la descripción de la sesión.</p>
+    </section>
+    <section class="sesiones-list">
+        <article class="sesion-card">
+            <h3>Video de la sesión</h3>
+            <div class="video-embed-wrap">
+                <div class="video-embed">
+                    <video id="sesion3_4Video" playsinline controlslist="nodownload noplaybackrate noremoteplayback" disablepictureinpicture oncontextmenu="return false;">
+                        <source id="sesion3_4VideoSource" src="" type="video/mp4">
+                        Tu navegador no soporta reproducción de video.
+                    </video>
+                </div>
+            </div>
+            <div class="video-controls-lite">
+                <button type="button" class="btn-video" id="btnTogglePlay3_4">Reproducir</button>
+                <button type="button" class="btn-video fullscreen" id="btnFullscreen3_4">Pantalla completa</button>
+                <label for="controlVolumen3_4">Volumen</label>
+                <input id="controlVolumen3_4" type="range" min="0" max="100" value="80">
+                <span id="valorVolumen3_4">80%</span>
+                <div class="seek-wrap">
+                    <input id="controlProgreso3_4" type="range" min="0" max="100" step="0.1" value="0">
+                    <span class="seek-time" id="tiempo3_4">00:00 / 00:00</span>
+                </div>
+            </div>
+            <p class="sesion-meta" id="sesion3_4Estado">Estado: pendiente</p>
+            <div class="sesion-actions">
+                <button type="button" class="btn-modulo btn-modulo-sec" id="btnCompletarSesion3_4" onclick="toggleSesionCompletada()">Marcar como completada</button>
+            </div>
+        </article>
+    </section>
+
+    <section class="progreso-box">
+        <div class="progreso-head">
+            <h3>Progreso del módulo</h3>
+            <span id="progresoModulo3Pct">0%</span>
+        </div>
+        <div class="progreso-bar">
+            <div class="progreso-fill" id="progresoModulo3Fill"></div>
+        </div>
+        <p class="progreso-desc" id="progresoModulo3Desc">0 de 6 sesiones completadas</p>
+    </section>
+    <div class="modulo-actions">
+        <a class="btn-modulo btn-modulo-sec" href="modulo3.html">Volver al módulo</a>
+        <a class="btn-modulo btn-modulo-primary" href="nivel1.html">Regresar</a>
+        <button type="button" class="btn-modulo btn-modulo-primary" onclick="irSiguienteSesion()">Siguiente sesión →</button>
+    </div>
+</main>
+    </div>
+</div>
+<script src="video-config.js" defer></script>
+<script src="app.js" defer></script>
+<script>
+(function() {
+    var CURSO_ID = 'mecanica_nivel1';
+    var MODULO_ID = 'modulo3';
+    var MODULO_NUM = 3;
+    var SESION_NUM = 4;
+    var TOTAL_SESIONES = 6;
+
+    window.verificarSesion = function() {
+        if (SESION_NUM > 1 && !(typeof estaSesionCompletada === 'function' ? estaSesionCompletada(CURSO_ID, MODULO_NUM, SESION_NUM - 1) : false)) {
+            mostrarModal('Debes completar la sesión anterior para acceder a esta.', function() { window.location.href = 'modulo3.html'; });
+            return;
+        }
+        if (typeof applyExternalVideoSource === 'function') {
+            applyExternalVideoSource({ courseId: CURSO_ID, moduleId: MODULO_ID, sessionNumber: SESION_NUM, videoId: 'sesion3_4Video', sourceId: 'sesion3_4VideoSource' });
+        }
+        configurarControlesVideo();
+        renderEstadoSesion();
+        renderProgresoModulo();
+        loadTopbarAvatar();
+    };
+
+    function loadTopbarAvatar() {
+        var el = document.getElementById('topbarAvatar');
+        if (!el) return;
+        var avatar = localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar') || localStorage.getItem('userAvatar') || localStorage.getItem('profilePhoto') || localStorage.getItem('profileImage') || localStorage.getItem('avatarUrl');
+        if (typeof aplicarAvatarSeguro === 'function') aplicarAvatarSeguro(el, avatar);
+    }
+
+    function renderEstadoSesion() {
+        if (typeof estaSesionCompletada !== 'function') return;
+        var ok = estaSesionCompletada(CURSO_ID, MODULO_NUM, SESION_NUM);
+        var estado = document.getElementById('sesion3_4Estado');
+        var boton = document.getElementById('btnCompletarSesion3_4');
+        if (estado) estado.textContent = ok ? 'Estado: completada' : 'Estado: pendiente';
+        if (boton) boton.textContent = ok ? 'Marcar como pendiente' : 'Marcar como completada';
+    }
+
+    function renderProgresoModulo() {
+        if (typeof estaSesionCompletada !== 'function') return;
+        var completadas = 0;
+        for (var i = 1; i <= TOTAL_SESIONES; i++) { if (estaSesionCompletada(CURSO_ID, MODULO_NUM, i)) completadas++; }
+        var pct = Math.round((completadas / TOTAL_SESIONES) * 100);
+        var pctEl = document.getElementById('progresoModulo3Pct');
+        var fill = document.getElementById('progresoModulo3Fill');
+        var desc = document.getElementById('progresoModulo3Desc');
+        if (pctEl) pctEl.textContent = pct + '%';
+        if (fill) fill.style.width = pct + '%';
+        if (desc) desc.textContent = completadas + ' de ' + TOTAL_SESIONES + ' sesiones completadas';
+    }
+
+    function configurarControlesVideo() {
+        var slider = document.getElementById('controlVolumen3_4');
+        var sliderP = document.getElementById('controlProgreso3_4');
+        var tiempo = document.getElementById('tiempo3_4');
+        var video = document.getElementById('sesion3_4Video');
+        var btnPlay = document.getElementById('btnTogglePlay3_4');
+        var btnFs = document.getElementById('btnFullscreen3_4');
+        if (!slider || !video) return;
+        video.volume = 0.8;
+        slider.addEventListener('input', function() { video.volume = parseInt(slider.value, 10) / 100; var l = document.getElementById('valorVolumen3_4'); if (l) l.textContent = slider.value + '%'; });
+        function fmtTime(s) { var t = Math.max(0, Math.floor(Number(s) || 0)); return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); }
+        function updateSeek() { var d = Number(video.duration || 0), c = Number(video.currentTime || 0); if (sliderP) sliderP.value = d > 0 ? String((c / d) * 100) : '0'; if (tiempo) tiempo.textContent = fmtTime(c) + ' / ' + fmtTime(d); }
+        if (btnPlay) { btnPlay.onclick = function() { video.paused || video.ended ? video.play() : video.pause(); }; video.addEventListener('play', function() { btnPlay.textContent = 'Pausar'; }); video.addEventListener('pause', function() { btnPlay.textContent = 'Reproducir'; }); }
+        if (sliderP) { video.addEventListener('loadedmetadata', updateSeek); video.addEventListener('timeupdate', updateSeek); sliderP.addEventListener('input', function() { var d = Number(video.duration || 0); if (d > 0) video.currentTime = d * (Number(sliderP.value) / 100); updateSeek(); }); }
+        if (btnFs) { btnFs.onclick = function() { document.fullscreenElement ? document.exitFullscreen() : video.requestFullscreen && video.requestFullscreen(); }; }
+    }
+
+    window.toggleSesionCompletada = function() {
+        if (typeof estaSesionCompletada !== 'function' || typeof marcarSesionCompletada !== 'function') return;
+        var actual = estaSesionCompletada(CURSO_ID, MODULO_NUM, SESION_NUM);
+        marcarSesionCompletada(CURSO_ID, MODULO_NUM, SESION_NUM, !actual);
+        renderEstadoSesion(); renderProgresoModulo();
+    };
+
+    window.irSiguienteSesion = function() {
+        if (typeof estaSesionCompletada === 'function' && !estaSesionCompletada(CURSO_ID, MODULO_NUM, SESION_NUM)) {
+            mostrarModal('Primero debes completar esta sesión.'); return;
+        }
+        window.location.href = 'modulo3_sesion5.html';
+    };
+    window.logout = function() { ['perfilAvatar','avatar','userAvatar','profilePhoto','profileImage','avatarUrl'].forEach(function(k) { localStorage.removeItem(k); }); window.location.href = 'home.html'; };
+    window.addEventListener('DOMContentLoaded', function() { window.verificarSesion(); });
+})();
+</script>
+</body>
+</html>

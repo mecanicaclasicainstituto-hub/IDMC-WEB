@@ -1,0 +1,431 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+    <link rel="icon" href="favicon.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - IDMC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Topbar ---- */
+    .checkout-topbar {
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .checkout-topbar .brand {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      letter-spacing: -0.5px;
+    }
+
+    .checkout-topbar .back-link {
+      font-size: 0.82rem;
+      color: #64748b;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .checkout-topbar .back-link:hover { color: #1e3a8a; }
+
+    /* ---- Layout ---- */
+    .checkout-body {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 36px 20px 60px;
+    }
+
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 22px;
+      width: 100%;
+      max-width: 960px;
+    }
+
+    .checkout-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 8px 24px rgba(15,23,42,0.07);
+    }
+
+    /* ---- Resumen del pedido ---- */
+    .order-tag {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    .order-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .order-subtitle {
+      font-size: 0.84rem;
+      color: #64748b;
+      margin-bottom: 22px;
+    }
+
+    .order-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .order-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: #334155;
+      line-height: 1.4;
+    }
+
+    .order-features li::before {
+      content: '✓';
+      color: #2563eb;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .order-divider {
+      border: 0;
+      border-top: 1px solid #f1f5f9;
+      margin: 20px 0;
+    }
+
+    .order-total-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .order-total-label {
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .order-total-price {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #1d4ed8;
+      line-height: 1;
+    }
+
+    .order-total-currency {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      margin-top: 3px;
+    }
+
+    /* ---- Seguridad ---- */
+    .trust-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      color: #64748b;
+    }
+
+    .trust-item .icon {
+      font-size: 1rem;
+    }
+
+    /* ---- Panel de pago ---- */
+    .pay-header {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 20px;
+    }
+
+    .pay-student-row {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .pay-student-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #dbeafe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .pay-student-info .label {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .pay-student-info .name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .pay-method-label {
+      font-size: 0.78rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .pay-method-box {
+      border: 2px solid #2563eb;
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+      background: #eff6ff;
+    }
+
+    .pay-method-box .mp-icon {
+      width: 36px;
+      height: 36px;
+      background: #009ee3;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .pay-method-box .mp-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .pay-method-box .mp-desc {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    .pay-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      border: 0;
+      border-radius: 12px;
+      padding: 15px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: opacity 0.2s, transform 0.1s;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+    }
+
+    .pay-btn:hover:not(:disabled) {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .pay-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .pay-btn .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    .pay-btn.loading .spinner { display: block; }
+    .pay-btn.loading .btn-text { display: none; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .msg-error {
+      margin-top: 12px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.83rem;
+      color: #dc2626;
+      display: none;
+    }
+
+    .msg-error.visible { display: block; }
+
+    .pay-hint {
+      margin-top: 14px;
+      font-size: 0.76rem;
+      color: #94a3b8;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .pay-secure-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 16px;
+      font-size: 0.76rem;
+      color: #64748b;
+    }
+
+    @media (max-width: 800px) {
+      .checkout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="checkout-topbar">
+    <span class="brand">IDMC</span>
+    <a class="back-link" href="cursos.html">&#8592; Volver a cursos</a>
+  </nav>
+
+  <div class="checkout-body">
+    <div class="checkout-grid">
+
+      <!-- Resumen del pedido -->
+      <div class="checkout-card">
+        <span class="order-tag">Resumen del pedido</span>
+        <h1 class="order-title" id="courseName">Cargando curso...</h1>
+        <p class="order-subtitle">Acceso completo a todos los módulos y sesiones del curso.</p>
+        <ul class="order-features">
+          <li>Acceso ilimitado a todas las sesiones en video.</li>
+          <li>Sistema de progreso del 0% al 100%.</li>
+          <li>Acceso por avance: módulos desbloqueados progresivamente.</li>
+          <li>Disponible en cualquier dispositivo desde la plataforma.</li>
+          <li>Un solo pago, sin mensualidades.</li>
+        </ul>
+        <hr class="order-divider">
+        <div class="order-total-row">
+          <div>
+            <div class="order-total-label">Total a pagar</div>
+            <div class="order-total-currency">Pago único · Sin cargos extra</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="order-total-price" id="coursePrice">$0</div>
+            <div class="order-total-currency">MXN</div>
+          </div>
+        </div>
+        <div class="trust-row">
+          <div class="trust-item"><span class="icon">🔒</span> Pago seguro</div>
+          <div class="trust-item"><span class="icon">✅</span> Acceso inmediato</div>
+          <div class="trust-item"><span class="icon">🎓</span> Plataforma IDMC</div>
+        </div>
+      </div>
+
+      <!-- Panel de pago -->
+      <div class="checkout-card">
+        <p class="pay-header">Finalizar compra</p>
+
+        <div class="pay-student-row">
+          <div class="pay-student-avatar">👤</div>
+          <div class="pay-student-info">
+            <div class="label">Comprando como</div>
+            <div class="name" id="userName">—</div>
+          </div>
+        </div>
+
+        <div style="text-align:center; padding: 32px 0;">
+          <div style="font-size:2.5rem; margin-bottom:12px;">🚧</div>
+          <h2 style="font-size:1.1rem; font-weight:700; color:#0f172a; margin-bottom:8px;">Pagos próximamente</h2>
+          <p style="font-size:0.85rem; color:#64748b; line-height:1.6;">El sistema de pagos estará disponible muy pronto.<br>¡Gracias por tu paciencia!</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function getQueryParam(name, fallback) {
+      var u = new URL(window.location.href);
+      return u.searchParams.get(name) || fallback;
+    }
+
+    var course = getQueryParam('course', 'Mecánica Clásica Nivel I');
+    var price = Number(getQueryParam('price', '200'));
+    var user = localStorage.getItem('usuario') || 'Estudiante';
+
+    document.getElementById('courseName').textContent = course;
+    document.getElementById('userName').textContent = user;
+    document.getElementById('coursePrice').textContent = '$' + price;
+
+    // Pagos deshabilitados temporalmente
+  </script>
+</body>
+</html>
+
+

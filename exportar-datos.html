@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="icon" href="favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+  <title>Exportar datos - IDMC</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 8px; color: #f8fafc; }
+    p { color: #94a3b8; margin-bottom: 28px; font-size: 0.95rem; }
+    .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #1d4ed8; }
+    .msg {
+      margin-top: 18px;
+      font-size: 0.9rem;
+      color: #4ade80;
+      display: none;
+    }
+    .stats {
+      margin-top: 20px;
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      text-align: left;
+      display: none;
+    }
+    .stats span { color: #f8fafc; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Exportar datos del sitio</h1>
+    <p>Descarga un archivo JSON con todos los usuarios y publicaciones para importarlos en la app de administración.</p>
+    <button class="btn" onclick="exportarDatos()">Descargar datos (JSON)</button>
+    <div class="msg" id="msg">Archivo descargado correctamente.</div>
+    <div class="stats" id="stats">
+      Usuarios: <span id="cntUsers">0</span> &nbsp;|&nbsp;
+      Publicaciones: <span id="cntPosts">0</span>
+    </div>
+  </div>
+
+  <script>
+    function exportarDatos() {
+      const usuarios = JSON.parse(localStorage.getItem('usuariosRegistrados') || '[]');
+      const perfiles = JSON.parse(localStorage.getItem('perfilesUsuarios') || '{}');
+      const comunidad = JSON.parse(localStorage.getItem('comunidadUsuarios') || '[]');
+      const posts = JSON.parse(localStorage.getItem('comunidadPosts') || '[]');
+      const comments = JSON.parse(localStorage.getItem('comunidadComentariosPerfil') || '[]');
+
+      const users = usuarios.map(function(u) {
+        var perfil = perfiles[u.usuario] || {};
+        var comunMember = comunidad.find(function(c) { return c.usuario === u.usuario; }) || {};
+        return {
+          usuario: u.usuario,
+          email: u.email,
+          password: u.password || '',
+          formacion: u.formacion || comunMember.rol || 'Estudiante',
+          cursos: perfil.cursos || []
+        };
+      });
+
+      var data = { users: users, posts: posts, comments: comments };
+
+      var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'idmc-datos.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+
+      document.getElementById('cntUsers').textContent = users.length;
+      document.getElementById('cntPosts').textContent = posts.length;
+      document.getElementById('msg').style.display = 'block';
+      document.getElementById('stats').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IDMC Admin Desktop</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="authView" class="auth-wrap">
+    <div class="card">
+      <img src="../../NEW LOGO - copia.png" alt="Logo IDMC" style="display:block;margin:0 auto 18px auto;max-width:180px;width:100%;height:auto;" />
+      <h1>IDMC Admin</h1>
+      <p>Acceso privado del panel de administracion.</p>
+      <input id="adminKey" type="password" placeholder="Codigo admin" />
+      <button id="loginBtn">Entrar</button>
+      <p id="authMsg" class="msg"></p>
+      <p class="hint">Codigo inicial: admin123 (cambialo luego en codigo).</p>
+    </div>
+  </div>
+
+  <div id="appView" class="app-wrap hidden">
+    <header class="topbar">
+      <h2>Panel Admin Desktop</h2>
+      <div class="actions-inline">
+        <button id="importBtn" class="ghost">Importar desde Web</button>
+        <button id="exportBtn" class="ghost">Exportar para Web</button>
+        <button id="reloadBtn" class="ghost">Recargar</button>
+        <button id="resetBtn" class="danger">Reset total</button>
+        <button id="logoutBtn" class="ghost">Salir</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="panel">
+        <h3>Usuarios</h3>
+        <table>
+          <thead>
+            <tr><th>Usuario</th><th>Correo</th><th>Rol</th><th></th></tr>
+          </thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+      </section>
+
+      <section class="panel">
+        <h3>Cursos por usuario</h3>
+        <div class="stack">
+          <select id="courseUser"></select>
+          <select id="courseName">
+            <option value="">-- Selecciona un curso --</option>
+            <option>Mecánica Clásica Nivel I</option>
+            <option>Mecánica Clásica Nivel II</option>
+            <option>Mecánica Clásica Nivel III</option>
+            <option>Electromagnetismo Clásico Nivel I</option>
+            <option>Mecánica de Fluidos I</option>
+            <option>Mecánica de Fluidos II</option>
+            <option>Mecánica de Fluidos III</option>
+            <option>Matemática Aplicada a la Física e Ingeniería</option>
+          </select>
+          <div class="actions-inline">
+            <button id="addCourseBtn">Agregar curso</button>
+            <button id="removeCourseBtn" class="danger">Quitar curso</button>
+          </div>
+          <select id="courseList" size="8"></select>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Progresos de cursos</h3>
+        <div class="stack">
+          <select id="progressUser"></select>
+          <select id="progressCourse">
+            <option value="">-- Selecciona un curso --</option>
+            <option value="mecanica_nivel1">Mecánica Clásica Nivel I</option>
+            <option value="mecanica_nivel2">Mecánica Clásica Nivel II</option>
+            <option value="mecanica_nivel3">Mecánica Clásica Nivel III</option>
+            <option value="electro_nivel1">Electromagnetismo Clásico Nivel I</option>
+            <option value="fluidos_nivel1">Mecánica de Fluidos I</option>
+            <option value="fluidos_nivel2">Mecánica de Fluidos II</option>
+            <option value="fluidos_nivel3">Mecánica de Fluidos III</option>
+            <option value="matematica_nivel1">Matemática Aplicada</option>
+          </select>
+          <div class="actions-inline">
+            <button id="viewProgressBtn">Ver progreso</button>
+            <button id="clearProgressBtn" class="danger">Limpiar progreso</button>
+          </div>
+          <div class="actions-inline">
+            <button id="completeAllBtn" class="success">Completar todas las sesiones</button>
+            <button id="removeAllBtn" class="danger">Quitar todas las sesiones</button>
+          </div>
+          <textarea id="progressDetail" rows="8" readonly placeholder="Detalles del progreso..."></textarea>
+        </div>
+      </section>
+
+      <section class="panel full">
+        <h3>Publicaciones</h3>
+        <table>
+          <thead>
+            <tr><th>Usuario</th><th>Fecha</th><th>Resumen</th><th>Likes</th><th></th></tr>
+          </thead>
+          <tbody id="postsBody"></tbody>
+        </table>
+        <pre id="postPreview" class="preview hidden"></pre>
+      </section>
+    </main>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

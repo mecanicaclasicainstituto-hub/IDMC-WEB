@@ -1,0 +1,437 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Módulo 3 - Sistema Internacional de Unidades</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .topbar { position: sticky; top: 0; z-index: 100; background: #fff; box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08); }
+        .topbar .profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; cursor: pointer; }
+        .profile-dropdown { min-width: 170px; }
+        .modulo-page { padding: 26px; display: flex; flex-direction: column; gap: 16px; }
+        .modulo-hero { background: linear-gradient(135deg, #0f172a, #1e3a8a 60%, #2563eb); color: #fff; border-radius: 16px; padding: 22px; box-shadow: 0 12px 24px rgba(30, 58, 138, 0.24); }
+        .modulo-hero h1 { margin: 0 0 8px 0; font-size: 1.4rem; }
+        .modulo-hero p { margin: 0; color: rgba(255, 255, 255, 0.9); line-height: 1.5; max-width: 860px; }
+        .progreso-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06); }
+        .progreso-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+        .progreso-head h3 { margin: 0; color: #0f172a; font-size: 0.88rem; }
+        .progreso-head span { font-size: 0.8rem; font-weight: 700; color: #1d4ed8; }
+        .progreso-bar { width: 100%; height: 6px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
+        .progreso-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #2563eb, #60a5fa); transition: width 0.3s ease; }
+        .progreso-desc { margin: 6px 0 0; font-size: 0.74rem; color: #64748b; }
+        .sesiones-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        @media (min-width: 900px) {
+            .sesiones-list { grid-template-columns: 1fr 1fr; }
+        }
+        .sesion-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06); max-width: 980px; }
+        .sesion-card h3 { margin: 0 0 6px; color: #1e3a8a; font-size: 1rem; }
+        .sesion-card p { margin: 0 0 10px; color: #475569; font-size: 0.9rem; line-height: 1.45; }
+        .sesion-meta { font-size: 0.8rem; color: #64748b; font-weight: 600; margin-bottom: 12px; }
+        .modulo-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-modulo { border: none; border-radius: 8px; padding: 10px 14px; font-weight: 600; font-size: 0.88rem; text-decoration: none; cursor: pointer; display: inline-block; }
+        .btn-modulo-primary { background: #2563eb; color: #fff; }
+        .btn-modulo-primary:hover { background: #1d4ed8; }
+        .btn-modulo-sec { background: #e2e8f0; color: #0f172a; }
+        .btn-modulo-sec:hover { background: #cbd5e1; }
+
+        /* Contenido descargable */
+        .descargable-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+            max-width: 560px;
+        }
+        .descargable-card h2 {
+            margin: 0 0 10px;
+            font-size: 0.88rem;
+            color: #0f172a;
+        }
+        .descargable-card .desc { display: none; }
+        .archivos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .archivo-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 7px 10px;
+        }
+        .archivo-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: #dbeafe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+        .archivo-info { flex: 1; }
+        .archivo-info .nombre {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .archivo-info .tipo {
+            font-size: 0.76rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        .archivo-btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            white-space: nowrap;
+            display: inline-block;
+        }
+        .archivo-btn:hover { background: #1d4ed8; }
+        .archivo-btn[disabled], .archivo-btn.disabled {
+            background: #cbd5e1;
+            color: #64748b;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .archivos-empty {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            text-align: center;
+            padding: 10px 0;
+        }
+        a.archivo-item {
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        a.archivo-item:hover {
+            border-color: #93c5fd;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+        }
+        .archivo-info strong {
+            display: block;
+            font-size: 0.82rem;
+            color: #0f172a;
+        }
+        .archivo-info small {
+            font-size: 0.72rem;
+            color: #94a3b8;
+        }
+        .archivo-accion {
+            background: #2563eb;
+            color: #fff;
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        a.archivo-item:hover .archivo-accion { background: #1d4ed8; }
+    </style>
+</head>
+<body onload="verificarSesion();">
+<div class="container">
+    <aside class="sidebar">
+        <h2><a href="index.html" style="color:inherit;text-decoration:none;cursor:pointer;">Plataforma</a></h2>
+        <ul>
+            <li><a href="lobby.html">Lobby</a></li>
+            <li><a href="cursos.html">Cursos</a></li>
+            <li><a href="tu_progreso.html">Tu progreso</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+            <li><a href="redes_sociales.html">Redes Sociales</a></li>
+            <li><a href="comunidad.html">Comunidad</a></li>
+            <li><a href="contactanos.html">Contáctanos</a></li>
+        </ul>
+        <button onclick="logout()">Cerrar sesión</button>
+    </aside>
+    <div style="width:100%;">
+<header class="topbar">
+    <div class="topbar-left"><h2>Módulo 3</h2></div>
+    <div class="topbar-right">
+        <div class="course-search-wrap">
+            <input id="topbarCourseInput" list="topbarCourseList" type="text" placeholder="Escribe un curso...">
+            <datalist id="topbarCourseList">
+                <option value="Mecánica Clásica">
+                <option value="Mecánica de Fluidos">
+                <option value="Matemática Básica">
+            </datalist>
+            <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
+        </div>
+        <div class="profile-menu">
+            <img id="topbarAvatar" src="avatar-default.svg" alt="Perfil" class="profile-avatar" onclick="toggleProfileMenu()" onerror="this.onerror=null;this.src='avatar-default.svg'">
+            <div class="profile-dropdown" id="profileDropdown">
+                <a href="cursos.html">Todos los cursos</a>
+                <a href="perfil.html#mis-cursos">Mis cursos</a>
+                <a href="lista_deseados.html">Lista de deseados</a>
+                <a href="perfil.html">Editar perfil</a>
+                <button type="button" onclick="logout()">Cerrar sesión</button>
+            </div>
+        </div>
+    </div>
+</header>
+<main class="modulo-page fade-in">
+    <section class="modulo-hero">
+        <h1>Módulo 3: Sistema Internacional de Unidades</h1>
+        <p>Magnitudes, unidades base y derivadas, conversiones y notación correcta para resolver ejercicios. Avanza en orden para desbloquear las siguientes sesiones.</p>
+    </section>
+
+    <section class="progreso-box">
+        <div class="progreso-head">
+            <h3>Progreso del módulo</h3>
+            <span id="progresoModulo3Pct">0%</span>
+        </div>
+        <div class="progreso-bar">
+            <div class="progreso-fill" id="progresoModulo3Fill"></div>
+        </div>
+        <p class="progreso-desc" id="progresoModulo3Desc">0 de 21 sesiones completadas</p>
+    </section>
+
+    <section class="sesiones-list" id="sesionesModulo3">
+        <!-- Sesiones generadas por JS -->
+    </section>
+
+    <!-- Contenido descargable -->
+    <section class="descargable-card">
+        <h2>📁 Contenido descargable</h2>
+        <p class="desc">Aquí encontrarás los archivos de apoyo para este módulo: apuntes, ejercicios, tablas de unidades y más.</p>
+        <div class="archivos-list" id="archivosDescargables">
+            <a class="archivo-item" href="contenido descargable/modulo 3/GUIA INTERNACIONAL SI.pdf" target="_blank" rel="noopener">
+                <span class="archivo-icon">📄</span>
+                <span class="archivo-info">
+                    <strong>Guía Internacional SI</strong>
+                    <small>PDF · Abrir en nueva pestaña</small>
+                </span>
+                <span class="archivo-accion">Abrir</span>
+            </a>
+            <a class="archivo-item" href="contenido descargable/modulo 3/NOM0082021 ACLARACION2023.pdf" target="_blank" rel="noopener">
+                <span class="archivo-icon">📄</span>
+                <span class="archivo-info">
+                    <strong>NOM-008-2021 Aclaración 2023</strong>
+                    <small>PDF · Abrir en nueva pestaña</small>
+                </span>
+                <span class="archivo-accion">Abrir</span>
+            </a>
+            <a class="archivo-item" href="contenido descargable/modulo 3/Tabla Magnitudes y Unidades Fundamentales.png" download="Tabla Magnitudes y Unidades Fundamentales.png">
+                <span class="archivo-icon">🖼️</span>
+                <span class="archivo-info">
+                    <strong>Tabla de Magnitudes y Unidades Fundamentales</strong>
+                    <small>PNG · Descargar imagen</small>
+                </span>
+                <span class="archivo-accion">Descargar</span>
+            </a>
+            <a class="archivo-item" href="contenido descargable/modulo 3/Prefijos.png" download="Prefijos.png">
+                <span class="archivo-icon">🖼️</span>
+                <span class="archivo-info">
+                    <strong>Prefijos del Sistema Internacional</strong>
+                    <small>PNG · Descargar imagen</small>
+                </span>
+                <span class="archivo-accion">Descargar</span>
+            </a>
+        </div>
+    </section>
+
+    <div class="modulo-actions">
+        <a class="btn-modulo btn-modulo-sec" href="nivel1.html">Regresar</a>
+        <a class="btn-modulo btn-modulo-primary" href="cursos.html">Ir a cursos</a>
+    </div>
+</main>
+    </div>
+</div>
+<script src="app.js" defer></script>
+<script>
+(function() {
+    var CURSO_ID = 'mecanica_nivel1';
+    var MODULO_NUM = 3;
+    var TOTAL_SESIONES = 21;
+
+    function loadTopbarAvatar() {
+        var topbarAvatar = document.getElementById('topbarAvatar');
+        if (!topbarAvatar) return;
+        var avatar = localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar') || localStorage.getItem('userAvatar') || localStorage.getItem('profilePhoto') || localStorage.getItem('profileImage') || localStorage.getItem('avatarUrl');
+        if (typeof aplicarAvatarSeguro === 'function') aplicarAvatarSeguro(topbarAvatar, avatar);
+    }
+
+    function renderSesionesModulo3() {
+        var cont = document.getElementById('sesionesModulo3');
+        if (!cont) return;
+        cont.innerHTML = '';
+        var completadas = 0;
+        for (var i = 1; i <= TOTAL_SESIONES; i++) {
+            var sesionCompletada = (typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, i) : false;
+            if (sesionCompletada) completadas++;
+            var bloqueada = (i > 1 && !((typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, i - 1) : false));
+            var card = document.createElement('article');
+            card.className = 'sesion-card';
+            card.innerHTML =
+                '<h3>Módulo 3 - Sesión ' + i + '</h3>' +
+                '<p class="sesion-meta">Estado: ' + (sesionCompletada ? 'completada' : (bloqueada ? 'bloqueada' : 'pendiente')) + '</p>' +
+                '<a class="btn-modulo btn-modulo-primary" href="modulo3_sesion' + i + '.html"' +
+                (bloqueada ? ' style="pointer-events:none;opacity:0.5;" tabindex="-1" aria-disabled="true"' : '') +
+                '>Entrar a la sesión</a>';
+            if (i !== 9 && i !== 10 && i !== 11 && i !== 12 && i !== 13) { cont.appendChild(card); }
+            // Tarjeta extra: Ejercicio Sesión 4 (va justo después de Sesión 4)
+            if (i === 4) {
+                var ejercicioCompletado = (typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, 4) : false;
+                var ejercicioBloqueado = !ejercicioCompletado;
+                var cardEjercicio = document.createElement('article');
+                cardEjercicio.className = 'sesion-card';
+                cardEjercicio.innerHTML =
+                    '<h3>Módulo 3 - Ejercicio Sesión 4</h3>' +
+                    '<p class="sesion-meta">Estado: ' + (ejercicioCompletado ? 'completada' : (ejercicioBloqueado ? 'bloqueada' : 'pendiente')) + '</p>' +
+                    '<a class="btn-modulo btn-modulo-primary" href="modulo3_ejercicio4.html"' +
+                    (ejercicioBloqueado ? ' style="pointer-events:none;opacity:0.5;" tabindex="-1" aria-disabled="true"' : '') +
+                    '>Entrar al ejercicio</a>';
+                cont.appendChild(cardEjercicio);
+            }
+            // Tarjeta extra: Ejercicios (va justo después de Sesión 7)
+            if (i === 7) {
+                var ses7Completada = (typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, 7) : false;
+                var ejerciciosBloqueado = !ses7Completada;
+                var ejerciciosCompletado = false;
+                try { ejerciciosCompletado = localStorage.getItem('idmc_ejercicios_m3s7') === '1'; } catch(e) {}
+                var cardEjercicios = document.createElement('article');
+                cardEjercicios.className = 'sesion-card';
+                cardEjercicios.innerHTML =
+                    '<h3>Módulo 3 - Sesión 7 Ejercicios</h3>' +
+                    '<p class="sesion-meta">Estado: ' + (ejerciciosCompletado ? 'completada' : (ejerciciosBloqueado ? 'bloqueada' : 'pendiente')) + '</p>' +
+                    '<a class="btn-modulo btn-modulo-primary" href="modulo3_ejercicios.html"' +
+                    (ejerciciosBloqueado ? ' style="pointer-events:none;opacity:0.5;" tabindex="-1" aria-disabled="true"' : '') +
+                    '>Ir a ejercicios</a>';
+                cont.appendChild(cardEjercicios);
+            }
+            // Tarjeta extra: Módulo 3 - Sesión 9 (va justo después de Sesión 8)
+            if (i === 8) {
+                var ses8Completada = (typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, 8) : false;
+                var ses9Bloqueada = !ses8Completada;
+                var ses9Completada = (typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, 9) : false;
+                var cardSes9 = document.createElement('article');
+                cardSes9.className = 'sesion-card';
+                cardSes9.innerHTML =
+                    '<h3>Módulo 3 - Sesión 9</h3>' +
+                    '<p class="sesion-meta">Estado: ' + (ses9Completada ? 'completada' : (ses9Bloqueada ? 'bloqueada' : 'pendiente')) + '</p>' +
+                    '<a class="btn-modulo btn-modulo-primary" href="modulo3_sesion9.html"' +
+                    (ses9Bloqueada ? ' style="pointer-events:none;opacity:0.5;" tabindex="-1" aria-disabled="true"' : '') +
+                    '>Entrar a la sesión</a>';
+                cont.appendChild(cardSes9);
+            }
+            // Tarjeta extra: Módulo 3 - Sesión 11 (va justo después de Sesión 10)
+            if (i === 11) {
+                var ses11Completada = (typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, 10) : false;
+                var ses11Bloqueada = !ses11Completada;
+                var cardSes11 = document.createElement('article');
+                cardSes11.className = 'sesion-card';
+                cardSes11.innerHTML =
+                    '<h3>Módulo 3 - Sesión 11</h3>' +
+                    '<p class="sesion-meta">Estado: ' + (ses11Bloqueada ? 'bloqueada' : 'pendiente') + '</p>' +
+                    '<a class="btn-modulo btn-modulo-primary" href="modulo3_sesion11.html"' +
+                    (ses11Bloqueada ? ' style="pointer-events:none;opacity:0.5;" tabindex="-1" aria-disabled="true"' : '') +
+                    '>Entrar a la sesión</a>';
+                cont.appendChild(cardSes11);
+            }
+            // Tarjeta extra: Módulo 3 - Sesión 12 (va justo después de Sesión 11)
+            if (i === 12) {
+                var ses12Completada = (typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, 11) : false;
+                var ses12Bloqueada = !ses12Completada;
+                var cardSes12 = document.createElement('article');
+                cardSes12.className = 'sesion-card';
+                cardSes12.innerHTML =
+                    '<h3>Módulo 3 - Sesión 12</h3>' +
+                    '<p class="sesion-meta">Estado: ' + (ses12Bloqueada ? 'bloqueada' : 'pendiente') + '</p>' +
+                    '<a class="btn-modulo btn-modulo-primary" href="modulo3_sesion12.html"' +
+                    (ses12Bloqueada ? ' style="pointer-events:none;opacity:0.5;" tabindex="-1" aria-disabled="true"' : '') +
+                    '>Entrar a la sesión</a>';
+                cont.appendChild(cardSes12);
+            }
+            // Tarjeta extra: Módulo 3 - Sesión 13 (va justo después de Sesión 12)
+            if (i === 13) {
+                var ses13Completada = (typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, 12) : false;
+                var ses13Bloqueada = !ses13Completada;
+                var cardSes13 = document.createElement('article');
+                cardSes13.className = 'sesion-card';
+                cardSes13.innerHTML =
+                    '<h3>Módulo 3 - Sesión 13</h3>' +
+                    '<p class="sesion-meta">Estado: ' + (ses13Bloqueada ? 'bloqueada' : 'pendiente') + '</p>' +
+                    '<a class="btn-modulo btn-modulo-primary" href="modulo3_sesion13.html"' +
+                    (ses13Bloqueada ? ' style="pointer-events:none;opacity:0.5;" tabindex="-1" aria-disabled="true"' : '') +
+                    '>Entrar a la sesión</a>';
+                cont.appendChild(cardSes13);
+            }
+            // Tarjeta extra: Módulo 3 - Sesión 10 - Ejercicio Maestro Parte 2 (va justo después de Sesión 9 Ejercicio maestro)
+            if (i === 10) {
+                var ses10Completada = (typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, 9) : false;
+                var ses10Bloqueada = !ses10Completada;
+                var cardSes10 = document.createElement('article');
+                cardSes10.className = 'sesion-card';
+                cardSes10.innerHTML =
+                    '<h3>Módulo 3 - Sesión 10 - Ejercicio Maestro Parte 2</h3>' +
+                    '<p class="sesion-meta">Estado: ' + (ses10Bloqueada ? 'bloqueada' : 'pendiente') + '</p>' +
+                    '<a class="btn-modulo btn-modulo-primary" href="modulo3_sesion10.html"' +
+                    (ses10Bloqueada ? ' style="pointer-events:none;opacity:0.5;" tabindex="-1" aria-disabled="true"' : '') +
+                    '>Entrar a la sesión</a>';
+                cont.appendChild(cardSes10);
+            }
+            // Tarjeta extra: Módulo 3 - Sesión 9 Ejercicio maestro (va justo después de Sesión 9)
+            if (i === 9) {
+                var ses9CompletadaEM = (typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, 9) : false;
+                var ejercicioMaestroBloqueado = !ses9CompletadaEM;
+                var cardEjercicioMaestro = document.createElement('article');
+                cardEjercicioMaestro.className = 'sesion-card';
+                cardEjercicioMaestro.innerHTML =
+                    '<h3>Módulo 3 - Sesión 9 Ejercicio maestro</h3>' +
+                    '<p class="sesion-meta">Estado: ' + (ejercicioMaestroBloqueado ? 'bloqueada' : 'pendiente') + '</p>' +
+                    '<a class="btn-modulo btn-modulo-primary" href="modulo3_ejercicio_maestro.html"' +
+                    (ejercicioMaestroBloqueado ? ' style="pointer-events:none;opacity:0.5;" tabindex="-1" aria-disabled="true"' : '') +
+                    '>Ir al ejercicio maestro</a>';
+                cont.appendChild(cardEjercicioMaestro);
+            }
+        }
+
+        var pct = Math.round((completadas / TOTAL_SESIONES) * 100);
+        var pctEl = document.getElementById('progresoModulo3Pct');
+        var fill = document.getElementById('progresoModulo3Fill');
+        var desc = document.getElementById('progresoModulo3Desc');
+        if (pctEl) pctEl.textContent = pct + '%';
+        if (fill) fill.style.width = pct + '%';
+        if (desc) desc.textContent = completadas + ' de ' + TOTAL_SESIONES + ' sesiones completadas';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadTopbarAvatar();
+        renderSesionesModulo3();
+    });
+
+    window.logout = function() {
+        localStorage.removeItem('perfilAvatar');
+        localStorage.removeItem('avatar');
+        localStorage.removeItem('userAvatar');
+        localStorage.removeItem('profilePhoto');
+        localStorage.removeItem('profileImage');
+        localStorage.removeItem('avatarUrl');
+        window.location.href = 'home.html';
+    };
+})();
+</script>
+</body>
+</html>

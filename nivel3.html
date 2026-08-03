@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+    <link rel="icon" href="favicon.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <title>Mecanica Clasica Nivel III</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .topbar { position: sticky; top: 0; z-index: 100; background: #fff; box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08); }
+    .topbar .profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; cursor: pointer; }
+    .profile-dropdown { min-width: 170px; }
+
+    .curso-page { padding: 26px; display: flex; flex-direction: column; gap: 18px; }
+    .curso-hero {
+      background: linear-gradient(135deg, #172554, #3730a3 62%, #7c3aed);
+      color: #fff;
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 12px 24px rgba(55, 48, 163, 0.25);
+    }
+    .curso-hero h1 { margin: 0 0 8px 0; font-size: 1.55rem; }
+    .curso-hero p { margin: 0 0 14px 0; color: rgba(255, 255, 255, 0.9); max-width: 840px; line-height: 1.5; }
+
+    .curso-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .curso-chip {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .modulos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    .modulo-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+    }
+    .modulo-card h3 { margin: 0 0 6px 0; color: #3730a3; font-size: 1rem; }
+    .modulo-card p { margin: 0 0 10px 0; color: #475569; font-size: 0.9rem; line-height: 1.45; }
+    .modulo-meta { font-size: 0.8rem; color: #64748b; font-weight: 600; }
+
+    .curso-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-curso {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .btn-curso-primary { background: #3730a3; color: #fff; }
+    .btn-curso-primary:hover { background: #2f2a84; }
+    .btn-curso-sec { background: #e2e8f0; color: #0f172a; }
+    .btn-curso-sec:hover { background: #cbd5e1; }
+  </style>
+</head>
+<body onload="verificarSesion();">
+
+<div class="container">
+
+  <aside class="sidebar">
+    <h2><a href="index.html" style="color:inherit;text-decoration:none;cursor:pointer;">Plataforma</a></h2>
+    <ul>
+      <li><a href="lobby.html">Lobby</a></li>
+      <li><a href="cursos.html">Cursos</a></li>
+      <li><a href="tu_progreso.html">Tu progreso</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+      <li><a href="redes_sociales.html">Redes Sociales</a></li>
+      <li><a href="comunidad.html">Comunidad</a></li>
+      <li><a href="contactanos.html">Contáctanos</a></li>
+    </ul>
+    <button onclick="logout()">Cerrar sesion</button>
+  </aside>
+
+  <div style="width:100%;">
+
+<header class="topbar">
+  <div class="topbar-left"><h2>Mecanica Clasica Nivel III</h2></div>
+  <div class="topbar-right">
+    <div class="course-search-wrap">
+      <input id="topbarCourseInput" list="topbarCourseList" type="text" placeholder="Escribe un curso...">
+      <datalist id="topbarCourseList">
+        <option value="Mecanica Clasica">
+        <option value="Mecanica de Fluidos">
+        <option value="Matematica Basica">
+      </datalist>
+      <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
+    </div>
+    <div class="profile-menu">
+      <img id="topbarAvatar" src="avatar-default.svg" alt="Perfil" class="profile-avatar" onclick="toggleProfileMenu()" onerror="this.onerror=null;this.src='avatar-default.svg'">
+      <div class="profile-dropdown" id="profileDropdown">
+        <a href="cursos.html">Todos los cursos</a>
+        <a href="perfil.html#mis-cursos">Mis Cursos</a>
+        <a href="lista_deseados.html">Lista de deseados</a>
+        <a href="perfil.html">Editar perfil</a>
+        <button type="button" onclick="logout()">Cerrar sesion</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="curso-page fade-in">
+  <section class="curso-hero">
+    <h1>Mecanica Clasica Nivel III</h1>
+    <p>Nivel avanzado enfocado en formulaciones lagrangianas y hamiltonianas, oscilaciones acopladas y sistemas dinamicos con mayor rigor matematico.</p>
+    <div class="curso-chips">
+      <span class="curso-chip">16 clases</span>
+      <span class="curso-chip">Nivel avanzado</span>
+      <span class="curso-chip">6 semanas sugeridas</span>
+      <span class="curso-chip">Proyectos de aplicacion</span>
+    </div>
+  </section>
+
+  <section class="modulos-grid">
+    <article class="modulo-card">
+      <h3>Modulo 1: Oscilaciones avanzadas</h3>
+      <p>Oscilador armonico amortiguado, forzado y resonancia en sistemas fisicos reales.</p>
+      <span class="modulo-meta">Duracion estimada: 2h 10m</span>
+    </article>
+    <article class="modulo-card">
+      <h3>Modulo 2: Principio variacional</h3>
+      <p>Accion minima y derivacion de ecuaciones de Euler-Lagrange paso a paso.</p>
+      <span class="modulo-meta">Duracion estimada: 2h 00m</span>
+    </article>
+    <article class="modulo-card">
+      <h3>Modulo 3: Mecanica lagrangiana</h3>
+      <p>Coordenadas generalizadas, restricciones y formulacion energetica de sistemas.</p>
+      <span class="modulo-meta">Duracion estimada: 1h 50m</span>
+    </article>
+    <article class="modulo-card">
+      <h3>Modulo 4: Introduccion hamiltoniana</h3>
+      <p>Transformaciones canonicas y estructura del espacio de fases para analisis dinamico.</p>
+      <span class="modulo-meta">Duracion estimada: 2h 20m</span>
+    </article>
+  </section>
+
+  <div class="curso-actions">
+    <a class="btn-curso btn-curso-sec" href="cursos.html">Volver a cursos</a>
+    <button class="btn-curso btn-curso-primary" type="button" onclick="alert('Proximamente habilitaremos evaluaciones avanzadas.')">Continuar aprendizaje</button>
+  </div>
+</main>
+
+  </div>
+
+</div>
+
+<script src="app.js" defer></script>
+<script>
+(function() {
+  function loadTopbarAvatar() {
+    var topbarAvatar = document.getElementById('topbarAvatar');
+    if (!topbarAvatar) return;
+    var avatar = localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar') || localStorage.getItem('userAvatar') || localStorage.getItem('profilePhoto') || localStorage.getItem('profileImage') || localStorage.getItem('avatarUrl');
+    if (typeof aplicarAvatarSeguro === 'function') aplicarAvatarSeguro(topbarAvatar, avatar);
+  }
+  window.addEventListener('DOMContentLoaded', loadTopbarAvatar);
+  window.logout = function() {
+    localStorage.removeItem('perfilAvatar');
+    localStorage.removeItem('avatar');
+    localStorage.removeItem('userAvatar');
+    localStorage.removeItem('profilePhoto');
+    localStorage.removeItem('profileImage');
+    localStorage.removeItem('avatarUrl');
+    window.location.href = 'home.html';
+  };
+})();
+</script>
+</body>
+</html>
+
+
+
+

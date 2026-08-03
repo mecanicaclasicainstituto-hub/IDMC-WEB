@@ -1,0 +1,290 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Módulo 3 - Sesión 7 Ejercicios</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .topbar { position: sticky; top: 0; z-index: 100; background: #fff; box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08); }
+        .topbar .profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; cursor: pointer; }
+        .profile-dropdown { min-width: 170px; }
+        .modulo-page { padding: 26px; display: flex; flex-direction: column; gap: 16px; }
+        .modulo-hero { background: linear-gradient(135deg, #0f172a, #1e3a8a 60%, #2563eb); color: #fff; border-radius: 16px; padding: 22px; box-shadow: 0 12px 24px rgba(30, 58, 138, 0.24); }
+        .modulo-hero h1 { margin: 0 0 8px 0; font-size: 1.35rem; }
+        .modulo-hero p { margin: 0; color: rgba(255, 255, 255, 0.9); line-height: 1.5; max-width: 860px; }
+        .ejercicios-list { display: flex; flex-direction: column; gap: 20px; }
+        .ejercicio-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 6px 16px rgba(15,23,42,0.06); overflow: hidden; width: 100%; }
+        .ejercicio-header { background: #0f172a; padding: 14px 24px; }
+        .ejercicio-num { font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: 700; color: #60a5fa; letter-spacing: 0.06em; margin: 0; }
+        .ejercicio-svg-wrap { width: 100%; background: #f0f6ff; padding: 0; line-height: 0; }
+        .ejercicio-svg-wrap svg { width: 100%; height: auto; display: block; }
+        .ejercicio-body { padding: 20px 24px; }
+        .ejercicio-enunciado { color: #0f172a; font-size: 0.95rem; line-height: 1.7; margin: 0; }
+        .modulo-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-modulo { border: none; border-radius: 8px; padding: 10px 14px; font-weight: 600; font-size: 0.88rem; text-decoration: none; cursor: pointer; display: inline-block; }
+        .btn-modulo-primary { background: #2563eb; color: #fff; }
+        .btn-modulo-primary:hover { background: #1d4ed8; }
+        .btn-modulo-sec { background: #e2e8f0; color: #0f172a; }
+        .btn-modulo-sec:hover { background: #cbd5e1; }
+    </style>
+</head>
+<body onload="verificarSesion();">
+<div class="container">
+    <aside class="sidebar">
+        <h2><a href="index.html" style="color:inherit;text-decoration:none;cursor:pointer;">Plataforma</a></h2>
+        <ul>
+            <li><a href="lobby.html">Lobby</a></li>
+            <li><a href="cursos.html">Cursos</a></li>
+            <li><a href="tu_progreso.html">Tu progreso</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+            <li><a href="redes_sociales.html">Redes Sociales</a></li>
+            <li><a href="comunidad.html">Comunidad</a></li>
+            <li><a href="contactanos.html">Contáctanos</a></li>
+        </ul>
+        <button onclick="logout()">Cerrar sesión</button>
+    </aside>
+    <div style="width:100%;">
+<header class="topbar">
+    <div class="topbar-left"><h2>Módulo 3 - Sesión 7 Ejercicios</h2></div>
+    <div class="topbar-right">
+        <div class="course-search-wrap">
+            <input id="topbarCourseInput" list="topbarCourseList" type="text" placeholder="Escribe un curso...">
+            <datalist id="topbarCourseList">
+                <option value="Mecánica Clásica">
+                <option value="Mecánica de Fluidos">
+                <option value="Matemática Básica">
+            </datalist>
+            <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
+        </div>
+        <div class="profile-menu">
+            <img id="topbarAvatar" src="avatar-default.svg" alt="Perfil" class="profile-avatar" onclick="toggleProfileMenu()" onerror="this.onerror=null;this.src='avatar-default.svg'">
+            <div class="profile-dropdown" id="profileDropdown">
+                <a href="cursos.html">Todos los cursos</a>
+                <a href="perfil.html#mis-cursos">Mis cursos</a>
+                <a href="lista_deseados.html">Lista de deseados</a>
+                <a href="perfil.html">Editar perfil</a>
+                <button type="button" onclick="logout()">Cerrar sesión</button>
+            </div>
+        </div>
+    </div>
+</header>
+<main class="modulo-page fade-in">
+    <section class="modulo-hero">
+        <h1>Módulo 3 - Sesión 7 Ejercicios</h1>
+        <p>Resuelve los siguientes ejercicios aplicando lo aprendido en el módulo. Lee con cuidado cada enunciado antes de comenzar.</p>
+    </section>
+
+    <section class="ejercicios-list">
+
+        <!-- EJERCICIO 1 -->
+        <div class="ejercicio-card">
+            <div class="ejercicio-header">
+                <p class="ejercicio-num">a = v / t</p>
+            </div>
+            <div class="ejercicio-svg-wrap">
+                <svg viewBox="0 0 900 160" xmlns="http://www.w3.org/2000/svg">
+                    <!-- fondo -->
+                    <rect width="900" height="160" fill="#f0f6ff"/>
+                    <!-- superficie -->
+                    <rect x="60" y="120" width="780" height="8" rx="4" fill="#bfdbfe"/>
+                    <!-- cuerpo -->
+                    <rect x="380" y="78" width="90" height="42" rx="10" fill="#2563eb"/>
+                    <text x="425" y="105" text-anchor="middle" font-family="Poppins,sans-serif" font-size="14" font-weight="700" fill="#fff">Cuerpo</text>
+                    <!-- flecha velocidad -->
+                    <defs>
+                        <marker id="av1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#1d4ed8"/></marker>
+                        <marker id="av2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/></marker>
+                    </defs>
+                    <line x1="480" y1="99" x2="640" y2="99" stroke="#1d4ed8" stroke-width="3" marker-end="url(#av1)"/>
+                    <text x="560" y="92" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" font-weight="700" fill="#1d4ed8">v = 40 m/s</text>
+                    <!-- flecha aceleración (abajo) -->
+                    <line x1="480" y1="128" x2="700" y2="128" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="7,4" marker-end="url(#av2)"/>
+                    <text x="590" y="148" text-anchor="middle" font-family="Poppins,sans-serif" font-size="12" font-weight="700" fill="#b45309">a = ?</text>
+                    <!-- tiempo -->
+                    <rect x="100" y="78" width="120" height="42" rx="10" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+                    <text x="160" y="97" text-anchor="middle" font-family="Poppins,sans-serif" font-size="12" fill="#1e3a8a" font-weight="700">t = 5 s</text>
+                    <text x="160" y="112" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#475569">intervalo de tiempo</text>
+                    <!-- título -->
+                    <text x="450" y="28" text-anchor="middle" font-family="Poppins,sans-serif" font-size="16" font-weight="700" fill="#0f172a">Ejercicio 1 — Cálculo de Aceleración</text>
+                    <text x="450" y="50" text-anchor="middle" font-family="Courier New,monospace" font-size="13" fill="#2563eb">a = v / t</text>
+                </svg>
+            </div>
+            <div class="ejercicio-body">
+                <p class="ejercicio-enunciado">Dentro de un sistema físico y respecto a un marco de referencia, un cuerpo alcanza una velocidad de 40 m/s en un intervalo de tiempo de 5 s. Calcula la aceleración del cuerpo y demuestra mediante análisis dimensional que el resultado corresponde a una aceleración.</p>
+            </div>
+        </div>
+
+        <!-- EJERCICIO 2 -->
+        <div class="ejercicio-card">
+            <div class="ejercicio-header">
+                <p class="ejercicio-num">F = m &middot; a</p>
+            </div>
+            <div class="ejercicio-svg-wrap">
+                <svg viewBox="0 0 900 160" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="900" height="160" fill="#f0f6ff"/>
+                    <rect x="60" y="120" width="780" height="8" rx="4" fill="#bfdbfe"/>
+                    <defs>
+                        <marker id="bf1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#1d4ed8"/></marker>
+                        <marker id="bf2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/></marker>
+                    </defs>
+                    <!-- bloque masa -->
+                    <rect x="370" y="74" width="110" height="46" rx="10" fill="#2563eb"/>
+                    <text x="425" y="99" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" font-weight="700" fill="#fff">m = 3 kg</text>
+                    <text x="425" y="114" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#bfdbfe">Masa</text>
+                    <!-- flecha fuerza -->
+                    <line x1="180" y1="97" x2="368" y2="97" stroke="#1d4ed8" stroke-width="3" marker-end="url(#bf1)"/>
+                    <text x="274" y="88" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" font-weight="700" fill="#1d4ed8">F = ?</text>
+                    <!-- flecha aceleración -->
+                    <line x1="482" y1="97" x2="700" y2="97" stroke="#f59e0b" stroke-width="3" marker-end="url(#bf2)"/>
+                    <text x="591" y="88" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" font-weight="700" fill="#b45309">a = 2 m/s²</text>
+                    <!-- etiquetas base -->
+                    <text x="274" y="148" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#64748b">Fuerza (N)</text>
+                    <text x="425" y="148" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#64748b">Masa (kg)</text>
+                    <text x="591" y="148" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#64748b">Aceleración (m/s²)</text>
+                    <!-- título -->
+                    <text x="450" y="28" text-anchor="middle" font-family="Poppins,sans-serif" font-size="16" font-weight="700" fill="#0f172a">Ejercicio 2 — Segunda Ley de Newton</text>
+                    <text x="450" y="50" text-anchor="middle" font-family="Courier New,monospace" font-size="13" fill="#2563eb">F = m &middot; a</text>
+                </svg>
+            </div>
+            <div class="ejercicio-body">
+                <p class="ejercicio-enunciado">Dentro de un sistema físico y respecto a un marco de referencia, un cuerpo con una masa de 3 kg experimenta una aceleración de 2 m/s². Calcula la fuerza aplicada sobre el cuerpo y demuestra mediante análisis dimensional que el resultado corresponde a una fuerza.</p>
+            </div>
+        </div>
+
+        <!-- EJERCICIO 3 -->
+        <div class="ejercicio-card">
+            <div class="ejercicio-header">
+                <p class="ejercicio-num">v = d / t &nbsp;&nbsp;|&nbsp;&nbsp; a = v / t &nbsp;&nbsp;|&nbsp;&nbsp; F = m &middot; a</p>
+            </div>
+            <div class="ejercicio-svg-wrap">
+                <svg viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="900" height="220" fill="#f0f6ff"/>
+                    <defs>
+                        <marker id="cv1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#1d4ed8"/></marker>
+                        <marker id="cv2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/></marker>
+                        <marker id="cv3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#dc2626"/></marker>
+                    </defs>
+                    <!-- título -->
+                    <text x="450" y="24" text-anchor="middle" font-family="Poppins,sans-serif" font-size="15" font-weight="700" fill="#0f172a">Ejercicio 3 — Tres fases de movimiento</text>
+                    <!-- superficie -->
+                    <rect x="30" y="148" width="840" height="7" rx="3" fill="#bfdbfe"/>
+                    <!-- separadores de fase -->
+                    <line x1="320" y1="45" x2="320" y2="154" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,4"/>
+                    <line x1="610" y1="45" x2="610" y2="154" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,4"/>
+                    <!-- etiquetas de fase -->
+                    <text x="175" y="42" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#64748b">FASE 1</text>
+                    <text x="465" y="42" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#64748b">FASE 2</text>
+                    <text x="755" y="42" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#64748b">FASE 3</text>
+                    <!-- FASE 1: vehículo desplazamiento -->
+                    <rect x="50" y="108" width="100" height="38" rx="8" fill="#2563eb"/>
+                    <text x="100" y="131" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#fff">m=1200 kg</text>
+                    <line x1="152" y1="127" x2="300" y2="127" stroke="#1d4ed8" stroke-width="3" marker-end="url(#cv1)"/>
+                    <text x="226" y="118" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#1d4ed8">d = 830 m</text>
+                    <rect x="60" y="68" width="105" height="28" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                    <text x="112" y="86" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#1e3a8a" font-weight="700">t = 40 s → v = ?</text>
+                    <text x="175" y="175" text-anchor="middle" font-family="Courier New,monospace" font-size="11" fill="#2563eb">v = d / t</text>
+                    <!-- FASE 2: aceleración -->
+                    <rect x="340" y="108" width="100" height="38" rx="8" fill="#15803d"/>
+                    <text x="390" y="131" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#fff">Vehículo</text>
+                    <line x1="442" y1="127" x2="590" y2="127" stroke="#f59e0b" stroke-width="3" marker-end="url(#cv2)"/>
+                    <text x="516" y="118" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#b45309">35 m/s</text>
+                    <rect x="348" y="68" width="105" height="28" rx="6" fill="#fef9c3" stroke="#fcd34d" stroke-width="1"/>
+                    <text x="400" y="86" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#92400e" font-weight="700">t = 5 s → a = ?</text>
+                    <text x="465" y="175" text-anchor="middle" font-family="Courier New,monospace" font-size="11" fill="#f59e0b">a = v / t</text>
+                    <!-- FASE 3: impacto -->
+                    <rect x="630" y="108" width="100" height="38" rx="8" fill="#dc2626"/>
+                    <text x="680" y="131" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#fff">Vehículo</text>
+                    <!-- barrera -->
+                    <rect x="750" y="92" width="14" height="70" rx="3" fill="#0f172a"/>
+                    <line x1="764" y1="92" x2="790" y2="92" stroke="#0f172a" stroke-width="2"/>
+                    <line x1="764" y1="108" x2="790" y2="108" stroke="#0f172a" stroke-width="2"/>
+                    <line x1="764" y1="124" x2="790" y2="124" stroke="#0f172a" stroke-width="2"/>
+                    <line x1="764" y1="140" x2="790" y2="140" stroke="#0f172a" stroke-width="2"/>
+                    <line x1="764" y1="156" x2="790" y2="156" stroke="#0f172a" stroke-width="2"/>
+                    <!-- flecha fuerza impacto -->
+                    <line x1="728" y1="127" x2="752" y2="127" stroke="#dc2626" stroke-width="3" marker-end="url(#cv3)"/>
+                    <text x="680" y="105" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" font-weight="700" fill="#dc2626">F = ?</text>
+                    <rect x="635" y="68" width="112" height="28" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+                    <text x="691" y="86" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#991b1b" font-weight="700">t=0.5s → v=0</text>
+                    <text x="755" y="175" text-anchor="middle" font-family="Courier New,monospace" font-size="11" fill="#dc2626">F = m · a</text>
+                    <!-- leyenda barrera -->
+                    <text x="800" y="127" text-anchor="start" font-family="Poppins,sans-serif" font-size="10" fill="#475569">Barrera</text>
+                    <!-- fórmulas abajo -->
+                    <text x="450" y="205" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#94a3b8">Masa del vehículo: 1 200 kg</text>
+                </svg>
+            </div>
+            <div class="ejercicio-body">
+                <p class="ejercicio-enunciado">Dentro de un sistema físico y respecto a un marco de referencia, un vehículo con una masa de 1 200 kg realiza un desplazamiento total de 830 m durante un intervalo de tiempo de 40 s; posteriormente el vehículo aumenta su velocidad hasta 35 m/s en un tiempo de 5 s. Accidentalmente el vehículo impacta contra una barrera y desacelera bruscamente hasta detenerse por completo en 0.5 s. Calcula la velocidad promedio del vehículo durante los primeros 40 segundos, la aceleración del vehículo durante el aumento de velocidad, la fuerza ejercida sobre el vehículo durante el impacto y, finalmente, demuestra mediante análisis dimensional que las unidades obtenidas corresponden correctamente a velocidad y aceleración.</p>
+            </div>
+        </div>
+
+    </section>
+
+    <div class="modulo-actions">
+        <a class="btn-modulo btn-modulo-sec" href="modulo3.html">Volver al módulo</a>
+        <a class="btn-modulo btn-modulo-primary" href="nivel1.html">Regresar</a>
+        <button type="button" class="btn-modulo btn-modulo-sec" id="btnCompletarEjercicios" onclick="toggleCompletado()">Marcar como completado</button>
+        <span style="font-size:0.8rem; font-weight:600; color:#64748b;" id="ejerciciosEstado">Estado: pendiente</span>
+        <button type="button" class="btn-modulo btn-modulo-primary" onclick="irSiguienteSesion()">Ir a la sesión 8 →</button>
+    </div>
+</main>
+    </div>
+</div>
+<script src="app.js" defer></script>
+<script>
+(function() {
+    var CURSO_ID = 'mecanica_nivel1';
+    var MODULO_NUM = 3;
+    var SESION_REQUERIDA = 7;
+    var EJERCICIOS_KEY = 'idmc_ejercicios_m3s7';
+
+    window.verificarSesion = function() {
+        loadTopbarAvatar();
+        renderEstado();
+        var sesion7ok = (typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, SESION_REQUERIDA) : false;
+        if (!sesion7ok) {
+            mostrarModal('Debes completar la Sesión 7 para acceder a los ejercicios.', function() { window.location.href = 'modulo3.html'; });
+        }
+    };
+
+    function isCompletado() {
+        try { return localStorage.getItem(EJERCICIOS_KEY) === '1'; } catch(e) { return false; }
+    }
+
+    function renderEstado() {
+        var ok = isCompletado();
+        var estado = document.getElementById('ejerciciosEstado');
+        var boton = document.getElementById('btnCompletarEjercicios');
+        if (estado) estado.textContent = ok ? 'Estado: completado' : 'Estado: pendiente';
+        if (boton) boton.textContent = ok ? 'Marcar como pendiente' : 'Marcar como completado';
+    }
+
+    window.toggleCompletado = function() {
+        var ok = isCompletado();
+        try { localStorage.setItem(EJERCICIOS_KEY, ok ? '0' : '1'); } catch(e) {}
+        renderEstado();
+    };
+
+    window.irSiguienteSesion = function() {
+        if (!isCompletado()) {
+            mostrarModal('Primero debes marcar los ejercicios como completados.'); return;
+        }
+        window.location.href = 'modulo3_sesion8.html';
+    };
+
+    function loadTopbarAvatar() {
+        var el = document.getElementById('topbarAvatar');
+        if (!el) return;
+        var avatar = localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar') || localStorage.getItem('userAvatar') || localStorage.getItem('profilePhoto') || localStorage.getItem('profileImage') || localStorage.getItem('avatarUrl');
+        if (typeof aplicarAvatarSeguro === 'function') aplicarAvatarSeguro(el, avatar);
+    }
+    window.logout = function() { ['perfilAvatar','avatar','userAvatar','profilePhoto','profileImage','avatarUrl'].forEach(function(k) { localStorage.removeItem(k); }); window.location.href = 'home.html'; };
+})();
+</script>
+</body>
+</html>

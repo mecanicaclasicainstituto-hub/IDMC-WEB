@@ -1,0 +1,245 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Políticas de Privacidad - Instituto de Mecánica Clásica</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        .pp-header {
+            background: #0f172a;
+            color: #fff;
+            padding: 28px 24px 24px;
+            text-align: center;
+        }
+        .pp-header .logo-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 10px;
+        }
+        .pp-header img {
+            width: 48px;
+            height: auto;
+        }
+        .pp-header h1 {
+            font-size: clamp(1.2rem, 4vw, 1.7rem);
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .pp-header p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        /* ── Contenido ── */
+        .pp-body {
+            max-width: 820px;
+            margin: 40px auto;
+            padding: 0 20px 60px;
+        }
+
+        .pp-card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 36px 40px;
+            margin-bottom: 28px;
+        }
+
+        .pp-card h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .pp-card h2 .num {
+            background: #2563eb;
+            color: #fff;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .pp-card p {
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.75;
+            margin-bottom: 10px;
+        }
+        .pp-card p:last-child { margin-bottom: 0; }
+        .pp-card ul {
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.75;
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+        .pp-card ul li { margin-bottom: 6px; }
+
+        /* ── Footer ── */
+        .pp-footer {
+            text-align: center;
+            padding: 24px 20px;
+            color: #94a3b8;
+            font-size: 0.82rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .pp-footer a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .pp-footer a:hover { text-decoration: underline; }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 22px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            text-decoration: none;
+            margin-bottom: 32px;
+            transition: background 0.18s ease;
+        }
+        .back-btn:hover { background: #1d4ed8; }
+
+        @media (max-width: 600px) {
+            .pp-card { padding: 24px 20px; }
+            .pp-card a { word-break: break-all; overflow-wrap: break-word; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="pp-header">
+    <div class="logo-row">
+        <img src="Icono IDMC.png" alt="Logo IDMC" loading="lazy" decoding="async">
+        <h1>Instituto de Mecánica Clásica</h1>
+    </div>
+    <p>Políticas de Privacidad y Términos de Uso</p>
+</div>
+
+<div class="pp-body">
+
+    <a href="index.html" class="back-btn">← Volver al inicio</a>
+
+    <!-- 1 -->
+    <div class="pp-card">
+        <h2><span class="num">1</span> Información que recopilamos</h2>
+        <p>Al registrarte en el Instituto de Mecánica Clásica, recopilamos la siguiente información personal:</p>
+        <ul>
+            <li>Nombre completo y dirección de correo electrónico.</li>
+            <li>Información de pago procesada de forma segura a través de Mercado Pago (no almacenamos datos de tarjeta).</li>
+            <li>Progreso de cursos y actividad dentro de la plataforma.</li>
+        </ul>
+        <p>No recopilamos información sensible como datos biométricos, documentos de identidad ni información médica.</p>
+    </div>
+
+    <!-- 2 -->
+    <div class="pp-card">
+        <h2><span class="num">2</span> Uso de la información</h2>
+        <p>La información recopilada es utilizada exclusivamente para:</p>
+        <ul>
+            <li>Gestionar tu cuenta y acceso a los cursos adquiridos.</li>
+            <li>Procesar pagos y emitir comprobantes.</li>
+            <li>Enviarte actualizaciones sobre el contenido del curso o la plataforma (puedes cancelar en cualquier momento).</li>
+            <li>Mejorar la experiencia educativa y el funcionamiento del sitio.</li>
+        </ul>
+        <p>No vendemos, alquilamos ni compartimos tu información personal con terceros con fines comerciales.</p>
+    </div>
+
+    <!-- 3 -->
+    <div class="pp-card">
+        <h2><span class="num">3</span> Almacenamiento y seguridad</h2>
+        <p>Tu progreso dentro de los cursos se almacena localmente en tu navegador mediante <strong>localStorage</strong>. Esto significa que el progreso es específico al dispositivo y navegador que uses.</p>
+        <p>Los datos de pago son procesados directamente por <strong>Mercado Pago</strong> bajo sus propios estándares de seguridad PCI DSS. El Instituto de Mecánica Clásica no tiene acceso a los números de tarjeta u otros datos bancarios.</p>
+    </div>
+
+    <!-- 4 -->
+    <div class="pp-card">
+        <h2><span class="num">4</span> Derechos de autor y propiedad intelectual</h2>
+        <p>Todo el contenido disponible en esta plataforma — incluyendo videos, textos, imágenes, ejercicios y materiales descargables — es propiedad exclusiva del <strong>Instituto de Mecánica Clásica</strong>.</p>
+        <p>Queda estrictamente prohibido:</p>
+        <ul>
+            <li>Reproducir, distribuir o compartir el contenido sin autorización escrita.</li>
+            <li>Subir los materiales a plataformas de terceros (YouTube, redes sociales, sitios de descarga, etc.).</li>
+            <li>Utilizar el contenido con fines comerciales o lucrativos.</li>
+        </ul>
+        <p>El acceso a los cursos es personal e intransferible. Cada cuenta es para uso exclusivo del titular.</p>
+    </div>
+
+    <!-- 5 -->
+    <div class="pp-card">
+        <h2><span class="num">5</span> Política de reembolsos</h2>
+        <p>Dado que el contenido educativo es de acceso inmediato al realizar el pago, <strong>no se realizan reembolsos</strong> una vez que se ha accedido al material del curso.</p>
+        <p>Si experimentas un problema técnico que te impida acceder al contenido, contáctanos a través de nuestra sección de <a href="contactanos.html" style="color:#2563eb;">Contáctanos</a> y lo resolveremos a la brevedad.</p>
+    </div>
+
+    <!-- 6 -->
+    <div class="pp-card">
+        <h2><span class="num">6</span> Cookies</h2>
+        <p>Este sitio utiliza únicamente almacenamiento local del navegador (<strong>localStorage</strong>) para guardar tu sesión y progreso. No utilizamos cookies de rastreo publicitario ni de terceros.</p>
+    </div>
+
+    <!-- 7 -->
+    <div class="pp-card">
+        <h2><span class="num">7</span> Cambios a estas políticas</h2>
+        <p>El Instituto de Mecánica Clásica se reserva el derecho de actualizar estas políticas en cualquier momento. Los cambios serán publicados en esta misma página con la fecha de actualización correspondiente.</p>
+        <p>Al continuar usando la plataforma después de cualquier modificación, aceptas las políticas actualizadas.</p>
+    </div>
+
+    <!-- 8 -->
+    <div class="pp-card">
+        <h2><span class="num">8</span> Contacto</h2>
+        <p>Si tienes preguntas, dudas o solicitudes relacionadas con tus datos personales o estas políticas, puedes contactarnos directamente:</p>
+        <ul>
+            <li><strong>Responsable:</strong> Aaron Antonio Gordillo López</li>
+            <li><strong>Cargo:</strong> Director y Fundador</li>
+            <li><strong>Ubicación:</strong> Tijuana, Baja California, México</li>
+            <li><strong>Correo no laboral:</strong> <a href="mailto:mecanicaclasicainstituto@gmail.com" style="color:#2563eb;">mecanicaclasicainstituto@gmail.com</a></li>
+            <li><strong>Correo personal:</strong> <a href="mailto:aarongordillo44@gmail.com" style="color:#2563eb;">aarongordillo44@gmail.com</a></li>
+            <li><strong>Correo institucional:</strong> <a href="mailto:contacto@institutodemecanicaclasica.com" style="color:#2563eb;">contacto@institutodemecanicaclasica.com</a></li>
+            <li><strong>Teléfonos:</strong> <a href="tel:+526634034765" style="color:#2563eb;">663 403 4765</a> · <a href="tel:+526647672069" style="color:#2563eb;">664 767 2069</a></li>
+        </ul>
+        <p style="margin-top:12px;"><strong>Última actualización:</strong> Mayo 2026.</p>
+    </div>
+
+</div>
+
+<div class="pp-footer">
+    <p>© 2026 Instituto de Mecánica Clásica. Todos los derechos reservados.</p>
+    <li><a href="comunidad.html">Comunidad</a></li>
+    <p style="margin-top:6px;"><a href="index.html">Inicio</a> · <a href="contactanos.html">Contacto</a> · <a href="politicas-privacidad.html">Políticas de Privacidad</a></p>
+</div>
+
+</body>
+</html>

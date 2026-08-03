@@ -1,0 +1,13 @@
+{
+  "name": "idmc-admin-desktop",
+  "version": "1.0.0",
+  "description": "Admin desktop app for IDMC platform",
+  "main": "main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^31.0.0"
+  }
+}

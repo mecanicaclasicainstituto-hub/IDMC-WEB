@@ -1,0 +1,669 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursos</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        (function() {
+            var logged = localStorage.getItem('sesion') === 'activa' || !!localStorage.getItem('sesionUsuario') || !!localStorage.getItem('usuario');
+            document.documentElement.classList.add(logged ? 'preauth-in' : 'preauth-out');
+        })();
+    </script>
+    <style>
+        .topbar { position: sticky; top: 0; z-index: 100; background: #fff; box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08); }
+        .topbar .profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; cursor: pointer; }
+        .topbar .cart-button { position: relative; }
+        .topbar .cart-count { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: #ff5c5c; color: #fff; font-size: 0.7rem; padding: 0 5px; }
+        .profile-dropdown { min-width: 170px; }
+
+        /* --- Layout cursos + filtros --- */
+        .cursos-layout {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            padding: 28px 24px;
+        }
+        .cursos-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+        }
+        .cursos-grid {
+            flex: 1;
+            min-width: 0;
+            order: 1;
+        }
+        .cursos-main h1 {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+        }
+        .filtros-panel {
+            flex: 0 0 220px;
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #e8eefc;
+            box-shadow: 0 4px 18px rgba(15,23,42,0.07);
+            padding: 20px 18px;
+            position: sticky;
+            top: 80px;
+            order: 2;
+        }
+        .filtros-panel .filtro-label {
+            font-size: 0.72rem;
+            color: #aaa;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .filtros-panel h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #111;
+            margin: 0 0 12px;
+        }
+        .filtro-grupo {
+            margin-bottom: 22px;
+        }
+        .filtro-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 0;
+            border-bottom: 1px solid #f0f0f0;
+            gap: 8px;
+        }
+        .filtro-item:last-child { border-bottom: none; }
+        .filtro-item label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: #4a90d9;
+            cursor: pointer;
+            font-weight: 500;
+            flex: 1;
+        }
+        .filtro-item input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            accent-color: #2563eb;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .filtro-count {
+            font-size: 0.8rem;
+            color: #bbb;
+            font-weight: 500;
+        }
+        .filtros-btns {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .btn-aplicar {
+            flex: 1;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 9px 0;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-aplicar:hover { opacity: 0.88; }
+        .btn-reiniciar {
+            flex: 1;
+            background: #fff;
+            color: #333;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            padding: 9px 0;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-reiniciar:hover { background: #f5f5f5; }
+
+        /* --- Toggle Filtros en móvil --- */
+        .filtros-toggle-btn {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: #fff;
+            border: 1.5px solid #dbeafe;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2563eb;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 14px;
+            font-family: 'Poppins', sans-serif;
+            transition: background 0.15s;
+        }
+        .filtros-toggle-btn:hover { background: #f0f7ff; }
+        .filtros-toggle-arrow {
+            font-size: 0.8rem;
+            transition: transform 0.28s ease;
+            display: inline-block;
+        }
+        .filtros-toggle-btn.open .filtros-toggle-arrow { transform: rotate(180deg); }
+
+        @media (max-width: 768px) {
+            .filtros-toggle-btn { display: flex; }
+            .cursos-layout { padding: 16px; }
+            .cursos-main {
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+            }
+            .filtros-toggle-btn { order: 1; }
+            .filtros-panel {
+                display: none;
+                position: static;
+                flex: none;
+                order: 2;
+                width: 100%;
+                border-radius: 12px;
+                border: 1px solid #dbeafe;
+                box-shadow: 0 4px 18px rgba(15,23,42,0.09);
+                margin-bottom: 14px;
+                max-height: 70vh;
+                overflow-y: auto;
+                transform: none;
+                transition: none;
+            }
+            .filtros-panel.open { display: block; }
+            .cursos-grid { order: 3; }
+        }
+
+        /* --- Cursos de pago --- */
+        .curso-card {
+            position: relative;
+            display: none; /* oculto por defecto, JS los muestra */
+            flex-direction: column;
+            height: 100%;
+        }
+        .curso-card.visible {
+            display: flex;
+        }
+        .curso-lock-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            letter-spacing: 0.4px;
+        }
+        .curso-precio {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #4a90d9;
+            margin: 6px 0 10px;
+        }
+        .btn-adquirir {
+            background: linear-gradient(135deg, #2563eb, #4a90d9);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 0;
+            width: 100%;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: auto;
+        }
+        .btn-adquirir:hover { opacity: 0.88; }
+        .proximamente-label {
+            font-size: 0.78rem;
+            color: #aaa;
+            text-align: center;
+            margin-top: 6px;
+        }
+
+    </style>
+</head>
+
+<body onload="if (typeof mostrarUsuario === 'function') mostrarUsuario(); if (typeof updateAuthButtons === 'function') updateAuthButtons();">
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2><a href="index.html" style="color:inherit;text-decoration:none;cursor:pointer;">Plataforma</a></h2>
+
+        <ul>
+            <li><a href="lobby.html">Lobby</a></li>
+            <li><a href="cursos.html">Cursos</a></li>
+            <li><a href="tu_progreso.html">Tu progreso</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+            <li><a href="redes_sociales.html">Redes Sociales</a></li>
+            <li><a href="comunidad.html">Comunidad</a></li>
+            <li><a href="contactanos.html">Contáctanos</a></li>
+        </ul>
+
+        <div class="sidebar-auth-slot">
+            <div class="sidebar-auth-buttons" id="sidebarAuthButtons">
+                <a href="home.html" class="sidebar-btn-signin">Iniciar sesión</a>
+                <a href="registro.html" class="sidebar-btn-signup">Crear cuenta</a>
+            </div>
+
+            <button class="sidebar-logout" id="sidebarLogoutBtn" onclick="logout()">Cerrar sesión</button>
+        </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div style="width:100%;">
+
+        <header class="topbar">
+            <div class="topbar-left"><h2>Cursos</h2></div>
+            <div class="topbar-right">
+                                <div class="course-search-wrap">
+                    <input id="topbarCourseInput" list="topbarCourseList" type="text" placeholder="Escribe un curso...">
+                    <datalist id="topbarCourseList">
+                        <option value="Mecánica Clásica">
+                        <option value="Mecánica de Fluidos">
+                        <option value="Matemática Básica">
+                        <option value="Cálculo Vectorial">
+                        <option value="Neumática Básica">
+                    </datalist>
+                    <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
+                </div>
+                <div class="profile-menu">
+                    <img id="topbarAvatar" src="avatar-default.svg" alt="Perfil" class="profile-avatar" onclick="toggleProfileMenu()" onerror="this.onerror=null;this.src='avatar-default.svg'">
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <a href="cursos.html">Todos los cursos</a>
+                        <a href="perfil.html#mis-cursos">Mis Cursos</a>
+                        <a href="lista_deseados.html">Lista de deseados</a>
+                        <a href="perfil.html">Editar perfil</a>
+                        <button type="button" onclick="logout()">Cerrar sesión</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="contenido fade-in" style="padding:0;">
+            <div class="cursos-layout">
+
+                <!-- GRID DE CURSOS -->
+                <div class="cursos-main">
+                <!-- Botón toggle filtros (solo móvil) -->
+                <button class="filtros-toggle-btn" id="filtrosToggleBtn" aria-expanded="false" aria-controls="filtrosPanel">
+                    <span>&#9878; Filtrar cursos</span>
+                    <span class="filtros-toggle-arrow">&#9660;</span>
+                </button>
+                <aside class="filtros-panel" id="filtrosPanel">
+                    <p class="filtro-label">Filtrar</p>
+                    <div class="filtro-grupo">
+                        <h3>Categorías</h3>
+                        <div class="filtro-item">
+                            <label><input type="checkbox" class="filtro-cat" value="mecanica-clasica"> Mecánica Clásica</label>
+                            <span class="filtro-count">3</span>
+                        </div>
+                        <div class="filtro-item">
+                            <label><input type="checkbox" class="filtro-cat" value="mecanica-fluidos"> Mecánica de Fluidos</label>
+                            <span class="filtro-count">3</span>
+                        </div>
+                        <div class="filtro-item">
+                            <label><input type="checkbox" class="filtro-cat" value="electromagnetismo"> Electromagnetismo</label>
+                            <span class="filtro-count">3</span>
+                        </div>
+                        <div class="filtro-item">
+                            <label><input type="checkbox" class="filtro-cat" value="matematica"> Matemática Aplicada</label>
+                            <span class="filtro-count">3</span>
+                        </div>
+                        <div class="filtro-item">
+                            <label><input type="checkbox" class="filtro-cat" value="neumatica"> Neumática</label>
+                            <span class="filtro-count">1</span>
+                        </div>
+                    </div>
+                    <div class="filtro-grupo">
+                        <h3>Niveles</h3>
+                        <div class="filtro-item">
+                            <label><input type="checkbox" class="filtro-niv" value="1"> Nivel I</label>
+                            <span class="filtro-count">4</span>
+                        </div>
+                        <div class="filtro-item">
+                            <label><input type="checkbox" class="filtro-niv" value="2"> Nivel II</label>
+                            <span class="filtro-count">3</span>
+                        </div>
+                        <div class="filtro-item">
+                            <label><input type="checkbox" class="filtro-niv" value="3"> Nivel III</label>
+                            <span class="filtro-count">3</span>
+                        </div>
+                    </div>
+                    <div class="filtro-grupo">
+                        <h3>Precio</h3>
+                        <div class="filtro-item">
+                            <label><input type="checkbox" id="filtro-gratuito"> Cursos gratuitos</label>
+                            <span class="filtro-count">2</span>
+                        </div>
+                    </div>
+                    <div class="filtros-btns">
+                        <button class="btn-aplicar" onclick="aplicarFiltros()">Aplicar</button>
+                        <button class="btn-reiniciar" onclick="reiniciarFiltros()">Reiniciar</button>
+                    </div>
+                </aside>
+                <div class="cursos-grid" id="cursosGrid">
+
+                <!-- MECÁNICA CLÁSICA NIVEL I -->
+                <div class="curso-card visible" data-categoria="mecanica-clasica" data-nivel="1" data-gratuito="false">
+                    <span class="curso-lock-badge">&#128274; De pago</span>
+                    <div class="curso-img-banner banner-mecanica">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+                        <span class="banner-label">Mecánica Clásica</span>
+                    </div>
+                    <h2>Mecánica Clásica Nivel I</h2>
+                    <p>Fundamentos de cinemática, dinámica y leyes de Newton.</p>
+                    <p class="curso-precio">$200 MXN</p>
+                    <button class="btn-adquirir" id="btnCursoMecanicaNivel1" onclick="window.location.href='curso_mecanica_nivel1.html'">Ver detalles</button>
+                    <p class="proximamente-label">Acceso inmediato al pagar</p>
+                </div>
+
+                <!-- MECÁNICA CLÁSICA NIVEL II -->
+                <div class="curso-card visible" data-categoria="mecanica-clasica" data-nivel="2" data-gratuito="false">
+                    <span class="curso-lock-badge">&#128274; De pago</span>
+                    <div class="curso-img-banner banner-mecanica">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+                        <span class="banner-label">Mecánica Clásica</span>
+                    </div>
+                    <h2>Mecánica Clásica Nivel II</h2>
+                    <p>Trabajo, energía, impulso, rotación y cuerpo rígido.</p>
+                    <p class="curso-precio">Precio por definir</p>
+                    <button class="btn-adquirir" onclick="window.location.href='curso_mecanica_nivel2.html'">Ver detalles</button>
+                    <p class="proximamente-label">Disponible pronto</p>
+                </div>
+
+                <!-- MECÁNICA CLÁSICA NIVEL III -->
+                <div class="curso-card visible" data-categoria="mecanica-clasica" data-nivel="3" data-gratuito="false">
+                    <span class="curso-lock-badge">&#128274; De pago</span>
+                    <div class="curso-img-banner banner-mecanica">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+                        <span class="banner-label">Mecánica Clásica</span>
+                    </div>
+                    <h2>Mecánica Clásica Nivel III</h2>
+                    <p>Mecánica lagrangiana, hamiltoniana y sistemas avanzados.</p>
+                    <p class="curso-precio">Precio por definir</p>
+                    <button class="btn-adquirir" onclick="window.location.href='curso_mecanica_nivel3.html'">Ver detalles</button>
+                    <p class="proximamente-label">Disponible pronto</p>
+                </div>
+
+                <!-- ELECTROMAGNETISMO CLÁSICO NIVEL I -->
+                <div class="curso-card visible" data-categoria="electromagnetismo" data-nivel="1" data-gratuito="false">
+                    <span class="curso-lock-badge">&#128274; De pago</span>
+                    <div class="curso-img-banner banner-electro">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+                        <span class="banner-label">Electromagnetismo</span>
+                    </div>
+                    <h2>Electromagnetismo Clásico Nivel I</h2>
+                    <p>Cargas eléctricas, campo y potencial eléctrico, ley de Gauss.</p>
+                    <p class="curso-precio">Precio por definir</p>
+                    <button class="btn-adquirir" onclick="window.location.href='curso_electromagnetismo_nivel1.html'">Ver detalles</button>
+                    <p class="proximamente-label">Disponible pronto</p>
+                </div>
+
+                <!-- ELECTROMAGNETISMO CLÁSICO NIVEL II -->
+                <div class="curso-card visible" data-categoria="electromagnetismo" data-nivel="2" data-gratuito="false">
+                    <span class="curso-lock-badge">&#128274; De pago</span>
+                    <div class="curso-img-banner banner-electro">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+                        <span class="banner-label">Electromagnetismo</span>
+                    </div>
+                    <h2>Electromagnetismo Clásico Nivel II</h2>
+                    <p>Magnetostática, ley de Ampère, inducción y ley de Faraday.</p>
+                    <p class="curso-precio">Precio por definir</p>
+                    <button class="btn-adquirir" onclick="window.location.href='curso_electromagnetismo_nivel2.html'">Ver detalles</button>
+                    <p class="proximamente-label">Disponible pronto</p>
+                </div>
+
+                <!-- ELECTROMAGNETISMO CLÁSICO NIVEL III -->
+                <div class="curso-card visible" data-categoria="electromagnetismo" data-nivel="3" data-gratuito="false">
+                    <span class="curso-lock-badge">&#128274; De pago</span>
+                    <div class="curso-img-banner banner-electro">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+                        <span class="banner-label">Electromagnetismo</span>
+                    </div>
+                    <h2>Electromagnetismo Clásico Nivel III</h2>
+                    <p>Ecuaciones de Maxwell, ondas electromagnéticas y relatividad.</p>
+                    <p class="curso-precio">Precio por definir</p>
+                    <button class="btn-adquirir" onclick="window.location.href='curso_electromagnetismo_nivel3.html'">Ver detalles</button>
+                    <p class="proximamente-label">Disponible pronto</p>
+                </div>
+
+                <!-- MECÁNICA DE FLUIDOS I -->
+                <div class="curso-card visible" data-categoria="mecanica-fluidos" data-nivel="1" data-gratuito="false">
+                    <span class="curso-lock-badge">&#128274; De pago</span>
+                    <div class="curso-img-banner banner-fluidos">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke-dasharray="0"/><path d="M2 12c2.5-3 5-4.5 10-4.5S19.5 9 22 12c-2.5 3-5 4.5-10 4.5S4.5 15 2 12z"/><circle cx="12" cy="12" r="2" fill="rgba(255,255,255,0.5)" stroke="none"/></svg></span>
+                        <span class="banner-label">Mecánica de Fluidos</span>
+                    </div>
+                    <h2>Mecánica de Fluidos I</h2>
+                    <p>Propiedades de los fluidos, estática y principio de Bernoulli.</p>
+                    <p class="curso-precio">Precio por definir</p>
+                    <button class="btn-adquirir" onclick="window.location.href='curso_fluidos_nivel1.html'">Ver detalles</button>
+                    <p class="proximamente-label">Disponible pronto</p>
+                </div>
+
+                <!-- MECÁNICA DE FLUIDOS II -->
+                <div class="curso-card visible" data-categoria="mecanica-fluidos" data-nivel="2" data-gratuito="false">
+                    <span class="curso-lock-badge">&#128274; De pago</span>
+                    <div class="curso-img-banner banner-fluidos">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke-dasharray="0"/><path d="M2 12c2.5-3 5-4.5 10-4.5S19.5 9 22 12c-2.5 3-5 4.5-10 4.5S4.5 15 2 12z"/><circle cx="12" cy="12" r="2" fill="rgba(255,255,255,0.5)" stroke="none"/></svg></span>
+                        <span class="banner-label">Mecánica de Fluidos</span>
+                    </div>
+                    <h2>Mecánica de Fluidos II</h2>
+                    <p>Flujo interno, externo, capa límite y número de Reynolds.</p>
+                    <p class="curso-precio">Precio por definir</p>
+                    <button class="btn-adquirir" onclick="window.location.href='curso_fluidos_nivel2.html'">Ver detalles</button>
+                    <p class="proximamente-label">Disponible pronto</p>
+                </div>
+
+                <!-- MECÁNICA DE FLUIDOS III -->
+                <div class="curso-card visible" data-categoria="mecanica-fluidos" data-nivel="3" data-gratuito="false">
+                    <span class="curso-lock-badge">&#128274; De pago</span>
+                    <div class="curso-img-banner banner-fluidos">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke-dasharray="0"/><path d="M2 12c2.5-3 5-4.5 10-4.5S19.5 9 22 12c-2.5 3-5 4.5-10 4.5S4.5 15 2 12z"/><circle cx="12" cy="12" r="2" fill="rgba(255,255,255,0.5)" stroke="none"/></svg></span>
+                        <span class="banner-label">Mecánica de Fluidos</span>
+                    </div>
+                    <h2>Mecánica de Fluidos III</h2>
+                    <p>Flujo compresible, turbulencia y aplicaciones en ingeniería.</p>
+                    <p class="curso-precio">Precio por definir</p>
+                    <button class="btn-adquirir" onclick="window.location.href='curso_fluidos_nivel3.html'">Ver detalles</button>
+                    <p class="proximamente-label">Disponible pronto</p>
+                </div>
+
+                <!-- MATEMÁTICA APLICADA -->
+                <div class="curso-card visible" data-categoria="matematica" data-nivel="1" data-gratuito="false">
+                    <span class="curso-lock-badge">&#128274; De pago</span>
+                    <div class="curso-img-banner banner-mate">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><line x1="3" y1="3" x2="3" y2="21"/><line x1="3" y1="21" x2="21" y2="21"/><polyline points="7 16 11 10 15 13 19 6"/><circle cx="19" cy="6" r="1.5" fill="rgba(255,255,255,0.7)" stroke="none"/></svg></span>
+                        <span class="banner-label">Matemática Aplicada</span>
+                    </div>
+                    <h2>Matemática Aplicada a la Física e Ingeniería</h2>
+                    <p>Cálculo, álgebra lineal, ecuaciones diferenciales y series.</p>
+                    <p class="curso-precio">Precio por definir</p>
+                    <button class="btn-adquirir" onclick="window.location.href='curso_matematica_aplicada.html'">Ver detalles</button>
+                    <p class="proximamente-label">Disponible pronto</p>
+                </div>
+
+                <!-- ÁLGEBRA LINEAL - GRATUITO -->
+                <div class="curso-card visible" data-categoria="matematica" data-nivel="1" data-gratuito="true">
+                    <span class="curso-lock-badge" style="background: linear-gradient(135deg, #16a34a, #22c55e);">&#127381; Gratuito</span>
+                    <div class="curso-img-banner banner-mate">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><rect x="3" y="3" width="4" height="4" rx="0.5"/><rect x="10" y="3" width="4" height="4" rx="0.5"/><rect x="17" y="3" width="4" height="4" rx="0.5"/><rect x="3" y="10" width="4" height="4" rx="0.5"/><rect x="10" y="10" width="4" height="4" rx="0.5"/><rect x="17" y="10" width="4" height="4" rx="0.5"/><rect x="3" y="17" width="4" height="4" rx="0.5"/><rect x="10" y="17" width="4" height="4" rx="0.5"/><rect x="17" y="17" width="4" height="4" rx="0.5"/></svg></span>
+                        <span class="banner-label">Álgebra Lineal</span>
+                    </div>
+                    <h2>Álgebra Lineal</h2>
+                    <p>Vectores, matrices, determinantes, transformaciones lineales y espacios vectoriales.</p>
+                    <p class="curso-precio" style="color:#16a34a;">Gratis</p>
+                    <button class="btn-adquirir" style="background: linear-gradient(135deg, #16a34a, #22c55e);" onclick="window.location.href='curso_algebra_lineal.html'">Ver detalles</button>
+                    <p class="proximamente-label">Disponible pronto</p>
+                </div>
+
+                <!-- CÁLCULO VECTORIAL -->
+                <div class="curso-card visible" data-categoria="matematica" data-nivel="1" data-gratuito="true">
+                    <span class="curso-lock-badge" style="background: linear-gradient(135deg, #14532d, #16a34a);">&#127381; Gratuito</span>
+                    <div class="curso-img-banner banner-calculo">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><polygon points="12 3 3 20 21 20" fill="none"/><line x1="12" y1="10" x2="12" y2="16"/><line x1="9" y1="14" x2="15" y2="14"/></svg></span>
+                        <span class="banner-label">Cálculo Vectorial</span>
+                    </div>
+                    <h2>Cálculo Vectorial</h2>
+                    <p>Gradiente, divergencia, rotacional, integrales de línea y de superficie, teoremas de Gauss y Stokes.</p>
+                    <p class="curso-precio" style="color:#16a34a;">Gratis</p>
+                    <button class="btn-adquirir" style="background: linear-gradient(135deg, #14532d, #16a34a 60%, #4ade80);" onclick="window.location.href='curso_calculo_vectorial.html'">Ver detalles</button>
+                    <p class="proximamente-label">Disponible pronto</p>
+                </div>
+
+                <!-- NEUMÁTICA BÁSICA -->
+                <div class="curso-card visible" data-categoria="neumatica" data-nivel="1" data-gratuito="false">
+                    <span class="curso-lock-badge">&#128274; De pago</span>
+                    <div class="curso-img-banner banner-neumatica">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><path d="M5 12h14"/><path d="M12 5c0 0 5 2.5 5 7s-5 7-5 7"/><path d="M3 8c1.5-1.5 3.5-2.5 6-2.5"/><path d="M3 16c1.5 1.5 3.5 2.5 6 2.5"/><circle cx="19" cy="12" r="2"/></svg></span>
+                        <span class="banner-label">Neumática Básica</span>
+                    </div>
+                    <h2>Neumática Básica</h2>
+                    <p>Fundamentos de sistemas neumáticos: componentes, circuitos, válvulas y actuadores de aire comprimido.</p>
+                    <p class="curso-precio">Precio por definir</p>
+                    <button class="btn-adquirir" onclick="window.location.href='curso_neumatica_basica.html'">Ver detalles</button>
+                    <p class="proximamente-label">Disponible pronto</p>
+                </div>
+
+                </div><!-- /cursos-grid -->
+                </div><!-- /cursos-main -->
+
+            </div><!-- /cursos-layout -->
+        </main>
+
+    </div>
+
+</div>
+<div class="filtros-overlay" id="filtrosOverlay"></div>
+
+<script src="app.js" defer></script>
+
+<script>
+(function() {
+    function loadTopbarAvatar() {
+        var topbarAvatar = document.getElementById('topbarAvatar');
+        if (!topbarAvatar) return;
+        var avatar = localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar') || localStorage.getItem('userAvatar') || localStorage.getItem('profilePhoto') || localStorage.getItem('profileImage') || localStorage.getItem('avatarUrl');
+        if (typeof aplicarAvatarSeguro === 'function') aplicarAvatarSeguro(topbarAvatar, avatar);
+    }
+    window.addEventListener('DOMContentLoaded', loadTopbarAvatar);
+    window.logout = function() {
+        localStorage.removeItem('perfilAvatar');
+        localStorage.removeItem('avatar');
+        localStorage.removeItem('userAvatar');
+        localStorage.removeItem('profilePhoto');
+        localStorage.removeItem('profileImage');
+        localStorage.removeItem('avatarUrl');
+        localStorage.removeItem('usuario');
+        localStorage.removeItem('sesion');
+        localStorage.removeItem('sesionUsuario');
+        location.reload();
+    };
+
+    window.aplicarFiltros = function() {
+        var cats = Array.from(document.querySelectorAll('.filtro-cat:checked')).map(function(el){ return el.value; });
+        var nivs = Array.from(document.querySelectorAll('.filtro-niv:checked')).map(function(el){ return el.value; });
+        var soloGratuito = document.getElementById('filtro-gratuito') && document.getElementById('filtro-gratuito').checked;
+        document.querySelectorAll('.curso-card').forEach(function(card) {
+            var cat = card.dataset.categoria;
+            var niv = card.dataset.nivel;
+            var gratuito = card.dataset.gratuito === 'true';
+            var catOk = cats.length === 0 || cats.indexOf(cat) !== -1;
+            var nivOk = nivs.length === 0 || nivs.indexOf(niv) !== -1;
+            var gratOk = !soloGratuito || gratuito;
+            card.classList.toggle('visible', catOk && nivOk && gratOk);
+        });
+    };
+
+    window.reiniciarFiltros = function() {
+        document.querySelectorAll('.filtro-cat, .filtro-niv').forEach(function(cb){ cb.checked = false; });
+        var filtroGrat = document.getElementById('filtro-gratuito');
+        if (filtroGrat) filtroGrat.checked = false;
+        document.querySelectorAll('.curso-card').forEach(function(card){ card.classList.add('visible'); });
+    };
+
+
+    window.addEventListener('DOMContentLoaded', function() {
+        window.updateAuthButtons();
+        var btn = document.getElementById('btnCursoMecanicaNivel1');
+        if (!btn || typeof usuarioTieneCurso !== 'function') return;
+
+        if (usuarioTieneCurso('Mecánica Clásica Nivel I')) {
+            btn.textContent = 'Continuar';
+            btn.onclick = function() {
+                window.location.href = 'curso_mecanica_nivel1.html';
+            };
+        }
+    });
+
+    // Toggle panel filtros en móvil
+    window.addEventListener('DOMContentLoaded', function() {
+        var toggleBtn = document.getElementById('filtrosToggleBtn');
+        var panel = document.getElementById('filtrosPanel');
+        var overlay = document.getElementById('filtrosOverlay');
+        if (!toggleBtn || !panel) return;
+
+        function openFiltros() {
+            panel.classList.add('open');
+            toggleBtn.classList.add('open');
+            toggleBtn.setAttribute('aria-expanded', 'true');
+        }
+        function closeFiltros() {
+            panel.classList.remove('open');
+            toggleBtn.classList.remove('open');
+            toggleBtn.setAttribute('aria-expanded', 'false');
+        }
+
+        toggleBtn.addEventListener('click', function() {
+            panel.classList.contains('open') ? closeFiltros() : openFiltros();
+        });
+        if (overlay) overlay.addEventListener('click', closeFiltros);
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeFiltros();
+        });
+        // Cerrar al aplicar/reiniciar en móvil
+        panel.querySelectorAll('.btn-aplicar, .btn-reiniciar').forEach(function(b) {
+            b.addEventListener('click', function() {
+                if (window.innerWidth <= 768) closeFiltros();
+            });
+        });
+    });
+})();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

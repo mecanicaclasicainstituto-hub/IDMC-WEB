@@ -1,0 +1,819 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="icon" href="favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+  <title>Perfil del Miembro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .topbar { position: sticky; top: 0; z-index: 100; background: #fff; box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08); }
+    .topbar .profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #fff; border: 2px solid #fff; cursor: pointer; }
+    .profile-dropdown { min-width: 170px; }
+
+    .perfil-page {
+      padding: 24px;
+      max-width: 1680px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .perfil-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .side-panel {
+      background: #fff;
+      border: 1px solid #e8eefc;
+      border-radius: 18px;
+      box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+      padding: 14px;
+    }
+
+    .side-panel .subtitulo {
+      margin-top: 2px;
+    }
+
+    .perfil-card {
+      background: #fff;
+      border: 1px solid #e8eefc;
+      border-radius: 18px;
+      box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    .perfil-banner {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      background: #60a5fa;
+      display: block;
+    }
+
+    .perfil-body {
+      padding: 0 20px 20px;
+    }
+
+    .perfil-avatar-wrap {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: #fff;
+      padding: 4px;
+      margin-top: -44px;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
+    }
+
+    .perfil-avatar-wrap img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: contain;
+      background: #fff;
+      padding: 4px;
+    }
+
+    .perfil-nombre { margin: 10px 0 4px; font-size: 1.6rem; color: #111827; }
+    .perfil-formacion { margin: 0 0 8px; color: #2563eb; font-weight: 600; }
+    .perfil-bio { margin: 0 0 12px; color: #475569; line-height: 1.5; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat-box {
+      background: #f0f4ff;
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .stat-box strong { display: block; font-size: 1.35rem; color: #2563eb; }
+    .stat-box span { font-size: 0.8rem; color: #64748b; }
+
+    .subtitulo { margin: 10px 0 8px; color: #1f2937; font-size: 1rem; }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .chip {
+      background: #f8fbff;
+      border: 1px solid #dbeafe;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.84rem;
+      color: #1e3a8a;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .lista-cursos {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .curso-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.88rem;
+      color: #334155;
+    }
+
+    .comentarios-wrap {
+      border: 1px solid #e5edff;
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 12px;
+    }
+
+    .comentarios-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      padding-right: 4px;
+    }
+
+    .comentario-item { background: #f1f6ff; border-radius: 10px; padding: 8px 10px; }
+    .comentario-item strong { display: block; font-size: 0.78rem; color: #245a9d; margin-bottom: 3px; }
+    .comentario-item p { margin: 0; font-size: 0.83rem; color: #344054; line-height: 1.45; }
+    .comentario-item span { display: block; margin-top: 4px; font-size: 0.7rem; color: #8a94a6; }
+
+    .comentario-actions { display: flex; justify-content: flex-end; margin-top: 6px; }
+    .btn-like-comentario {
+      background: #e8f1ff;
+      color: #2e5f99;
+      border: 1px solid #c8dbff;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .btn-like-comentario.liked { background: #ffe8ee; color: #b3345a; border-color: #ffc8d7; }
+
+    .comentarios-wrap textarea {
+      width: 100%;
+      border: 1px solid #cfe0ff;
+      border-radius: 10px;
+      padding: 9px 10px;
+      min-height: 72px;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 0.86rem;
+      box-sizing: border-box;
+      margin-bottom: 8px;
+    }
+
+    .mensajes-wrap {
+      border: 1px solid #e5edff;
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 12px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .mensajes-wrap textarea {
+      width: 100%;
+      min-height: 98px;
+      border: 1px solid #cfe0ff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      color: #334155;
+      background: #fff;
+      resize: vertical;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .mensajes-wrap textarea:focus {
+      outline: none;
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+    }
+
+    .mensajes-wrap textarea:disabled {
+      background: #f1f5f9;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    #btnEnviarPrivado {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.86rem;
+      letter-spacing: 0.1px;
+    }
+
+    .mensajes-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 210px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      padding-right: 4px;
+    }
+
+    .mensaje-item {
+      background: #f1f6ff;
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    .mensaje-item.mine {
+      background: #e1f0ff;
+      border: 1px solid #c5e1ff;
+    }
+
+    .mensaje-item strong {
+      display: block;
+      font-size: 0.78rem;
+      color: #245a9d;
+      margin-bottom: 3px;
+    }
+
+    .mensaje-item p {
+      margin: 0;
+      font-size: 0.83rem;
+      color: #344054;
+      line-height: 1.45;
+    }
+
+    .mensaje-item span {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.7rem;
+      color: #8a94a6;
+    }
+
+    .mensaje-status {
+      margin: 8px 2px 0;
+      font-size: 0.76rem;
+      color: #6b7280;
+      min-height: 16px;
+    }
+
+    .btn-primary:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .panel-extra-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel-extra-item {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px;
+      background: #f8fafc;
+      font-size: 0.86rem;
+      color: #334155;
+    }
+
+    .panel-extra-item strong {
+      display: block;
+      color: #1e3a8a;
+      margin-bottom: 4px;
+      font-size: 0.84rem;
+    }
+
+    .panel-extra-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .panel-extra-links a {
+      text-decoration: none;
+      background: #eef4ff;
+      border: 1px solid #dbeafe;
+      border-radius: 9px;
+      padding: 8px 10px;
+      color: #1e40af;
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .panel-extra-links a:hover {
+      background: #dbeafe;
+    }
+
+    .btn-primary {
+      background: #4a90d9;
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover { background: #357abd; }
+
+    .acciones-top {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-volver {
+      display: inline-block;
+      text-decoration: none;
+      background: #e2e8f0;
+      color: #0f172a;
+      border-radius: 9px;
+      padding: 8px 12px;
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .btn-volver:hover { background: #cbd5e1; }
+
+    @media (max-width: 1280px) {
+      .perfil-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body onload="verificarSesion();">
+
+<div class="container">
+  <aside class="sidebar">
+    <h2><a href="index.html" style="color:inherit;text-decoration:none;">Plataforma</a></h2>
+    <ul>
+      <li><a href="lobby.html">Lobby</a></li>
+      <li><a href="cursos.html">Cursos</a></li>
+      <li><a href="tu_progreso.html">Tu progreso</a></li>
+      <li><a href="perfil.html">Perfil</a></li>
+      <li><a href="redes_sociales.html">Redes Sociales</a></li>
+      <li><a href="comunidad.html">Comunidad</a></li>
+      <li><a href="contactanos.html">Contáctanos</a></li>
+    </ul>
+    <div class="sidebar-auth-slot">
+      <div class="sidebar-auth-buttons" id="sidebarAuthButtons">
+        <a href="home.html" class="sidebar-btn-signin">Iniciar sesión</a>
+        <a href="registro.html" class="sidebar-btn-signup">Crear cuenta</a>
+      </div>
+      <button class="sidebar-logout" id="sidebarLogoutBtn" onclick="logout()">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <div style="width:100%;min-width:0;">
+
+<header class="topbar">
+  <div class="topbar-left"><h2>Perfil del miembro</h2></div>
+  <div class="topbar-right">
+    <div class="course-search-wrap">
+      <input id="topbarCourseInput" list="topbarCourseList" type="text" placeholder="Escribe un curso...">
+      <datalist id="topbarCourseList">
+        <option value="Mecánica Clásica">
+        <option value="Mecánica de Fluidos">
+        <option value="Matemática Básica">
+      </datalist>
+      <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
+    </div>
+    <div class="profile-menu">
+      <img id="topbarAvatar" src="avatar-default.svg" alt="Perfil" class="profile-avatar" onclick="toggleProfileMenu()" onerror="this.onerror=null;this.src='avatar-default.svg'">
+      <div class="profile-dropdown" id="profileDropdown">
+        <a href="cursos.html">Todos los cursos</a>
+        <a href="perfil.html#mis-cursos">Mis Cursos</a>
+        <a href="lista_deseados.html">Lista de deseados</a>
+        <a href="perfil.html">Editar perfil</a>
+        <button type="button" onclick="logout()">Cerrar sesión</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="perfil-page fade-in">
+  <div class="acciones-top">
+    <a class="btn-volver" href="comunidad.html">Volver a comunidad</a>
+  </div>
+
+  <div class="perfil-layout">
+    <section class="perfil-card">
+      <img id="miembroBanner" class="perfil-banner" src="cover-default.svg" alt="Banner" onerror="this.onerror=null;this.src='cover-default.svg'">
+      <div class="perfil-body">
+        <div class="perfil-avatar-wrap">
+          <img id="miembroAvatar" src="avatar-default.svg" alt="Avatar" onerror="this.onerror=null;this.src='avatar-default.svg'">
+        </div>
+
+        <h1 class="perfil-nombre" id="miembroNombre">Miembro</h1>
+        <p class="perfil-formacion" id="miembroFormacion">Estudiante</p>
+        <p id="miembroGeneroTrabajo" style="font-size:0.85rem; color:#64748b; margin:0 0 6px;"></p>
+        <p class="perfil-bio" id="miembroBio">Sin biografía disponible.</p>
+
+        <div class="stats">
+          <div class="stat-box"><strong id="miembroPosts">0</strong><span>Publicaciones</span></div>
+          <div class="stat-box"><strong id="miembroCursos">0</strong><span>Cursos</span></div>
+          <div class="stat-box"><strong id="miembroDesde">-</strong><span>Miembro desde</span></div>
+        </div>
+
+        <h3 class="subtitulo">Redes sociales</h3>
+        <div class="chips" id="miembroRedes"></div>
+
+        <div id="miembroCapacitacionesWrap" style="display:none; margin-bottom:16px;">
+          <h3 class="subtitulo">Capacitaciones</h3>
+          <p id="miembroCapacitaciones" style="font-size:0.88rem; color:#374151; white-space:pre-line;"></p>
+        </div>
+
+        <div id="miembroGustosWrap" style="display:none; margin-bottom:16px;">
+          <h3 class="subtitulo">¿Qué le gusta hacer?</h3>
+          <p id="miembroGustos" style="font-size:0.88rem; color:#374151; white-space:pre-line;"></p>
+        </div>
+
+        <h3 class="subtitulo">Cursos inscritos</h3>
+        <div class="lista-cursos" id="miembroCursosLista"></div>
+
+        <h3 class="subtitulo">Comentarios</h3>
+        <div class="comentarios-wrap">
+          <div class="comentarios-lista" id="comentariosLista"></div>
+          <textarea id="nuevoComentario" placeholder="Escribe un comentario para este miembro..."></textarea>
+          <button type="button" class="btn-primary" onclick="agregarComentarioPerfil()">Publicar comentario</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="side-panel">
+      <h3 class="subtitulo">Sugerencias</h3>
+      <div class="panel-extra-list" id="panelExtraLista"></div>
+      <div class="panel-extra-links">
+        <a href="comunidad.html">Ver comunidad</a>
+        <a href="cursos.html">Explorar cursos</a>
+        <a href="perfil.html">Ir a mi perfil</a>
+      </div>
+    </aside>
+  </div>
+</main>
+
+  </div>
+</div>
+
+<script src="app.js" defer></script>
+<script>
+(function() {
+  var perfilUsuarioActual = '';
+
+  function escHtml(text) {
+    return String(text || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function getUsuarios() {
+    return JSON.parse(localStorage.getItem('comunidadUsuarios') || '[]');
+  }
+
+  function getPosts() {
+    return JSON.parse(localStorage.getItem('comunidadPosts') || '[]');
+  }
+
+  function getComentariosPerfil() {
+    return JSON.parse(localStorage.getItem('comunidadComentariosPerfil') || '[]');
+  }
+
+  function saveComentariosPerfil(comentarios) {
+    localStorage.setItem('comunidadComentariosPerfil', JSON.stringify(comentarios));
+  }
+
+  function getMensajesPrivados() {
+    return JSON.parse(localStorage.getItem('comunidadMensajesPrivados') || '[]');
+  }
+
+  function saveMensajesPrivados(mensajes) {
+    localStorage.setItem('comunidadMensajesPrivados', JSON.stringify(mensajes));
+  }
+
+  function mismoUsuario(a, b) {
+    return String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase();
+  }
+
+  function getUsuarioActual() {
+    return localStorage.getItem('usuario') || localStorage.getItem('userName') || 'Estudiante';
+  }
+
+  function getQueryUser() {
+    var params = new URLSearchParams(window.location.search);
+    return String(params.get('user') || '').trim();
+  }
+
+  function renderPerfil() {
+    perfilUsuarioActual = getQueryUser();
+    if (!perfilUsuarioActual) {
+      document.getElementById('miembroNombre').textContent = 'Miembro no encontrado';
+      renderPanelExtra(0, []);
+      return;
+    }
+
+    var usuarios = getUsuarios();
+    var u = usuarios.find(function(item) { return item.usuario === perfilUsuarioActual; }) || { usuario: perfilUsuarioActual };
+
+    var avatar = typeof obtenerAvatarSeguro === 'function' ? obtenerAvatarSeguro(u.avatar) : (u.avatar || 'avatar-default.svg');
+    var cover = typeof obtenerCoverSeguro === 'function' ? obtenerCoverSeguro(u.cover) : (u.cover || 'cover-default.svg');
+
+    document.getElementById('miembroAvatar').src = avatar;
+    document.getElementById('miembroBanner').src = cover;
+    document.getElementById('miembroNombre').textContent = u.nombre || u.usuario;
+    document.getElementById('miembroFormacion').textContent = u.formacion || 'Estudiante';
+    document.getElementById('miembroBio').textContent = u.bio || 'Sin biografía disponible.';
+
+    // Género y trabajo
+    var gtParts = [];
+    if (u.genero) gtParts.push(u.genero);
+    if (u.trabajo) gtParts.push('💼 ' + u.trabajo);
+    var gtEl = document.getElementById('miembroGeneroTrabajo');
+    if (gtEl) gtEl.textContent = gtParts.join(' · ');
+
+    // Capacitaciones
+    var capWrap = document.getElementById('miembroCapacitacionesWrap');
+    var capEl   = document.getElementById('miembroCapacitaciones');
+    if (capWrap && capEl && u.capacitaciones) {
+      capEl.textContent = u.capacitaciones;
+      capWrap.style.display = 'block';
+    }
+    // Gustos
+    var gustosWrap = document.getElementById('miembroGustosWrap');
+    var gustosEl   = document.getElementById('miembroGustos');
+    if (gustosWrap && gustosEl && u.gustos) {
+      gustosEl.textContent = u.gustos;
+      gustosWrap.style.display = 'block';
+    }
+
+    var posts = getPosts().filter(function(p) { return p.usuario === perfilUsuarioActual; }).length;
+    var cursos = Array.isArray(u.cursos) ? u.cursos : [];
+    if (!cursos.length && u.usuario) {
+      var perfiles = JSON.parse(localStorage.getItem('perfilesUsuarios') || '{}');
+      var perfilUsuario = perfiles[u.usuario] || {};
+      if (Array.isArray(perfilUsuario.cursos)) cursos = perfilUsuario.cursos;
+    }
+
+    document.getElementById('miembroPosts').textContent = String(posts);
+    document.getElementById('miembroCursos').textContent = String(cursos.length);
+    document.getElementById('miembroDesde').textContent = u.fechaRegistro || '-';
+
+    var cursosLista = document.getElementById('miembroCursosLista');
+    if (!cursos.length) {
+      cursosLista.innerHTML = '<div class="curso-item">Sin cursos inscritos.</div>';
+    } else {
+      cursosLista.innerHTML = cursos.map(function(nombreCurso) {
+        return '<div class="curso-item">' + escHtml(nombreCurso) + '</div>';
+      }).join('');
+    }
+
+    var redes = [];
+    if (u.facebook) redes.push('<a class="chip" href="' + escHtml(u.facebook) + '" target="_blank" rel="noopener">Facebook</a>');
+    if (u.twitter) redes.push('<a class="chip" href="' + escHtml(u.twitter) + '" target="_blank" rel="noopener">Twitter/X</a>');
+    if (u.youtube) redes.push('<a class="chip" href="' + escHtml(u.youtube) + '" target="_blank" rel="noopener">YouTube</a>');
+    if (u.linkedin) redes.push('<a class="chip" href="' + escHtml(u.linkedin) + '" target="_blank" rel="noopener">LinkedIn</a>');
+    document.getElementById('miembroRedes').innerHTML = redes.length ? redes.join('') : '<span style="color:#8a94a6; font-size:0.86rem;">Sin redes sociales registradas.</span>';
+
+    renderComentariosPerfil();
+    renderMensajesPrivadosPerfil();
+    renderPanelExtra(posts, cursos);
+  }
+
+  function renderPanelExtra(posts, cursos) {
+    var panel = document.getElementById('panelExtraLista');
+    if (!panel) return;
+
+    var totalCursos = Array.isArray(cursos) ? cursos.length : 0;
+    var nivelActividad = posts >= 5 ? 'Alta' : (posts >= 2 ? 'Media' : 'Inicial');
+    var recomendacion = totalCursos >= 3
+      ? 'Excelente ritmo. Puedes compartir una publicacion de avance en Comunidad.'
+      : 'Aún puede sumar más cursos para completar su ruta de aprendizaje.';
+
+    panel.innerHTML =
+      '<div class="panel-extra-item"><strong>Actividad</strong>' +
+      'Nivel actual: ' + escHtml(nivelActividad) + ' (' + escHtml(String(posts)) + ' publicaciones).</div>' +
+      '<div class="panel-extra-item"><strong>Cursos</strong>' +
+      'Inscrito en ' + escHtml(String(totalCursos)) + ' curso(s).</div>' +
+      '<div class="panel-extra-item"><strong>Tip</strong>' +
+      escHtml(recomendacion) + '</div>';
+  }
+
+  function renderMensajesPrivadosPerfil() {
+    var wrap = document.getElementById('mensajesWrap');
+    var titulo = document.getElementById('mensajesTitulo');
+    var lista = document.getElementById('mensajesLista');
+    var status = document.getElementById('mensajePrivadoStatus');
+    var input = document.getElementById('nuevoMensajePrivado');
+    var boton = document.getElementById('btnEnviarPrivado');
+    if (!wrap || !titulo || !lista || !status || !input || !boton) return;
+
+    var yo = getUsuarioActual();
+    if (!perfilUsuarioActual || mismoUsuario(yo, perfilUsuarioActual)) {
+      wrap.style.display = 'block';
+      titulo.style.display = 'block';
+      lista.innerHTML = '<p style="margin:0; color:#8a94a6; font-size:0.82rem;">No puedes enviarte mensajes privados a ti mismo.</p>';
+      input.value = '';
+      input.disabled = true;
+      boton.disabled = true;
+      status.textContent = '';
+      return;
+    }
+
+    wrap.style.display = 'block';
+    titulo.style.display = 'block';
+    input.disabled = false;
+    boton.disabled = false;
+
+    var mensajes = getMensajesPrivados().filter(function(m) {
+      return (mismoUsuario(m.de, yo) && mismoUsuario(m.para, perfilUsuarioActual)) ||
+             (mismoUsuario(m.de, perfilUsuarioActual) && mismoUsuario(m.para, yo));
+    });
+
+    if (!mensajes.length) {
+      lista.innerHTML = '<p style="margin:0; color:#8a94a6; font-size:0.82rem;">Aún no hay mensajes privados con este miembro.</p>';
+      return;
+    }
+
+    var ultimos = mensajes.slice(-12);
+    lista.innerHTML = ultimos.map(function(m) {
+      var esMio = mismoUsuario(m.de, yo);
+      return '<div class="mensaje-item' + (esMio ? ' mine' : '') + '">' +
+        '<strong>' + escHtml(esMio ? 'Tu' : (m.de || 'Usuario')) + '</strong>' +
+        '<p>' + escHtml(m.texto || '').replace(/\\n/g, '<br>') + '</p>' +
+        '<span>' + escHtml(m.fecha || '') + '</span>' +
+        '</div>';
+    }).join('');
+
+  }
+
+  function renderComentariosPerfil() {
+    var lista = document.getElementById('comentariosLista');
+    if (!lista) return;
+
+    var usuarioActual = localStorage.getItem('usuario') || 'Estudiante';
+    var comentarios = getComentariosPerfil().filter(function(c) { return c.destino === perfilUsuarioActual; });
+
+    if (!comentarios.length) {
+      lista.innerHTML = '<p style="margin:0; color:#8a94a6; font-size:0.82rem;">Aún no hay comentarios para este perfil.</p>';
+      return;
+    }
+
+    lista.innerHTML = comentarios.map(function(c) {
+      var likes = Number(c.likes || 0);
+      var likedBy = Array.isArray(c.likedBy) ? c.likedBy : [];
+      var likedClass = likedBy.indexOf(usuarioActual) !== -1 ? ' liked' : '';
+      return '<div class="comentario-item">' +
+        '<strong>' + escHtml(c.autor || 'Usuario') + '</strong>' +
+        '<p>' + escHtml(c.texto).replace(/\\n/g, '<br>') + '</p>' +
+        '<span>' + escHtml(c.fecha || '') + '</span>' +
+        '<div class="comentario-actions">' +
+        '<button type="button" class="btn-like-comentario' + likedClass + '" onclick="toggleLikeComentario(' + c.id + ')">Me gusta (' + likes + ')</button>' +
+        '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  window.toggleLikeComentario = function(commentId) {
+    if (!perfilUsuarioActual) return;
+
+    var usuarioActual = localStorage.getItem('usuario') || 'Estudiante';
+    var comentarios = getComentariosPerfil();
+    var comentario = comentarios.find(function(c) { return c.id === commentId; });
+    if (!comentario) return;
+
+    if (!Array.isArray(comentario.likedBy)) comentario.likedBy = [];
+    if (typeof comentario.likes !== 'number') comentario.likes = Number(comentario.likes || 0);
+
+    var idx = comentario.likedBy.indexOf(usuarioActual);
+    if (idx >= 0) {
+      comentario.likedBy.splice(idx, 1);
+      comentario.likes = Math.max(0, comentario.likes - 1);
+    } else {
+      comentario.likedBy.push(usuarioActual);
+      comentario.likes += 1;
+    }
+
+    saveComentariosPerfil(comentarios);
+    renderComentariosPerfil();
+  };
+
+  window.agregarComentarioPerfil = function() {
+    if (!perfilUsuarioActual) return;
+
+    var input = document.getElementById('nuevoComentario');
+    var texto = (input.value || '').trim();
+    if (!texto) {
+      alert('Escribe un comentario antes de publicar.');
+      return;
+    }
+
+    var autor = localStorage.getItem('usuario') || 'Estudiante';
+    var comentarios = getComentariosPerfil();
+    comentarios.unshift({
+      id: Date.now(),
+      destino: perfilUsuarioActual,
+      autor: autor,
+      texto: texto,
+      fecha: new Date().toLocaleDateString('es', { day: '2-digit', month: 'short', year: 'numeric' }),
+      likes: 0,
+      likedBy: []
+    });
+
+    saveComentariosPerfil(comentarios);
+    input.value = '';
+    renderComentariosPerfil();
+  };
+
+  window.enviarMensajePrivadoPerfil = function() {
+    if (!perfilUsuarioActual) return;
+
+    var yo = getUsuarioActual();
+    if (mismoUsuario(yo, perfilUsuarioActual)) {
+      alert('No puedes enviarte mensajes privados a ti mismo.');
+      return;
+    }
+
+    var input = document.getElementById('nuevoMensajePrivado');
+    var status = document.getElementById('mensajePrivadoStatus');
+    if (!input || !status) return;
+
+    var texto = (input.value || '').trim();
+    if (!texto) {
+      alert('Escribe un mensaje antes de enviar.');
+      return;
+    }
+
+    var mensajes = getMensajesPrivados();
+    mensajes.push({
+      id: Date.now(),
+      de: yo,
+      para: perfilUsuarioActual,
+      texto: texto,
+      fecha: new Date().toLocaleString('es', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
+    });
+    saveMensajesPrivados(mensajes);
+
+    input.value = '';
+    status.textContent = 'Mensaje enviado.';
+    renderMensajesPrivadosPerfil();
+  };
+
+  function loadTopbarAvatar() {
+    var topbarAvatar = document.getElementById('topbarAvatar');
+    if (!topbarAvatar) return;
+    var avatar = localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar') || localStorage.getItem('userAvatar') || localStorage.getItem('profilePhoto') || localStorage.getItem('profileImage') || localStorage.getItem('avatarUrl');
+    if (typeof aplicarAvatarSeguro === 'function') aplicarAvatarSeguro(topbarAvatar, avatar);
+  }
+
+  window.logout = function() {
+    localStorage.removeItem('perfilAvatar');
+    localStorage.removeItem('avatar');
+    localStorage.removeItem('userAvatar');
+    localStorage.removeItem('profilePhoto');
+    localStorage.removeItem('profileImage');
+    localStorage.removeItem('avatarUrl');
+    localStorage.removeItem('sesion');
+    localStorage.removeItem('sesionUsuario');
+    localStorage.removeItem('usuario');
+    localStorage.removeItem('email');
+    localStorage.removeItem('password');
+    window.location.href = 'home.html';
+  };
+
+  window.addEventListener('DOMContentLoaded', function() {
+    loadTopbarAvatar();
+    renderPerfil();
+  });
+})();
+</script>
+</body>
+</html>
+
+
+

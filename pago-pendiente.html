@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+    <link rel="icon" href="favicon.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pago pendiente - IDMC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #fffbeb, #fef3c7);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #fde68a;
+      border-radius: 20px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 16px 48px rgba(217,119,6,0.10);
+    }
+    .icon-circle {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      margin: 0 auto 20px;
+      box-shadow: 0 8px 20px rgba(217,119,6,0.28);
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #78350f;
+      margin-bottom: 10px;
+    }
+    p {
+      color: #4b5563;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #d97706, #b45309);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 12px;
+      padding: 13px 30px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      box-shadow: 0 4px 14px rgba(217,119,6,0.30);
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.88; }
+    .btn-sec {
+      display: inline-block;
+      margin-top: 12px;
+      color: #64748b;
+      font-size: 0.82rem;
+      text-decoration: none;
+    }
+    .btn-sec:hover { color: #1e293b; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon-circle">⏳</div>
+    <h1>Pago en revisión</h1>
+    <p>Tu pago está siendo procesado por la plataforma de cobros. Esto puede tardar unos minutos. Te notificaremos cuando se confirme el acceso al curso.</p>
+    <a class="btn" href="perfil.html">Ir a mi perfil</a>
+    <br>
+    <a class="btn-sec" href="cursos.html">Volver a cursos</a>
+  </div>
+</body>
+</html>
+
+

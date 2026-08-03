@@ -1,0 +1,290 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+    <link rel="icon" href="favicon.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Importar datos - IDMC</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0b1220;
+      color: #dbe7ff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      width: 100%;
+      max-width: 560px;
+      background: #121b2f;
+      border: 1px solid #243554;
+      border-radius: 14px;
+      padding: 28px;
+    }
+    h1 {
+      font-size: 1.45rem;
+      margin-bottom: 8px;
+      color: #ffffff;
+    }
+    p {
+      color: #9cb2d8;
+      margin-bottom: 18px;
+      line-height: 1.4;
+    }
+    input[type="file"] {
+      width: 100%;
+      margin-bottom: 14px;
+      color: #dbe7ff;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .primary {
+      background: #2563eb;
+      color: #fff;
+    }
+    .ghost {
+      background: #263754;
+      color: #e2ebff;
+    }
+    .msg {
+      margin-top: 14px;
+      font-size: 0.95rem;
+      color: #86efac;
+      display: none;
+    }
+    .warn {
+      margin-top: 12px;
+      font-size: 0.88rem;
+      color: #fbbf24;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Importar cambios a la web</h1>
+    <p>Selecciona el archivo JSON exportado desde la app desktop para actualizar usuarios, cursos, roles y publicaciones en esta web.</p>
+
+    <input id="jsonFile" type="file" accept="application/json,.json">
+
+    <div class="row">
+      <button class="primary" id="importBtn">Importar y aplicar</button>
+      <button class="primary" id="autoImportBtn">Importar automatico</button>
+      <button class="ghost" id="clearBtn">Limpiar selección</button>
+    </div>
+
+    <div id="msg" class="msg"></div>
+    <div class="warn">Nota: esto reemplaza los datos actuales del sitio en este navegador.</div>
+  </div>
+
+  <script>
+    function readLocalJson(file) {
+      return new Promise(function(resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function() {
+          try {
+            resolve(JSON.parse(reader.result));
+          } catch (e) {
+            reject(new Error('JSON inválido'));
+          }
+        };
+        reader.onerror = function() { reject(new Error('No se pudo leer el archivo')); };
+        reader.readAsText(file, 'utf8');
+      });
+    }
+
+    function normalizeUsers(inputUsers, prevUsers) {
+      var prevMap = {};
+      (prevUsers || []).forEach(function(u) {
+        if (u && u.usuario) prevMap[u.usuario] = u;
+      });
+
+      return (Array.isArray(inputUsers) ? inputUsers : [])
+        .filter(function(u) { return u && u.usuario; })
+        .map(function(u) {
+          var old = prevMap[u.usuario] || {};
+          return {
+            usuario: u.usuario,
+            email: u.email || old.email || '',
+            password: u.password || old.password || '',
+            formacion: u.formacion || old.formacion || 'Estudiante'
+          };
+        });
+    }
+
+    function normalizePerfiles(inputUsers, prevPerfiles) {
+      var out = {};
+      var prev = prevPerfiles || {};
+
+      (Array.isArray(inputUsers) ? inputUsers : []).forEach(function(u) {
+        if (!u || !u.usuario) return;
+        var oldPerfil = prev[u.usuario] || {};
+        out[u.usuario] = {
+          ...oldPerfil,
+          formacion: u.formacion || oldPerfil.formacion || 'Estudiante',
+          cursos: Array.isArray(u.cursos) ? u.cursos : (Array.isArray(oldPerfil.cursos) ? oldPerfil.cursos : [])
+        };
+      });
+
+      return out;
+    }
+
+    function normalizeComunidadUsuarios(inputUsers, prevComunidad) {
+      var prevMap = {};
+      (Array.isArray(prevComunidad) ? prevComunidad : []).forEach(function(c) {
+        if (c && c.usuario) prevMap[c.usuario] = c;
+      });
+
+      return (Array.isArray(inputUsers) ? inputUsers : [])
+        .filter(function(u) { return u && u.usuario; })
+        .map(function(u) {
+          var old = prevMap[u.usuario] || {};
+          return {
+            usuario: u.usuario,
+            nombre: old.nombre || u.usuario,
+            formacion: u.formacion || old.formacion || old.rol || 'Estudiante',
+            rol: u.formacion || old.rol || 'Estudiante',
+            avatar: old.avatar || '',
+            bio: old.bio || '',
+            cursos: Array.isArray(u.cursos) ? u.cursos : (Array.isArray(old.cursos) ? old.cursos : [])
+          };
+        });
+    }
+
+    function aplicarDataImportada(data) {
+      var msg = document.getElementById('msg');
+
+      try {
+        var prevUsers = JSON.parse(localStorage.getItem('usuariosRegistrados') || '[]');
+        var prevPerfiles = JSON.parse(localStorage.getItem('perfilesUsuarios') || '{}');
+        var prevComunidad = JSON.parse(localStorage.getItem('comunidadUsuarios') || '[]');
+
+        var users = normalizeUsers(data.users, prevUsers);
+        var perfiles = normalizePerfiles(data.users, prevPerfiles);
+        var comunidadUsuarios = normalizeComunidadUsuarios(data.users, prevComunidad);
+        var posts = Array.isArray(data.posts) ? data.posts : [];
+        var comments = Array.isArray(data.comments) ? data.comments : [];
+
+        localStorage.setItem('usuariosRegistrados', JSON.stringify(users));
+        localStorage.setItem('perfilesUsuarios', JSON.stringify(perfiles));
+        localStorage.setItem('comunidadUsuarios', JSON.stringify(comunidadUsuarios));
+        localStorage.setItem('comunidadPosts', JSON.stringify(posts));
+        localStorage.setItem('comunidadComentariosPerfil', JSON.stringify(comments));
+
+        // Aplicar progreso de sesiones si el admin lo configuró
+        var usuarioActivo = localStorage.getItem('usuario') || localStorage.getItem('userName') || '';
+        if (usuarioActivo && Array.isArray(data.users)) {
+          var importedUser = data.users.find(function(u) { return u.usuario === usuarioActivo; });
+          if (importedUser && importedUser.progreso && typeof importedUser.progreso === 'object') {
+            var estadoProgreso = JSON.parse(localStorage.getItem('cursoProgresoEstado') || '{}');
+            if (!estadoProgreso.sesionesCompletadas) estadoProgreso.sesionesCompletadas = {};
+            Object.keys(importedUser.progreso).forEach(function(cursoId) {
+              var progresoDelCurso = importedUser.progreso[cursoId];
+              var sesiones = progresoDelCurso && progresoDelCurso.sesionesCompletadas;
+              if (sesiones && typeof sesiones === 'object') {
+                // Limpiar sesiones previas de ese curso
+                Object.keys(estadoProgreso.sesionesCompletadas).forEach(function(k) {
+                  if (k.indexOf(cursoId + '|') === 0) delete estadoProgreso.sesionesCompletadas[k];
+                });
+                // Aplicar las nuevas
+                Object.keys(sesiones).forEach(function(k) {
+                  if (sesiones[k]) estadoProgreso.sesionesCompletadas[k] = true;
+                });
+              }
+            });
+            localStorage.setItem('cursoProgresoEstado', JSON.stringify(estadoProgreso));
+          }
+        }
+
+        if (usuarioActivo && perfiles[usuarioActivo] && perfiles[usuarioActivo].formacion) {
+          localStorage.setItem('formacion', perfiles[usuarioActivo].formacion);
+        }
+
+        var chkUsers = JSON.parse(localStorage.getItem('usuariosRegistrados') || '[]').length;
+        var chkPosts = JSON.parse(localStorage.getItem('comunidadPosts') || '[]').length;
+
+        msg.style.display = 'block';
+        msg.textContent = 'Importación completa. Usuarios: ' + chkUsers + ', publicaciones: ' + chkPosts + '. Redirigiendo a home para refrescar...';
+        setTimeout(function() {
+          window.location.href = 'home.html?sync=' + Date.now();
+        }, 900);
+      } catch (err) {
+        alert('No se pudo importar: ' + err.message);
+      }
+    }
+
+    async function importar() {
+      var input = document.getElementById('jsonFile');
+      if (!input.files || !input.files.length) {
+        alert('Selecciona primero un archivo JSON.');
+        return;
+      }
+      var data = await readLocalJson(input.files[0]);
+      aplicarDataImportada(data);
+    }
+
+    async function importarAutomatico() {
+      try {
+        var candidates = [
+          'idmc-sync-web.json',
+          'idmc-datos-desktop.json',
+          'idmc-datos.json',
+          'idmc-sync-web (1).json',
+          'idmc-datos (1).json',
+          'asdb.json'
+        ];
+        var res = null;
+        for (var i = 0; i < candidates.length; i++) {
+          var attempt = await fetch(candidates[i] + '?ts=' + Date.now(), { cache: 'no-store' });
+          if (attempt.ok) {
+            res = attempt;
+            break;
+          }
+        }
+        if (!res) {
+          var nombreManual = prompt('No se encontro el archivo con nombres comunes. Escribe el nombre exacto del JSON (ejemplo: mi-export.json):');
+          if (!nombreManual) {
+            alert('Importacion cancelada. Puedes usar tambien el boton "Importar y aplicar" para elegir el archivo manualmente.');
+            return;
+          }
+          var manual = await fetch(nombreManual.trim() + '?ts=' + Date.now(), { cache: 'no-store' });
+          if (!manual.ok) {
+            alert('No se encontro "' + nombreManual + '". Verifica el nombre y que esté en la carpeta del proyecto.');
+            return;
+          }
+          res = manual;
+        }
+        var data = await res.json();
+        aplicarDataImportada(data);
+      } catch (err) {
+        alert('No se pudo importar automatico: ' + err.message);
+      }
+    }
+
+    document.getElementById('importBtn').addEventListener('click', importar);
+    document.getElementById('autoImportBtn').addEventListener('click', importarAutomatico);
+    document.getElementById('clearBtn').addEventListener('click', function() {
+      var input = document.getElementById('jsonFile');
+      var msg = document.getElementById('msg');
+      input.value = '';
+      msg.style.display = 'none';
+      msg.textContent = '';
+    });
+  </script>
+</body>
+</html>
+
+

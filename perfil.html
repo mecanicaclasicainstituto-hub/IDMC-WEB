@@ -1,0 +1,943 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .topbar { position: sticky; top: 0; z-index: 100; background: #fff; box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08); }
+        .topbar .profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; cursor: pointer; }
+        .topbar .cart-button { position: relative; }
+        .topbar .cart-count { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: #ff5c5c; color: #fff; font-size: 0.7rem; padding: 0 5px; }
+        .profile-dropdown { min-width: 170px; }
+        .perfil-actions-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .btn-perfil-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            background: #e5e7eb;
+            color: #0f172a;
+            border: 1px solid #d1d5db;
+            border-radius: 16px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 8px;
+            box-shadow: 0 12px 22px rgba(15, 23, 42, 0.12);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        .btn-perfil-link:hover {
+            background: #d1d5db;
+            transform: translateY(-2px);
+            box-shadow: 0 16px 26px rgba(15, 23, 42, 0.16);
+        }
+
+        .perfil-msg {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #b9e6c9;
+            background: #ecfdf3;
+            color: #166534;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: none;
+        }
+
+        .perfil-msg.show {
+            display: block;
+        }
+
+        /* ===== AMIGOS ===== */
+        .amigos-add-row { margin-bottom: 20px; }
+        .amigos-search-wrap {
+            display: flex; gap: 8px; align-items: center;
+        }
+        .amigos-search-wrap input {
+            flex: 1; border: 1px solid #e2e8f0; border-radius: 10px;
+            padding: 9px 14px; font-family: Poppins, sans-serif;
+            font-size: 0.84rem; color: #1e293b; outline: none;
+            background: #f8fafc; transition: border-color 0.15s;
+        }
+        .amigos-search-wrap input:focus { border-color: #2563eb; background: #fff; }
+        .amigos-search-wrap button {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff; border: none; border-radius: 10px;
+            padding: 9px 18px; font-family: Poppins, sans-serif;
+            font-size: 0.84rem; font-weight: 600; cursor: pointer;
+            white-space: nowrap; transition: box-shadow 0.15s;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+        }
+        .amigos-search-wrap button:hover { box-shadow: 0 4px 12px rgba(37,99,235,0.38); }
+        .amigo-msg { font-size: 0.78rem; margin: 6px 0 0; min-height: 18px; }
+        .amigo-msg.ok  { color: #16a34a; }
+        .amigo-msg.err { color: #dc2626; }
+
+        .amigos-section-title {
+            font-size: 0.82rem; font-weight: 700; color: #94a3b8;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            margin: 0 0 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px;
+        }
+        .amigos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px; margin-bottom: 24px;
+        }
+        .amigo-card {
+            border: 1px solid #e2e8f0; border-radius: 14px;
+            padding: 14px 14px 12px;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 8px; background: #fff;
+            transition: box-shadow 0.15s, transform 0.12s;
+        }
+        .amigo-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,0.08); transform: translateY(-1px); }
+        .amigo-avatar {
+            width: 54px; height: 54px; border-radius: 50%;
+            object-fit: cover; border: 2px solid #e2e8f0;
+            background: #eff6ff;
+        }
+        .amigo-initials {
+            width: 54px; height: 54px; border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff; font-size: 1.2rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .amigo-nombre {
+            font-size: 0.84rem; font-weight: 700; color: #1e293b;
+            text-align: center; line-height: 1.3;
+        }
+        .amigo-fecha {
+            font-size: 0.68rem; color: #94a3b8;
+        }
+        .amigo-actions { display: flex; gap: 6px; width: 100%; justify-content: center; }
+        .amigo-btn-rm {
+            font-size: 0.72rem; padding: 4px 12px; border-radius: 8px;
+            border: 1px solid #fecdd3; background: #fff1f2;
+            color: #e11d48; cursor: pointer; font-family: Poppins, sans-serif;
+            transition: background 0.12s;
+        }
+        .amigo-btn-rm:hover { background: #ffe4e6; }
+        .amigo-btn-chat {
+            font-size: 0.72rem; padding: 4px 12px; border-radius: 8px;
+            border: 1px solid #bfdbfe; background: #eff6ff;
+            color: #2563eb; cursor: pointer; font-family: Poppins, sans-serif;
+            transition: background 0.12s; text-decoration: none; display: inline-flex;
+            align-items: center;
+        }
+        .amigo-btn-chat:hover { background: #dbeafe; }
+        .solicitud-card {
+            border: 1px dashed #bfdbfe; border-radius: 14px;
+            padding: 12px 14px;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 6px; background: #f8fafc;
+        }
+        .solicitud-card .amigo-initials {
+            background: linear-gradient(135deg, #94a3b8, #64748b);
+        }
+        .solicitud-badge {
+            font-size: 0.68rem; color: #64748b;
+            background: #e2e8f0; padding: 2px 8px;
+            border-radius: 20px;
+        }
+        .amigos-empty {
+            text-align: center; color: #94a3b8;
+            font-size: 0.84rem; padding: 30px 0;
+        }
+
+        /* ===== MODO VISTA / EDICIÓN ===== */
+        /* Override grid para agregar fila de acciones arriba */
+        #perfil-tab .perfil-box {
+            grid-template-areas:
+                "topactions topactions"
+                "cover cover"
+                "avatar avatar"
+                "bio social"
+                "action action";
+        }
+        .perfil-top-actions {
+            grid-area: topactions;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+        .btn-ver-perfil-pub {
+            display: inline-flex; align-items: center; gap: 7px;
+            text-decoration: none;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff; border: none; border-radius: 20px;
+            padding: 10px 20px; font-size: 0.88rem; font-weight: 600;
+            cursor: pointer; font-family: Poppins, sans-serif;
+            box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+            transition: box-shadow 0.18s, transform 0.15s;
+        }
+        .btn-ver-perfil-pub:hover { box-shadow: 0 6px 20px rgba(37,99,235,0.42); transform: translateY(-1px); }
+        .btn-editar-perfil {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0;
+            border-radius: 20px; padding: 9px 18px; font-size: 0.88rem;
+            font-weight: 600; cursor: pointer; font-family: Poppins, sans-serif;
+            transition: background 0.15s;
+        }
+        .btn-editar-perfil:hover { background: #e2e8f0; }
+        .btn-guardar-perfil {
+            display: none; align-items: center; gap: 6px;
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            color: #fff; border: none; border-radius: 20px;
+            padding: 9px 20px; font-size: 0.88rem; font-weight: 600;
+            cursor: pointer; font-family: Poppins, sans-serif;
+            box-shadow: 0 3px 10px rgba(22,163,74,0.25);
+            transition: box-shadow 0.15s;
+        }
+        .btn-guardar-perfil:hover { box-shadow: 0 5px 14px rgba(22,163,74,0.38); }
+        .btn-cancelar-edicion {
+            display: none; align-items: center; gap: 6px;
+            background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3;
+            border-radius: 20px; padding: 9px 16px; font-size: 0.88rem;
+            font-weight: 600; cursor: pointer; font-family: Poppins, sans-serif;
+            transition: background 0.15s;
+        }
+        .btn-cancelar-edicion:hover { background: #ffe4e6; }
+        .perfil-edit-btns { display: flex; gap: 8px; align-items: center; }
+
+        /* Los botones dentro de perfil-top-actions no deben heredar grid-area: action */
+        .perfil-top-actions button,
+        .perfil-top-actions .btn-ver-perfil-pub {
+            grid-area: unset !important;
+            margin-top: 0;
+            padding: unset;
+        }
+        /* En modo vista: inputs se ven como texto */
+        .perfil-box.view-mode input[type="text"],
+        .perfil-box.view-mode input[type="email"],
+        .perfil-box.view-mode input[type="url"],
+        .perfil-box.view-mode textarea,
+        .perfil-box.view-mode select {
+            border-color: transparent !important;
+            background: transparent !important;
+            pointer-events: none;
+            color: #374151;
+            padding-left: 0;
+            box-shadow: none !important;
+            resize: none;
+        }
+        .perfil-box.view-mode input::placeholder,
+        .perfil-box.view-mode textarea::placeholder { color: #94a3b8; }
+        .perfil-box.view-mode label { color: #94a3b8; font-size: 0.75rem; }
+        /* Ocultar botones de archivo en modo vista */
+        .perfil-box.view-mode .cover-fields,
+        .perfil-box.view-mode #fotoPerfil { display: none; }
+        .perfil-box.view-mode .edit-only { display: none !important; }
+        .perfil-box.edit-mode .edit-only { display: flex !important; }
+        /* Indicador modo edición */
+        .perfil-box.edit-mode { outline: 2px solid #dbeafe; }
+    </style>
+</head>
+
+<body onload="verificarSesion(); if(typeof mostrarUsuario==='function')mostrarUsuario();">
+
+<div class="container">
+
+    <!-- SIDEBAR UNIFICADO -->
+    <aside class="sidebar">
+        <h2><a href="index.html" style="color:inherit;text-decoration:none;cursor:pointer;">Plataforma</a></h2>
+
+        <ul>
+            <li><a href="lobby.html">Lobby</a></li>
+            <li><a href="cursos.html">Cursos</a></li>
+            <li><a href="tu_progreso.html">Tu progreso</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+            <li><a href="redes_sociales.html">Redes Sociales</a></li>
+            <li><a href="comunidad.html">Comunidad</a></li>
+            <li><a href="contactanos.html">Contáctanos</a></li>
+        </ul>
+
+        <div class="sidebar-auth-slot">
+            <button class="sidebar-logout" id="sidebarLogoutBtn" onclick="logout()">Cerrar sesión</button>
+        </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div style="width:100%;">
+
+        <header class="topbar">
+            <div class="topbar-left"><h2>Mi Perfil</h2></div>
+            <div class="topbar-right">
+                                <div class="course-search-wrap">
+                    <input id="topbarCourseInput" list="topbarCourseList" type="text" placeholder="Escribe un curso...">
+                    <datalist id="topbarCourseList">
+                        <option value="Mecánica Clásica">
+                        <option value="Mecánica de Fluidos">
+                        <option value="Matemática Básica">
+                    </datalist>
+                    <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
+                </div>
+                <div class="profile-menu">
+                    <img id="topbarAvatar" src="avatar-default.svg" alt="Perfil" class="profile-avatar" onclick="toggleProfileMenu()" onerror="this.onerror=null;this.src='avatar-default.svg'">
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <a href="cursos.html">Todos los cursos</a>
+                        <a href="perfil.html#mis-cursos">Mis Cursos</a>
+                        <a href="lista_deseados.html">Lista de deseados</a>
+                        <a href="perfil.html">Editar perfil</a>
+                        <button type="button" onclick="logout()">Cerrar sesión</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="contenido fade-in">
+
+            <div id="noCuenta" style="display:none; text-align:center; padding:50px;">
+                <h2>¿No tienes cuenta?</h2>
+                <p>Crea una cuenta para acceder a tu perfil y cursos.</p>
+                <a href="registro.html" style="display:inline-block; padding:10px 20px; background:#2563eb; color:white; text-decoration:none; border-radius:5px;">Crear cuenta</a>
+            </div>
+
+            <div id="perfilContent">
+
+                <div class="perfil-wrapper">
+
+                    <div class="tabs">
+                        <button class="tab-button active" onclick="showTab('perfil', this)">Mi Perfil</button>
+                        <button class="tab-button" onclick="showTab('cursos', this)">Mis Cursos</button>
+                        <button class="tab-button" onclick="showTab('certificados', this)">Certificados</button>
+                        <button class="tab-button" onclick="showTab('amigos', this)">Amigos</button>
+                    </div>
+
+                    <div id="perfil-tab" class="tab-content">
+
+                        <div class="perfil-box view-mode" id="perfilBox">
+
+                            <!-- Acciones arriba -->
+                            <div class="perfil-top-actions">
+                                <button class="btn-ver-perfil-pub" onclick="irMiPerfilCompleto()">👤 Ver mi perfil público</button>
+                                <div class="perfil-edit-btns">
+                                    <button class="btn-editar-perfil" id="btnEditarPerfil" onclick="activarEdicion()">✏️ Editar perfil</button>
+                                    <button class="btn-guardar-perfil" id="btnGuardarPerfil" onclick="guardarPerfil()">💾 Guardar cambios</button>
+                                    <button class="btn-cancelar-edicion" id="btnCancelarEdicion" onclick="cancelarEdicion()">✕ Cancelar</button>
+                                </div>
+                            </div>
+
+                            <div class="cover-section">
+                                <label>Imagen de portada</label>
+                                <img id="coverPreview" src="cover-default.svg" alt="Imagen de portada" onerror="this.onerror=null;this.src='cover-default.svg'">
+                                <div class="cover-fields edit-only" style="display:none;">
+                                    <input type="file" id="coverFile" accept="image/*" onchange="previewCover()">
+                                    <input type="text" id="coverUrl" placeholder="URL de la imagen de portada">
+                                </div>
+                            </div>
+
+                            <div class="avatar-info-grid">
+                                <div class="avatar-section">
+                                    <h4>Foto de perfil</h4>
+                                    <img id="avatarPreview" src="avatar-default.svg" alt="Foto de perfil" onerror="this.onerror=null;this.src='avatar-default.svg'">
+                                    <input type="file" id="fotoPerfil" accept="image/*" class="edit-only" style="display:none;" onchange="previewFoto()">
+                                    <input type="text" id="avatar" placeholder="URL del avatar" class="edit-only" style="display:none;">
+                                </div>
+
+                                <div class="info-section">
+                                    <div class="field">
+                                        <label>Primer nombre</label>
+                                        <input type="text" id="primerNombre" placeholder="Tu primer nombre">
+                                    </div>
+                                    <div class="field">
+                                        <label>Apellido</label>
+                                        <input type="text" id="apellido" placeholder="Tu apellido">
+                                    </div>
+                                    <div class="field">
+                                        <label>Nombre a mostrar</label>
+                                        <input type="text" id="nombreMostrar" placeholder="Cómo quieres que te vean">
+                                    </div>
+                                    <div class="field">
+                                        <label>Correo electrónico</label>
+                                        <input type="email" id="emailPerfil" placeholder="tu-correo@ejemplo.com">
+                                    </div>
+                                    <div class="field full">
+                                        <label>Formación que posee</label>
+                                        <input type="text" id="formacion" placeholder="Ej. Ingeniería Mecánica, Física Aplicada">
+                                    </div>
+                                    <div class="field full">
+                                        <label>Género</label>
+                                        <select id="genero">
+                                            <option value="">Sin especificar</option>
+                                            <option value="Hombre">Hombre</option>
+                                            <option value="Mujer">Mujer</option>
+                                            <option value="Prefiero no decir">Prefiero no decir</option>
+                                        </select>
+                                    </div>
+                                    <div class="field full">
+                                        <label>Dónde trabajas</label>
+                                        <input type="text" id="trabajo" placeholder="Ej. Empresa XYZ, Autoempleado">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bio-section">
+                                <div class="bio-header">
+                                    <h4>Información biográfica</h4>
+                                </div>
+                                <p class="bio-note">Comparte una pequeña información biográfica para completar tu perfil.</p>
+                                <textarea id="biografia" rows="3" placeholder="Escribe tu biografía aquí..."></textarea>
+
+                                <h4 style="margin-top:20px; color:#0f172a; font-size:1rem;">Capacitaciones</h4>
+                                <p class="bio-note">Cursos, diplomados o certificaciones que hayas tomado fuera de la plataforma.</p>
+                                <textarea id="capacitaciones" rows="3" placeholder="Ej. Diplomado en Automatización Industrial, Curso SolidWorks 2023..."></textarea>
+
+                                <h4 style="margin-top:20px; color:#0f172a; font-size:1rem;">¿Qué te gusta hacer?</h4>
+                                <p class="bio-note">Hobbies, intereses o actividades que disfrutas.</p>
+                                <textarea id="gustos" rows="3" placeholder="Ej. Diseño de piezas mecánicas, robótica, deportes..."></textarea>
+                            </div>
+
+                            <div class="social-section">
+                                <h4>Perfiles sociales</h4>
+                                <div class="social-fields">
+                                    <div class="field">
+                                        <label>Perfil de Facebook</label>
+                                        <input type="url" id="facebook" placeholder="https://">
+                                    </div>
+                                    <div class="field">
+                                        <label>Perfil de X</label>
+                                        <input type="url" id="twitter" placeholder="https://">
+                                    </div>
+                                    <div class="field">
+                                        <label>Canal de YouTube</label>
+                                        <input type="url" id="youtube" placeholder="https://">
+                                    </div>
+                                    <div class="field">
+                                        <label>Perfil de LinkedIn</label>
+                                        <input type="url" id="linkedin" placeholder="https://">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="perfilMsg" class="perfil-msg" role="status" aria-live="polite">Perfil actualizado correctamente.</div>
+
+                        </div>
+
+                    </div>
+
+                    <div id="cursos-tab" class="tab-content" style="display:none;">
+
+                        <div class="cursos-box">
+                            <div id="misCursosListaWrap">
+                                <p>Aquí aparecerán tus cursos inscritos.</p>
+                                <p>¡Inscríbete a más cursos en la sección de <a href="cursos.html">Cursos</a>!</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="certificados-tab" class="tab-content" style="display:none;">
+                        <div class="cursos-box" id="certificadosWrap">
+                            <p>Cargando...</p>
+                        </div>
+                    </div>
+
+                    <!-- ===== TAB AMIGOS ===== -->
+                    <div id="amigos-tab" class="tab-content" style="display:none;">
+                        <div class="cursos-box">
+
+                            <!-- Buscar / Agregar -->
+                            <div class="amigos-add-row">
+                                <div class="amigos-search-wrap">
+                                    <input type="text" id="amigo-input" placeholder="Nombre del estudiante..." autocomplete="off"
+                                           onkeydown="if(event.key==='Enter')agregarAmigo();">
+                                    <button onclick="agregarAmigo()">+ Agregar</button>
+                                </div>
+                                <p id="amigo-msg" class="amigo-msg" aria-live="polite"></p>
+                            </div>
+
+                            <!-- Solicitudes enviadas -->
+                            <div id="solicitudes-section" style="display:none;">
+                                <h4 class="amigos-section-title">Solicitudes enviadas</h4>
+                                <div id="solicitudes-lista" class="amigos-grid"></div>
+                            </div>
+
+                            <!-- Lista de amigos -->
+                            <h4 class="amigos-section-title" id="amigos-titulo">Mis amigos</h4>
+                            <div id="amigos-lista" class="amigos-grid"></div>
+                            <p id="amigos-empty" class="amigos-empty" style="display:none;">Aún no tienes amigos agregados. ¡Busca a tus compañeros!</p>
+
+                        </div>
+                    </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+<script>
+
+// ════════════════════════════════════════════════════════
+//  SISTEMA DE AMIGOS
+// ════════════════════════════════════════════════════════
+var AMIGOS_KEY    = 'idmc_amigos';
+var SOLICITUD_KEY = 'idmc_solicitudes';
+
+function getAmigos() {
+    try { return JSON.parse(localStorage.getItem(AMIGOS_KEY) || '[]'); } catch(e){ return []; }
+}
+function saveAmigos(arr) {
+    try { localStorage.setItem(AMIGOS_KEY, JSON.stringify(arr)); } catch(e){}
+}
+function getSolicitudes() {
+    try { return JSON.parse(localStorage.getItem(SOLICITUD_KEY) || '[]'); } catch(e){ return []; }
+}
+function saveSolicitudes(arr) {
+    try { localStorage.setItem(SOLICITUD_KEY, JSON.stringify(arr)); } catch(e){}
+}
+function getMiNombre() {
+    try { var r = localStorage.getItem('sesionUsuario'); if(r) return JSON.parse(r).nombre; } catch(e){}
+    return localStorage.getItem('nombre') || localStorage.getItem('nombreUsuario') || '';
+}
+
+function agregarAmigo() {
+    var input  = document.getElementById('amigo-input');
+    var msgEl  = document.getElementById('amigo-msg');
+    var nombre = (input.value || '').trim();
+    msgEl.className = 'amigo-msg';
+    if (!nombre) { msgEl.textContent = 'Escribe un nombre.'; msgEl.classList.add('err'); return; }
+    if (nombre === getMiNombre()) { msgEl.textContent = 'No puedes agregarte a ti mismo.'; msgEl.classList.add('err'); return; }
+
+    var amigos = getAmigos();
+    if (amigos.find(function(a){ return a.nombre.toLowerCase() === nombre.toLowerCase(); })) {
+        msgEl.textContent = nombre + ' ya está en tu lista.'; msgEl.classList.add('err'); return;
+    }
+    var solicitudes = getSolicitudes();
+    if (solicitudes.find(function(s){ return s.nombre.toLowerCase() === nombre.toLowerCase(); })) {
+        msgEl.textContent = 'Ya enviaste solicitud a ' + nombre + '.'; msgEl.classList.add('err'); return;
+    }
+
+    solicitudes.push({ nombre: nombre, ts: Date.now() });
+    saveSolicitudes(solicitudes);
+    input.value = '';
+    msgEl.textContent = 'Solicitud enviada a ' + nombre + ' ✓'; msgEl.classList.add('ok');
+    setTimeout(function(){ msgEl.textContent = ''; msgEl.className = 'amigo-msg'; }, 3000);
+    renderAmigos();
+}
+
+function aceptarSolicitudComoAmigo(nombre) {
+    var solicitudes = getSolicitudes().filter(function(s){ return s.nombre !== nombre; });
+    saveSolicitudes(solicitudes);
+    var amigos = getAmigos();
+    if (!amigos.find(function(a){ return a.nombre === nombre; })) {
+        amigos.push({ nombre: nombre, avatar: '', fecha: Date.now() });
+        saveAmigos(amigos);
+    }
+    renderAmigos();
+}
+
+function eliminarAmigo(nombre) {
+    saveAmigos(getAmigos().filter(function(a){ return a.nombre !== nombre; }));
+    renderAmigos();
+}
+function cancelarSolicitud(nombre) {
+    saveSolicitudes(getSolicitudes().filter(function(s){ return s.nombre !== nombre; }));
+    renderAmigos();
+}
+
+function initiales(nombre) {
+    var parts = nombre.trim().split(' ');
+    return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+}
+function fmtFecha(ts) {
+    return new Date(ts).toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric' });
+}
+
+function renderAmigos() {
+    var listaEl      = document.getElementById('amigos-lista');
+    var emptyEl      = document.getElementById('amigos-empty');
+    var solicSecEl   = document.getElementById('solicitudes-section');
+    var solicListEl  = document.getElementById('solicitudes-lista');
+    if (!listaEl) return;
+
+    var amigos      = getAmigos();
+    var solicitudes = getSolicitudes();
+
+    // Solicitudes enviadas
+    if (solicitudes.length) {
+        solicSecEl.style.display = 'block';
+        solicListEl.innerHTML = solicitudes.map(function(s){
+            return '<div class="amigo-card solicitud-card">' +
+                '<div class="amigo-initials">' + initiales(s.nombre) + '</div>' +
+                '<div class="amigo-nombre">' + escapeHtml(s.nombre) + '</div>' +
+                '<span class="solicitud-badge">Solicitud enviada</span>' +
+                '<div class="amigo-actions">' +
+                    '<button class="amigo-btn-rm" onclick="cancelarSolicitud(\'' + escapeJs(s.nombre) + '\')">Cancelar</button>' +
+                    '<button class="amigo-btn-chat" onclick="aceptarSolicitudComoAmigo(\'' + escapeJs(s.nombre) + '\')">Aceptar</button>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    } else {
+        solicSecEl.style.display = 'none';
+    }
+
+    // Lista de amigos
+    if (!amigos.length) {
+        listaEl.innerHTML = '';
+        emptyEl.style.display = 'block';
+    } else {
+        emptyEl.style.display = 'none';
+        listaEl.innerHTML = amigos.map(function(a){
+            var avatar = a.avatar
+                ? '<img class="amigo-avatar" src="' + escapeHtml(a.avatar) + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="amigo-initials" style="display:none">' + initiales(a.nombre) + '</div>'
+                : '<div class="amigo-initials">' + initiales(a.nombre) + '</div>';
+            return '<div class="amigo-card">' +
+                avatar +
+                '<div class="amigo-nombre">' + escapeHtml(a.nombre) + '</div>' +
+                (a.fecha ? '<div class="amigo-fecha">Amigos desde ' + fmtFecha(a.fecha) + '</div>' : '') +
+                '<div class="amigo-actions">' +
+                    '<button class="amigo-btn-rm" onclick="eliminarAmigo(\'' + escapeJs(a.nombre) + '\')">Eliminar</button>' +
+                    '<a class="amigo-btn-chat" href="chat_comunidad.html">Chat</a>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+}
+
+function escapeJs(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+function guardarPerfil() {
+    // ---
+    let avatar = document.getElementById("avatar").value;
+    if(avatar !== ""){
+        localStorage.setItem("avatar", avatar);
+        document.getElementById("avatarPreview").src = avatar;
+    }
+    // ---
+    let cover = document.getElementById("coverUrl") ? document.getElementById("coverUrl").value : '';
+    if(cover !== ""){
+        localStorage.setItem("cover", cover);
+        document.getElementById("coverPreview").src = cover;
+    }
+    // ---
+    let primerNombre = document.getElementById("primerNombre").value;
+    let apellido = document.getElementById("apellido").value;
+    let nombreMostrar = document.getElementById("nombreMostrar").value;
+    let emailPerfil = document.getElementById("emailPerfil").value;
+    let formacion = document.getElementById("formacion").value;
+    let biografia = document.getElementById("biografia").value;
+    let genero = document.getElementById("genero").value;
+    let trabajo = document.getElementById("trabajo").value;
+    let capacitaciones = document.getElementById("capacitaciones").value;
+    let gustos = document.getElementById("gustos").value;
+
+    localStorage.setItem("primerNombre", primerNombre);
+    localStorage.setItem("apellido", apellido);
+    localStorage.setItem("nombreMostrar", nombreMostrar);
+    localStorage.setItem("emailPerfil", emailPerfil);
+    localStorage.setItem("formacion", formacion);
+    localStorage.setItem("biografia", biografia);
+    localStorage.setItem("genero", genero);
+    localStorage.setItem("trabajo", trabajo);
+    localStorage.setItem("capacitaciones", capacitaciones);
+    localStorage.setItem("gustos", gustos);
+    // ---
+    let facebook = document.getElementById("facebook").value;
+    let twitter = document.getElementById("twitter").value;
+    let youtube = document.getElementById("youtube").value;
+    let linkedin = document.getElementById("linkedin").value;
+
+    localStorage.setItem("facebook", facebook);
+    localStorage.setItem("twitter", twitter);
+    localStorage.setItem("youtube", youtube);
+    localStorage.setItem("linkedin", linkedin);
+
+    desactivarEdicion();
+    mostrarMensajePerfil('Perfil actualizado correctamente.');
+    if (typeof sincronizarUsuarioComunidad === 'function') sincronizarUsuarioComunidad();
+}
+
+var perfilMsgTimer = null;
+function mostrarMensajePerfil(texto) {
+    var msg = document.getElementById('perfilMsg');
+    if (!msg) return;
+    msg.textContent = texto;
+    msg.classList.add('show');
+    if (perfilMsgTimer) clearTimeout(perfilMsgTimer);
+    perfilMsgTimer = setTimeout(function() {
+        msg.classList.remove('show');
+    }, 2600);
+}
+
+function irMiPerfilCompleto() {
+    var usuario = localStorage.getItem('usuario') || '';
+    if (!usuario) {
+        mostrarMensajePerfil('Inicia sesion para ver tu perfil completo.');
+        return;
+    }
+    window.location.href = 'perfil_miembro.html?user=' + encodeURIComponent(usuario);
+}
+
+function previewFoto() {
+    const file = document.getElementById("fotoPerfil").files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById("avatarPreview").src = e.target.result;
+            localStorage.setItem("avatar", e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function previewCover() {
+    const file = document.getElementById("coverFile").files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById("coverPreview").src = e.target.result;
+            localStorage.setItem("cover", e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function activarEdicion() {
+    var box = document.getElementById('perfilBox');
+    box.classList.remove('view-mode');
+    box.classList.add('edit-mode');
+    document.getElementById('btnEditarPerfil').style.display = 'none';
+    document.getElementById('btnGuardarPerfil').style.display = 'inline-flex';
+    document.getElementById('btnCancelarEdicion').style.display = 'inline-flex';
+}
+
+function desactivarEdicion() {
+    var box = document.getElementById('perfilBox');
+    box.classList.remove('edit-mode');
+    box.classList.add('view-mode');
+    document.getElementById('btnEditarPerfil').style.display = 'inline-flex';
+    document.getElementById('btnGuardarPerfil').style.display = 'none';
+    document.getElementById('btnCancelarEdicion').style.display = 'none';
+}
+
+function cancelarEdicion() {
+    cargarDatosPerfil(); // restaura valores guardados
+    desactivarEdicion();
+}
+
+function cargarDatosPerfil() {
+    document.getElementById("primerNombre").value  = localStorage.getItem("primerNombre") || '';
+    document.getElementById("apellido").value      = localStorage.getItem("apellido") || '';
+    document.getElementById("nombreMostrar").value = localStorage.getItem("nombreMostrar") || '';
+    document.getElementById("emailPerfil").value   = localStorage.getItem("emailPerfil") || '';
+    document.getElementById("formacion").value     = localStorage.getItem("formacion") || '';
+    document.getElementById("biografia").value     = localStorage.getItem("biografia") || '';
+    document.getElementById("genero").value        = localStorage.getItem("genero") || '';
+    document.getElementById("trabajo").value       = localStorage.getItem("trabajo") || '';
+    document.getElementById("capacitaciones").value = localStorage.getItem("capacitaciones") || '';
+    document.getElementById("gustos").value        = localStorage.getItem("gustos") || '';
+    document.getElementById("facebook").value      = localStorage.getItem("facebook") || '';
+    document.getElementById("twitter").value       = localStorage.getItem("twitter") || '';
+    document.getElementById("youtube").value       = localStorage.getItem("youtube") || '';
+    document.getElementById("linkedin").value      = localStorage.getItem("linkedin") || '';
+    document.getElementById("avatar").value        = localStorage.getItem("avatar") || '';
+    var coverUrl = document.getElementById("coverUrl");
+    if (coverUrl) coverUrl.value = localStorage.getItem("cover") || '';
+}
+
+function verificarPerfil() {
+    const usuario = localStorage.getItem("usuario");
+    if (!usuario) {
+        document.getElementById("noCuenta").style.display = "block";
+        document.getElementById("perfilContent").style.display = "none";
+    } else {
+        document.getElementById("noCuenta").style.display = "none";
+        document.getElementById("perfilContent").style.display = "block";
+    // ---
+        const avatar = localStorage.getItem("avatar");
+        if (typeof aplicarAvatarSeguro === 'function') {
+            aplicarAvatarSeguro(document.getElementById("avatarPreview"), avatar);
+            aplicarAvatarSeguro(document.getElementById('topbarAvatar'), avatar);
+        }
+        const cover = localStorage.getItem("cover");
+        if (typeof aplicarCoverSeguro === 'function') {
+            aplicarCoverSeguro(document.getElementById("coverPreview"), cover);
+        }
+        cargarDatosPerfil();
+        renderMisCursosActual();
+        if (window.location.hash === '#mis-cursos') {
+            const buttons = document.querySelectorAll('.tab-button');
+            if (buttons[1]) showTab('cursos', buttons[1]);
+        }
+    }
+}
+
+function showTab(tab, button) {
+    // ---
+    document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+    // ---
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+    // ---
+    document.getElementById(tab + '-tab').style.display = 'block';
+    // ---
+    button.classList.add('active');
+
+    if (tab === 'cursos') {
+        renderMisCursosActual();
+    }
+    if (tab === 'certificados') {
+        renderCertificados();
+    }
+    if (tab === 'amigos') {
+        renderAmigos();
+    }
+}
+
+function renderCertificados() {
+    var wrap = document.getElementById('certificadosWrap');
+    if (!wrap) return;
+
+    // Cursos y su estado de completitud
+    var CERTIFICADOS = [
+        {
+            id: 'mecanica_nivel1',
+            nombre: 'Mecánica Clásica Nivel I',
+            url: 'certificado.html'
+        }
+    ];
+
+    var disponibles = CERTIFICADOS.filter(function(c) {
+        if (typeof getContinuarSesionUrl !== 'function') return false;
+        return getContinuarSesionUrl(c.id) === 'modulo3_ejercicio4.html';
+    });
+
+    if (!disponibles.length) {
+        wrap.innerHTML =
+            '<div style="text-align:center; padding:32px 16px;">' +
+                '<p style="font-size:1.3rem; margin-bottom:8px;">🎓</p>' +
+                '<p style="color:#475569; line-height:1.6;">Aún no tienes certificados disponibles.<br>' +
+                'Completa un curso para obtener tu certificado.</p>' +
+                '<a href="cursos.html" style="display:inline-block;margin-top:16px;background:#2563eb;color:#fff;padding:10px 22px;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.9rem;">Ver cursos</a>' +
+            '</div>';
+        return;
+    }
+
+    wrap.innerHTML =
+        '<p style="font-weight:700; margin-bottom:16px;">Tus certificados:</p>' +
+        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px;">' +
+        disponibles.map(function(c) {
+            return '<a href="' + c.url + '" style="display:flex;align-items:center;gap:14px;text-decoration:none;border:1px solid #c8a95a;background:#fffdf5;border-radius:12px;padding:16px;">' +
+                '<span style="font-size:2rem;">🎓</span>' +
+                '<div>' +
+                    '<div style="font-weight:700;color:#92400e;margin-bottom:2px;">' + escapeHtml(c.nombre) + '</div>' +
+                    '<div style="font-size:0.82rem;color:#a16207;">Ver y descargar certificado →</div>' +
+                '</div>' +
+            '</a>';
+        }).join('') +
+        '</div>';
+}
+
+function escapeHtml(text) {
+    return String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function renderMisCursosActual() {
+    var wrap = document.getElementById('misCursosListaWrap');
+    if (!wrap) return;
+
+
+    var usuario = localStorage.getItem('usuario') || '';
+    if (!usuario) {
+        wrap.innerHTML = '<p>Inicia sesión para ver tus cursos.</p>';
+        return;
+    }
+
+    var perfiles = JSON.parse(localStorage.getItem('perfilesUsuarios') || '{}');
+    var perfil = perfiles[usuario] || {};
+    var cursos = Array.isArray(perfil.cursos) ? perfil.cursos : [];
+
+    if (!cursos.length) {
+        wrap.innerHTML = '<p>Aquí aparecerán tus cursos inscritos.</p>' +
+            '<p>¡Inscríbete a más cursos en la sección de <a href="cursos.html">Cursos</a>!</p>';
+        return;
+    }
+
+    var avisoCurso = localStorage.getItem('checkoutUltimoCurso') || '';
+    var avisoHtml = '';
+    if (avisoCurso) {
+        avisoHtml = '<p style="margin:0 0 12px; padding:10px 12px; border:1px solid #bbf7d0; border-radius:10px; background:#ecfdf3; color:#166534; font-weight:600;">Pago detectado: ' + escapeHtml(avisoCurso) + ' ya fue agregado a tus cursos.</p>';
+        localStorage.removeItem('checkoutUltimoCurso');
+    }
+
+    wrap.innerHTML = avisoHtml + '<p style="margin-bottom:10px;"><strong>Tus cursos inscritos:</strong></p>' +
+        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:10px; text-align:left;">' +
+        cursos.map(function(c) {
+            var url = (typeof getCursoContinuarUrl === 'function') ? getCursoContinuarUrl(c) : 'cursos.html';
+            return '<a href="' + url + '" style="display:block; text-decoration:none; border:1px solid #dbeafe; background:#f8fbff; border-radius:12px; padding:12px; color:#0f172a;">'
+                + '<div style="font-weight:700; color:#1e3a8a; margin-bottom:6px;">' + escapeHtml(c) + '</div>'
+                + '<div style="font-size:0.83rem; color:#64748b;">Continuar curso</div>'
+                + '</a>';
+        }).join('') +
+        '</div>';
+}
+</script>
+
+<script src="app.js" defer></script>
+
+<script>
+verificarPerfil(); // Call after app.js loads
+</script>
+
+<script>
+(function() {
+    function loadTopbarAvatar() {
+        var topbarAvatar = document.getElementById('topbarAvatar');
+        if (!topbarAvatar) return;
+        var avatar = localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar') || localStorage.getItem('userAvatar') || localStorage.getItem('profilePhoto') || localStorage.getItem('profileImage') || localStorage.getItem('avatarUrl');
+        if (typeof aplicarAvatarSeguro === 'function') aplicarAvatarSeguro(topbarAvatar, avatar);
+    }
+    window.addEventListener('DOMContentLoaded', loadTopbarAvatar);
+    window.logout = function() {
+        localStorage.removeItem('perfilAvatar');
+        localStorage.removeItem('avatar');
+        localStorage.removeItem('userAvatar');
+        localStorage.removeItem('profilePhoto');
+        localStorage.removeItem('profileImage');
+        localStorage.removeItem('avatarUrl');
+        localStorage.removeItem('sesion');
+        localStorage.removeItem('sesionUsuario');
+        localStorage.removeItem('usuario');
+        localStorage.removeItem('email');
+        localStorage.removeItem('password');
+        window.location.href = 'home.html';
+    };
+})();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+    <link rel="icon" href="favicon.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pago exitoso - IDMC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #bbf7d0;
+      border-radius: 20px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 16px 48px rgba(22,163,74,0.12);
+    }
+    .icon-circle {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.4rem;
+      margin: 0 auto 20px;
+      box-shadow: 0 8px 20px rgba(22,163,74,0.3);
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #14532d;
+      margin-bottom: 10px;
+    }
+    p {
+      color: #4b5563;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 12px;
+      padding: 13px 30px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      box-shadow: 0 4px 14px rgba(22,163,74,0.35);
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.88; }
+    .btn-sec {
+      display: inline-block;
+      margin-top: 12px;
+      color: #64748b;
+      font-size: 0.82rem;
+      text-decoration: none;
+    }
+    .btn-sec:hover { color: #1e293b; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon-circle">✓</div>
+    <h1>¡Pago aprobado!</h1>
+    <p id="successMsg">Tu pago fue procesado correctamente. Ya tienes acceso al curso. Dirígete a <strong>Mis Cursos</strong> para comenzar.</p>
+    <a class="btn" id="successBtn" href="perfil.html#mis-cursos">Ir a Mis Cursos</a>
+    <br>
+    <a class="btn-sec" href="cursos.html">Explorar más cursos</a>
+  </div>
+
+  <script src="app.js" defer></script>
+  <script>
+    (function() {
+      var msg = document.getElementById('successMsg');
+      var btn = document.getElementById('successBtn');
+
+      var checkoutInfo = null;
+      try {
+        checkoutInfo = JSON.parse(localStorage.getItem('checkoutInfo') || 'null');
+      } catch (_e) {
+        checkoutInfo = null;
+      }
+
+      // Expirar checkoutInfo si tiene más de 30 minutos
+      if (checkoutInfo && checkoutInfo.createdAt) {
+        var antiguedad = Date.now() - Number(checkoutInfo.createdAt);
+        if (antiguedad > 30 * 60 * 1000) {
+          localStorage.removeItem('checkoutInfo');
+          checkoutInfo = null;
+        }
+      }
+
+      if (!checkoutInfo || !checkoutInfo.title) {
+        msg.innerHTML = 'Tu pago fue procesado. <a href="perfil.html#mis-cursos">Ve a Mis Cursos</a> para ver tus cursos.';
+        btn.href = 'perfil.html#mis-cursos';
+        return;
+      }
+
+      if (typeof agregarCursoAUsuario === 'function') {
+        agregarCursoAUsuario(checkoutInfo.title, checkoutInfo.user || localStorage.getItem('usuario') || '');
+      }
+
+      // Limpiar progreso del curso comprado
+      (function() {
+        var nombre = String(checkoutInfo.title || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        var cursoIds = ['mecanica_nivel1', 'mecanica_nivel2', 'mecanica_nivel3', 'electro_nivel1', 'fluidos_nivel1', 'fluidos_nivel2', 'fluidos_nivel3', 'matematica_nivel1'];
+        var cursoIdEncontrado = '';
+
+        cursoIds.forEach(function(id) {
+          var cfg = { mecanica_nivel1: 'mec\u00e1nica cl\u00e1sica nivel i', mecanica_nivel2: 'mec\u00e1nica cl\u00e1sica nivel ii', mecanica_nivel3: 'mec\u00e1nica cl\u00e1sica nivel iii', electro_nivel1: 'electromagnetismo cl\u00e1sico nivel i', fluidos_nivel1: 'mec\u00e1nica de fluidos i', fluidos_nivel2: 'mec\u00e1nica de fluidos ii', fluidos_nivel3: 'mec\u00e1nica de fluidos iii', matematica_nivel1: 'matem\u00e1tica aplicada a la f\u00edsica e ingenier\u00eda' };
+          if (nombre === cfg[id]) cursoIdEncontrado = id;
+        });
+
+        if (cursoIdEncontrado) {
+          var progressData = JSON.parse(localStorage.getItem('cursoProgresoEstado') || '{}');
+          var sessionKeys = Object.keys(progressData.sesionesCompletadas || {});
+          var pattern = '^' + cursoIdEncontrado.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&') + '\\\\|';
+          var regex = new RegExp(pattern);
+
+          sessionKeys.forEach(function(k) {
+            if (regex.test(k)) delete progressData.sesionesCompletadas[k];
+          });
+
+          localStorage.setItem('cursoProgresoEstado', JSON.stringify(progressData));
+        }
+      })();
+
+      if (msg) {
+        msg.innerHTML = 'Tu pago fue procesado correctamente. El curso <strong>' + String(checkoutInfo.title).replace(/</g, '&lt;') + '</strong> ya fue agregado a tu cuenta.';
+      }
+      if (btn) {
+        btn.textContent = 'Continuar al curso';
+        btn.href = typeof getCursoContinuarUrl === 'function'
+          ? getCursoContinuarUrl(checkoutInfo.title)
+          : 'perfil.html#mis-cursos';
+      }
+
+      localStorage.removeItem('checkoutInfo');
+    })();
+  </script>
+</body>
+</html>
+
+

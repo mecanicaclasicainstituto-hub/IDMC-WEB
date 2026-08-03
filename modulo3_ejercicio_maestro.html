@@ -1,0 +1,326 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Módulo 3 - Sesión 9 Ejercicio Maestro</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .topbar { position: sticky; top: 0; z-index: 100; background: #fff; box-shadow: 0 1px 12px rgba(0,0,0,0.08); }
+        .topbar .profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; cursor: pointer; }
+        .profile-dropdown { min-width: 170px; }
+        .modulo-page { padding: 26px; display: flex; flex-direction: column; gap: 16px; }
+        .modulo-hero { background: linear-gradient(135deg, #0f172a, #1e3a8a 60%, #2563eb); color: #fff; border-radius: 16px; padding: 22px; box-shadow: 0 12px 24px rgba(30,58,138,0.24); }
+        .modulo-hero h1 { margin: 0 0 8px; font-size: 1.35rem; }
+        .modulo-hero p { margin: 0; color: rgba(255,255,255,0.9); line-height: 1.5; max-width: 860px; }
+        .ejercicio-wrap { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; box-shadow: 0 6px 16px rgba(15,23,42,0.06); max-width: 1480px; width: 100%; margin: 0 auto; border-left: 4px solid #2563eb; }
+        .fisica-img-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
+        .fisica-img-wrap svg { max-width: 900px; width: 100%; height: auto; }
+        .enunciado-box { background: #f0f6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; }
+        .enunciado-box p { margin: 0 0 10px; color: #1e3a8a; font-size: 0.93rem; line-height: 1.7; }
+        .enunciado-box p:last-child { margin-bottom: 0; }
+        .enunciado-box strong { color: #1d4ed8; }
+        .tareas-titulo { font-size: 0.92rem; font-weight: 700; color: #0f172a; margin: 0 0 12px; }
+        .tareas-lista { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+        .tarea-item { display: flex; gap: 12px; align-items: flex-start; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 11px 14px; }
+        .tarea-num { flex-shrink: 0; width: 28px; height: 28px; background: #2563eb; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.82rem; margin-top: 1px; }
+        .tarea-texto { font-size: 0.9rem; color: #334155; line-height: 1.55; }
+        .sesion-actions { margin-top: 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .sesion-meta { font-size: 0.8rem; color: #64748b; font-weight: 600; }
+        .progreso-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; box-shadow: 0 6px 16px rgba(15,23,42,0.06); }
+        .progreso-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+        .progreso-head h3 { margin: 0; color: #0f172a; font-size: 0.88rem; }
+        .progreso-head span { font-size: 0.8rem; font-weight: 700; color: #1d4ed8; }
+        .progreso-bar { width: 100%; height: 6px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
+        .progreso-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #2563eb, #60a5fa); transition: width 0.3s ease; }
+        .progreso-desc { margin: 6px 0 0; font-size: 0.74rem; color: #64748b; }
+        .modulo-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-modulo { border: none; border-radius: 8px; padding: 10px 14px; font-weight: 600; font-size: 0.88rem; text-decoration: none; cursor: pointer; display: inline-block; font-family: 'Poppins', sans-serif; }
+        .btn-modulo-primary { background: #2563eb; color: #fff; }
+        .btn-modulo-primary:hover { background: #1d4ed8; }
+        .btn-modulo-sec { background: #e2e8f0; color: #0f172a; }
+        .btn-modulo-sec:hover { background: #cbd5e1; }
+
+        /* ── Animaciones de entrada ── */
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-28px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(32px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .modulo-hero   { animation: slideDown 0.55s cubic-bezier(.22,.68,0,1.2) both; }
+        .ejercicio-wrap { animation: slideUp 0.55s cubic-bezier(.22,.68,0,1.2) 0.15s both; }
+        .progreso-box  { animation: slideUp 0.45s ease 0.35s both; }
+        .modulo-actions { animation: slideUp 0.4s ease 0.45s both; }
+
+        .tarea-item { animation: slideLeft 0.4s cubic-bezier(.22,.68,0,1.2) both; }
+        .tarea-item:nth-child(1) { animation-delay: 0.25s; }
+        .tarea-item:nth-child(2) { animation-delay: 0.32s; }
+        .tarea-item:nth-child(3) { animation-delay: 0.39s; }
+        .tarea-item:nth-child(4) { animation-delay: 0.46s; }
+        .tarea-item:nth-child(5) { animation-delay: 0.53s; }
+        .tarea-item:nth-child(6) { animation-delay: 0.60s; }
+        .tarea-item:nth-child(7) { animation-delay: 0.67s; }
+        .tarea-item:nth-child(8) { animation-delay: 0.74s; }
+        .tarea-item:nth-child(9) { animation-delay: 0.81s; }
+    </style>
+</head>
+<body onload="verificarSesion();">
+<div class="container">
+    <aside class="sidebar">
+        <h2><a href="index.html" style="color:inherit;text-decoration:none;cursor:pointer;">Plataforma</a></h2>
+        <ul>
+            <li><a href="lobby.html">Lobby</a></li>
+            <li><a href="cursos.html">Cursos</a></li>
+            <li><a href="tu_progreso.html">Tu progreso</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+            <li><a href="redes_sociales.html">Redes Sociales</a></li>
+            <li><a href="comunidad.html">Comunidad</a></li>
+            <li><a href="contactanos.html">Contáctanos</a></li>
+        </ul>
+        <button onclick="logout()">Cerrar sesión</button>
+    </aside>
+    <div style="width:100%;">
+<header class="topbar">
+    <div class="topbar-left"><h2>Módulo 3 - Sesión 9 Ejercicio Maestro</h2></div>
+    <div class="topbar-right">
+        <div class="course-search-wrap">
+            <input id="topbarCourseInput" list="topbarCourseList" type="text" placeholder="Escribe un curso...">
+            <datalist id="topbarCourseList">
+                <option value="Mecánica Clásica">
+                <option value="Mecánica de Fluidos">
+                <option value="Matemática Básica">
+            </datalist>
+            <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
+        </div>
+        <div class="profile-menu">
+            <img id="topbarAvatar" src="avatar-default.svg" alt="Perfil" class="profile-avatar" onclick="toggleProfileMenu()" onerror="this.onerror=null;this.src='avatar-default.svg'">
+            <div class="profile-dropdown" id="profileDropdown">
+                <a href="cursos.html">Todos los cursos</a>
+                <a href="perfil.html#mis-cursos">Mis cursos</a>
+                <a href="lista_deseados.html">Lista de deseados</a>
+                <a href="perfil.html">Editar perfil</a>
+                <button type="button" onclick="logout()">Cerrar sesión</button>
+            </div>
+        </div>
+    </div>
+</header>
+<main class="modulo-page fade-in">
+    <section class="modulo-hero">
+        <h1>Módulo 3 — Sesión 9: Ejercicio Maestro</h1>
+        <p>Ejercicio integrador de cierre. Aplica todos los conceptos del módulo: unidades, análisis dimensional, cinemática, dinámica, trabajo, energía, potencia e impulso.</p>
+    </section>
+
+    <div class="ejercicio-wrap">
+
+        <!-- Diagrama SVG del problema -->
+        <div class="fisica-img-wrap">
+            <svg viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagrama del ejercicio maestro">
+                <defs>
+                    <marker id="em1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#1d4ed8"/></marker>
+                    <marker id="em2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#dc2626"/></marker>
+                    <marker id="em3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/></marker>
+                </defs>
+
+                <!-- fondo -->
+                <rect width="900" height="220" fill="#f0f6ff"/>
+                <!-- superficie -->
+                <rect x="30" y="160" width="840" height="8" rx="4" fill="#bfdbfe"/>
+
+                <!-- separador de fases -->
+                <line x1="530" y1="40" x2="530" y2="166" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+                <!-- etiquetas de fase -->
+                <text x="270" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#64748b" font-weight="700">FASE 1 — ACELERACIÓN</text>
+                <text x="715" y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#64748b" font-weight="700">FASE 2 — FRENADO</text>
+
+                <!-- ====== FASE 1 ====== -->
+                <!-- reposo -->
+                <rect x="30" y="55" width="60" height="24" rx="5" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.2"/>
+                <text x="60" y="72" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#1e3a8a" font-weight="700">v₀ = 0</text>
+                <!-- auto fase 1 -->
+                <rect x="160" y="115" width="130" height="45" rx="10" fill="#2563eb"/>
+                <text x="225" y="140" text-anchor="middle" font-family="Poppins,sans-serif" font-size="12" font-weight="700" fill="#fff">m = 2400 kg</text>
+                <text x="225" y="155" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#bfdbfe">Automóvil</text>
+                <!-- flecha velocidad final fase1 -->
+                <line x1="292" y1="137" x2="520" y2="137" stroke="#1d4ed8" stroke-width="3" marker-end="url(#em1)"/>
+                <text x="406" y="127" text-anchor="middle" font-family="Poppins,sans-serif" font-size="12" font-weight="700" fill="#1d4ed8">v = 58 m/s</text>
+                <!-- datos fase 1 -->
+                <rect x="140" y="55" width="200" height="46" rx="6" fill="#fff" stroke="#bfdbfe" stroke-width="1.2"/>
+                <text x="240" y="73" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#0f172a" font-weight="700">d = 1200 m  |  t = 16 s</text>
+                <text x="240" y="90" text-anchor="middle" font-family="Courier New,monospace" font-size="10" fill="#2563eb">a = ?  |  F = ?  |  P = ?</text>
+
+                <!-- ====== FASE 2 ====== -->
+                <!-- auto fase 2 -->
+                <rect x="570" y="115" width="110" height="45" rx="10" fill="#dc2626"/>
+                <text x="625" y="140" text-anchor="middle" font-family="Poppins,sans-serif" font-size="12" font-weight="700" fill="#fff">Frenado</text>
+                <text x="625" y="155" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#fecaca">v final = 0</text>
+                <!-- fuerza de frenado con ángulo -->
+                <line x1="569" y1="137" x2="430" y2="102" stroke="#dc2626" stroke-width="2.5" marker-end="url(#em2)"/>
+                <text x="488" y="108" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#dc2626">F frenado</text>
+                <!-- ángulo 35° -->
+                <path d="M 545 137 A 28 28 0 0 0 521 118" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <text x="537" y="148" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#dc2626" font-weight="700">35°</text>
+                <!-- datos fase 2 -->
+                <rect x="570" y="55" width="200" height="46" rx="6" fill="#fff" stroke="#fecaca" stroke-width="1.2"/>
+                <text x="670" y="73" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#0f172a" font-weight="700">d = 210 m  |  v final = 0</text>
+                <text x="670" y="90" text-anchor="middle" font-family="Courier New,monospace" font-size="10" fill="#dc2626">a = ?  |  W = ?  |  J = ?</text>
+
+                <!-- etiqueta Ek max -->
+                <text x="450" y="188" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#059669" font-weight="700">Ek máx @ v = 58 m/s → Ek = ?</text>
+            </svg>
+        </div>
+
+        <!-- Enunciado del problema -->
+        <div class="enunciado-box">
+            <p>Dentro de un sistema físico y respecto a un <strong>marco de referencia inercial</strong>, un <strong>automóvil experimental de competición</strong> con una masa de <strong>2400 kg</strong> parte desde el reposo y acelera uniformemente hasta alcanzar una velocidad de <strong>58 m/s</strong> en un intervalo de tiempo de <strong>16 s</strong>, durante el cual recorre una distancia de <strong>1200 m</strong>.</p>
+            <p>Posteriormente, el automóvil entra en una zona de frenado donde una <strong>fuerza de frenado</strong> actúa formando un ángulo de <strong>35°</strong> respecto a la dirección horizontal del movimiento. El automóvil se detiene completamente después de recorrer <strong>210 m</strong>.</p>
+            <p>Finalmente, el motor del vehículo desarrolla una <strong>potencia constante</strong> durante la aceleración.</p>
+        </div>
+
+        <!-- Lista de tareas -->
+        <p class="tareas-titulo">Resuelve cada uno de los siguientes incisos:</p>
+        <ol class="tareas-lista">
+            <li class="tarea-item">
+                <span class="tarea-num">1</span>
+                <span class="tarea-texto">Calcula la <strong>aceleración del automóvil</strong> durante el arranque.</span>
+            </li>
+            <li class="tarea-item">
+                <span class="tarea-num">2</span>
+                <span class="tarea-texto">Calcula la <strong>fuerza neta aplicada</strong> sobre el automóvil.</span>
+            </li>
+            <li class="tarea-item">
+                <span class="tarea-num">3</span>
+                <span class="tarea-texto">Calcula el <strong>tiempo necesario para detenerse</strong> completamente durante el frenado.</span>
+            </li>
+            <li class="tarea-item">
+                <span class="tarea-num">4</span>
+                <span class="tarea-texto">Calcula la <strong>desaceleración del vehículo</strong> durante la fase de frenado.</span>
+            </li>
+            <li class="tarea-item">
+                <span class="tarea-num">5</span>
+                <span class="tarea-texto">Calcula el <strong>trabajo mecánico realizado</strong> por la fuerza de frenado.</span>
+            </li>
+            <li class="tarea-item">
+                <span class="tarea-num">6</span>
+                <span class="tarea-texto">Calcula la <strong>energía cinética máxima</strong> alcanzada por el automóvil.</span>
+            </li>
+            <li class="tarea-item">
+                <span class="tarea-num">7</span>
+                <span class="tarea-texto">Calcula la <strong>potencia media desarrollada</strong> por el motor durante la aceleración.</span>
+            </li>
+            <li class="tarea-item">
+                <span class="tarea-num">8</span>
+                <span class="tarea-texto">Calcula el <strong>impulso mecánico</strong> producido durante el frenado.</span>
+            </li>
+            <li class="tarea-item">
+                <span class="tarea-num">9</span>
+                <span class="tarea-texto">Demuestra <strong>dimensionalmente</strong> que la potencia corresponde a <strong>watts</strong>, el impulso a <strong>N · s</strong>, y la energía a <strong>Joules</strong>.</span>
+            </li>
+        </ol>
+
+        <div class="sesion-actions">
+            <button type="button" class="btn-modulo btn-modulo-sec" id="btnCompletarMaestro" onclick="toggleMaestroCompletado()">Marcar como completado</button>
+            <p class="sesion-meta" id="maestroEstado">Estado: pendiente</p>
+        </div>
+    </div>
+
+    <section class="progreso-box">
+        <div class="progreso-head">
+            <h3>Progreso del módulo</h3>
+            <span id="progresoModulo3Pct">0%</span>
+        </div>
+        <div class="progreso-bar">
+            <div class="progreso-fill" id="progresoModulo3Fill"></div>
+        </div>
+        <p class="progreso-desc" id="progresoModulo3Desc">0 de 9 sesiones completadas</p>
+    </section>
+
+    <div class="modulo-actions">
+        <a class="btn-modulo btn-modulo-sec" href="modulo3.html">Volver al módulo</a>
+        <a class="btn-modulo btn-modulo-primary" href="nivel1.html">Regresar al nivel</a>
+        <button type="button" class="btn-modulo btn-modulo-primary" onclick="irSiguienteSesion()">Siguiente sesión →</button>
+    </div>
+</main>
+    </div>
+</div>
+<script src="app.js" defer></script>
+<script>
+(function() {
+    var CURSO_ID = 'mecanica_nivel1';
+    var MODULO_NUM = 3;
+    var TOTAL_SESIONES = 9;
+    var MAESTRO_KEY = 'idmc_ejercicio_maestro_m3';
+
+    window.verificarSesion = function() {
+        loadTopbarAvatar();
+        renderEstado();
+        renderProgreso();
+    };
+
+    function loadTopbarAvatar() {
+        var el = document.getElementById('topbarAvatar');
+        if (!el) return;
+        var avatar = localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar') || localStorage.getItem('userAvatar') || localStorage.getItem('profilePhoto') || localStorage.getItem('profileImage') || localStorage.getItem('avatarUrl');
+        if (typeof aplicarAvatarSeguro === 'function') aplicarAvatarSeguro(el, avatar);
+    }
+
+    function isCompletado() {
+        try { return localStorage.getItem(MAESTRO_KEY) === '1'; } catch(e) { return false; }
+    }
+
+    function renderEstado() {
+        var ok = isCompletado();
+        var estado = document.getElementById('maestroEstado');
+        var boton = document.getElementById('btnCompletarMaestro');
+        if (estado) estado.textContent = ok ? 'Estado: completado ✓' : 'Estado: pendiente';
+        if (boton) boton.textContent = ok ? 'Marcar como pendiente' : 'Marcar como completado';
+    }
+
+    function renderProgreso() {
+        if (typeof estaSesionCompletada !== 'function') return;
+        var completadas = 0;
+        for (var i = 1; i <= TOTAL_SESIONES; i++) { if (estaSesionCompletada(CURSO_ID, MODULO_NUM, i)) completadas++; }
+        var pct = Math.round((completadas / TOTAL_SESIONES) * 100);
+        var pctEl = document.getElementById('progresoModulo3Pct');
+        var fill = document.getElementById('progresoModulo3Fill');
+        var desc = document.getElementById('progresoModulo3Desc');
+        if (pctEl) pctEl.textContent = pct + '%';
+        if (fill) fill.style.width = pct + '%';
+        if (desc) desc.textContent = completadas + ' de ' + TOTAL_SESIONES + ' sesiones completadas';
+    }
+
+    window.toggleMaestroCompletado = function() {
+        var ok = isCompletado();
+        try { localStorage.setItem(MAESTRO_KEY, ok ? '0' : '1'); } catch(e) {}
+        renderEstado();
+    };
+
+    window.irSiguienteSesion = function() {
+        if (!isCompletado()) {
+            mostrarModal('Primero debes marcar este ejercicio como completado.'); return;
+        }
+        window.location.href = 'modulo3_sesion10.html';
+    };
+
+    window.logout = function() {
+        ['perfilAvatar','avatar','userAvatar','profilePhoto','profileImage','avatarUrl'].forEach(function(k) { localStorage.removeItem(k); });
+        window.location.href = 'home.html';
+    };
+
+    window.addEventListener('DOMContentLoaded', function() { window.verificarSesion(); });
+})();
+</script>
+</body>
+</html>

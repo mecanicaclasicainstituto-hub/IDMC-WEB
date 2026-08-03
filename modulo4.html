@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Módulo 4 - Parámetros clásicos del movimiento</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .topbar { position: sticky; top: 0; z-index: 100; background: #fff; box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08); }
+        .topbar .profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; cursor: pointer; }
+        .profile-dropdown { min-width: 170px; }
+        .modulo-page { padding: 26px; display: flex; flex-direction: column; gap: 16px; }
+        .modulo-hero { background: linear-gradient(135deg, #0f172a, #1e3a8a 60%, #2563eb); color: #fff; border-radius: 16px; padding: 22px; box-shadow: 0 12px 24px rgba(30, 58, 138, 0.24); }
+        .modulo-hero h1 { margin: 0 0 8px 0; font-size: 1.4rem; }
+        .modulo-hero p { margin: 0; color: rgba(255, 255, 255, 0.9); line-height: 1.5; max-width: 860px; }
+        .progreso-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06); }
+        .progreso-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+        .progreso-head h3 { margin: 0; color: #0f172a; font-size: 0.88rem; }
+        .progreso-head span { font-size: 0.8rem; font-weight: 700; color: #1d4ed8; }
+        .progreso-bar { width: 100%; height: 6px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
+        .progreso-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #2563eb, #60a5fa); transition: width 0.3s ease; }
+        .progreso-desc { margin: 6px 0 0; font-size: 0.74rem; color: #64748b; }
+        .sesiones-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        @media (min-width: 900px) {
+            .sesiones-list { grid-template-columns: 1fr 1fr; }
+        }
+        .sesion-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06); max-width: 980px; }
+        .sesion-card h3 { margin: 0 0 6px; color: #1e3a8a; font-size: 1rem; }
+        .sesion-card p { margin: 0 0 10px; color: #475569; font-size: 0.9rem; line-height: 1.45; }
+        .sesion-meta { font-size: 0.8rem; color: #64748b; font-weight: 600; margin-bottom: 12px; }
+        .modulo-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-modulo { border: none; border-radius: 8px; padding: 10px 14px; font-weight: 600; font-size: 0.88rem; text-decoration: none; cursor: pointer; display: inline-block; }
+        .btn-modulo-primary { background: #2563eb; color: #fff; }
+        .btn-modulo-primary:hover { background: #1d4ed8; }
+        .btn-modulo-sec { background: #e2e8f0; color: #0f172a; }
+        .btn-modulo-sec:hover { background: #cbd5e1; }
+    </style>
+</head>
+<body onload="verificarSesion();">
+<div class="container">
+    <aside class="sidebar">
+        <h2><a href="index.html" style="color:inherit;text-decoration:none;cursor:pointer;">Plataforma</a></h2>
+        <ul>
+            <li><a href="lobby.html">Lobby</a></li>
+            <li><a href="cursos.html">Cursos</a></li>
+            <li><a href="tu_progreso.html">Tu progreso</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+            <li><a href="redes_sociales.html">Redes Sociales</a></li>
+            <li><a href="comunidad.html">Comunidad</a></li>
+            <li><a href="contactanos.html">Contáctanos</a></li>
+        </ul>
+        <button onclick="logout()">Cerrar sesión</button>
+    </aside>
+    <div style="width:100%;">
+<header class="topbar">
+    <div class="topbar-left"><h2>Módulo 4</h2></div>
+    <div class="topbar-right">
+        <div class="course-search-wrap">
+            <input id="topbarCourseInput" list="topbarCourseList" type="text" placeholder="Escribe un curso...">
+            <datalist id="topbarCourseList">
+                <option value="Mecánica Clásica">
+                <option value="Mecánica de Fluidos">
+                <option value="Matemática Básica">
+            </datalist>
+            <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
+        </div>
+        <div class="profile-menu">
+            <img id="topbarAvatar" src="avatar-default.svg" alt="Perfil" class="profile-avatar" onclick="toggleProfileMenu()" onerror="this.onerror=null;this.src='avatar-default.svg'">
+            <div class="profile-dropdown" id="profileDropdown">
+                <a href="cursos.html">Todos los cursos</a>
+                <a href="perfil.html#mis-cursos">Mis cursos</a>
+                <a href="lista_deseados.html">Lista de deseados</a>
+                <a href="perfil.html">Editar perfil</a>
+                <button type="button" onclick="logout()">Cerrar sesión</button>
+            </div>
+        </div>
+    </div>
+</header>
+<main class="modulo-page fade-in">
+    <section class="modulo-hero">
+        <h1>Módulo 4: Parámetros clásicos del movimiento</h1>
+        <p>Posición, desplazamiento, velocidad y aceleración con ejemplos prácticos paso a paso. Avanza en orden para desbloquear las siguientes sesiones.</p>
+    </section>
+
+    <section class="progreso-box">
+        <div class="progreso-head">
+            <h3>Progreso del módulo</h3>
+            <span id="progresoModulo4Pct">0%</span>
+        </div>
+        <div class="progreso-bar">
+            <div class="progreso-fill" id="progresoModulo4Fill"></div>
+        </div>
+        <p class="progreso-desc" id="progresoModulo4Desc">0 de 1 sesiones completadas</p>
+    </section>
+
+    <section class="sesiones-list" id="sesionesModulo4">
+        <!-- Sesiones generadas por JS -->
+    </section>
+
+    <div class="modulo-actions">
+        <a class="btn-modulo btn-modulo-sec" href="nivel1.html">Regresar</a>
+        <a class="btn-modulo btn-modulo-primary" href="cursos.html">Ir a cursos</a>
+    </div>
+</main>
+    </div>
+</div>
+<script src="app.js" defer></script>
+<script>
+(function() {
+    var CURSO_ID = 'mecanica_nivel1';
+    var MODULO_NUM = 4;
+    var TOTAL_SESIONES = 1;
+
+    function loadTopbarAvatar() {
+        var topbarAvatar = document.getElementById('topbarAvatar');
+        if (!topbarAvatar) return;
+        var avatar = localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar') || localStorage.getItem('userAvatar') || localStorage.getItem('profilePhoto') || localStorage.getItem('profileImage') || localStorage.getItem('avatarUrl');
+        if (typeof aplicarAvatarSeguro === 'function') aplicarAvatarSeguro(topbarAvatar, avatar);
+    }
+
+    function renderSesionesModulo4() {
+        var cont = document.getElementById('sesionesModulo4');
+        if (!cont) return;
+        cont.innerHTML = '';
+        var completadas = 0;
+        for (var i = 1; i <= TOTAL_SESIONES; i++) {
+            var sesionCompletada = (typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, i) : false;
+            if (sesionCompletada) completadas++;
+            var bloqueada = (i > 1 && !((typeof estaSesionCompletada === 'function') ? estaSesionCompletada(CURSO_ID, MODULO_NUM, i - 1) : false));
+            var card = document.createElement('article');
+            card.className = 'sesion-card';
+            card.innerHTML =
+                '<h3>Módulo 4 - Sesión ' + i + '</h3>' +
+                '<p class="sesion-meta">Estado: ' + (sesionCompletada ? 'completada' : (bloqueada ? 'bloqueada' : 'pendiente')) + '</p>' +
+                '<a class="btn-modulo btn-modulo-primary" href="modulo4_sesion' + i + '.html"' +
+                (bloqueada ? ' style="pointer-events:none;opacity:0.5;" tabindex="-1" aria-disabled="true"' : '') +
+                '>Entrar a la sesión</a>';
+            cont.appendChild(card);
+        }
+
+        var pct = Math.round((completadas / TOTAL_SESIONES) * 100);
+        var pctEl = document.getElementById('progresoModulo4Pct');
+        var fill = document.getElementById('progresoModulo4Fill');
+        var desc = document.getElementById('progresoModulo4Desc');
+        if (pctEl) pctEl.textContent = pct + '%';
+        if (fill) fill.style.width = pct + '%';
+        if (desc) desc.textContent = completadas + ' de ' + TOTAL_SESIONES + ' sesiones completadas';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadTopbarAvatar();
+        renderSesionesModulo4();
+    });
+
+    window.logout = function() {
+        localStorage.removeItem('perfilAvatar');
+        localStorage.removeItem('avatar');
+        localStorage.removeItem('userAvatar');
+        localStorage.removeItem('profilePhoto');
+        localStorage.removeItem('profileImage');
+        localStorage.removeItem('avatarUrl');
+        window.location.href = 'home.html';
+    };
+})();
+</script>
+</body>
+</html>

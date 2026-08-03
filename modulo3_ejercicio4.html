@@ -1,0 +1,260 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Módulo 3 - Ejercicio Sesión 4</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .topbar { position: sticky; top: 0; z-index: 100; background: #fff; box-shadow: 0 1px 12px rgba(0,0,0,0.08); }
+        .topbar .profile-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; cursor: pointer; }
+        .profile-dropdown { min-width: 170px; }
+        .modulo-page { padding: 26px; display: flex; flex-direction: column; gap: 16px; }
+        .modulo-hero { background: linear-gradient(135deg, #0f172a, #1e3a8a 60%, #2563eb); color: #fff; border-radius: 16px; padding: 22px; box-shadow: 0 12px 24px rgba(30,58,138,0.24); }
+        .modulo-hero h1 { margin: 0 0 8px; font-size: 1.35rem; }
+        .modulo-hero p { margin: 0; color: rgba(255,255,255,0.9); line-height: 1.5; max-width: 860px; }
+        .ejercicio-wrap { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; box-shadow: 0 6px 16px rgba(15,23,42,0.06); max-width: 1480px; width: 100%; margin: 0 auto; border-left: 4px solid #2563eb; }
+        .formula-principal { display: flex; align-items: center; justify-content: center; background: #0f172a; border-radius: 14px; padding: 24px 32px; margin-bottom: 20px; }
+        .formula-principal span { font-family: 'Courier New', monospace; font-size: 2.2rem; font-weight: 700; color: #60a5fa; letter-spacing: 0.08em; }
+        .instruccion { background: #f0f6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 16px; color: #1e3a8a; font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px; text-align: center; font-weight: 500; }
+        .pasos-grid { display: flex; flex-direction: column; gap: 18px; }
+        .paso { display: flex; gap: 14px; align-items: flex-start; }
+        .paso-num { flex-shrink: 0; width: 34px; height: 34px; background: #2563eb; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.92rem; margin-top: 2px; }
+        .paso-body { flex: 1; }
+        .paso-body h4 { margin: 0 0 8px; font-size: 0.92rem; color: #0f172a; font-weight: 700; }
+        .paso-desc { font-size: 0.88rem; color: #475569; line-height: 1.6; margin: 6px 0 0; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; }
+        .fisica-img-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
+        .fisica-img-wrap svg { max-width: 480px; width: 100%; height: auto; }
+        .sesion-actions { margin-top: 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .sesion-meta { font-size: 0.8rem; color: #64748b; font-weight: 600; }
+        .progreso-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; box-shadow: 0 6px 16px rgba(15,23,42,0.06); }
+        .progreso-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+        .progreso-head h3 { margin: 0; color: #0f172a; font-size: 0.88rem; }
+        .progreso-head span { font-size: 0.8rem; font-weight: 700; color: #1d4ed8; }
+        .progreso-bar { width: 100%; height: 6px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
+        .progreso-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #2563eb, #60a5fa); transition: width 0.3s ease; }
+        .progreso-desc { margin: 6px 0 0; font-size: 0.74rem; color: #64748b; }
+        .modulo-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-modulo { border: none; border-radius: 8px; padding: 10px 14px; font-weight: 600; font-size: 0.88rem; text-decoration: none; cursor: pointer; display: inline-block; font-family: 'Poppins', sans-serif; }
+        .btn-modulo-primary { background: #2563eb; color: #fff; }
+        .btn-modulo-primary:hover { background: #1d4ed8; }
+        .btn-modulo-sec { background: #e2e8f0; color: #0f172a; }
+        .btn-modulo-sec:hover { background: #cbd5e1; }
+    </style>
+</head>
+<body onload="verificarSesion();">
+<div class="container">
+    <aside class="sidebar">
+        <h2><a href="index.html" style="color:inherit;text-decoration:none;cursor:pointer;">Plataforma</a></h2>
+        <ul>
+            <li><a href="lobby.html">Lobby</a></li>
+            <li><a href="cursos.html">Cursos</a></li>
+            <li><a href="tu_progreso.html">Tu progreso</a></li>
+            <li><a href="perfil.html">Perfil</a></li>
+            <li><a href="redes_sociales.html">Redes Sociales</a></li>
+            <li><a href="comunidad.html">Comunidad</a></li>
+            <li><a href="contactanos.html">Contáctanos</a></li>
+        </ul>
+        <button onclick="logout()">Cerrar sesión</button>
+    </aside>
+    <div style="width:100%;">
+<header class="topbar">
+    <div class="topbar-left"><h2>Módulo 3 - Ejercicio Sesión 4</h2></div>
+    <div class="topbar-right">
+        <div class="course-search-wrap">
+            <input id="topbarCourseInput" list="topbarCourseList" type="text" placeholder="Escribe un curso...">
+            <datalist id="topbarCourseList">
+                <option value="Mecánica Clásica">
+                <option value="Mecánica de Fluidos">
+                <option value="Matemática Básica">
+            </datalist>
+            <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
+        </div>
+        <div class="profile-menu">
+            <img id="topbarAvatar" src="avatar-default.svg" alt="Perfil" class="profile-avatar" onclick="toggleProfileMenu()" onerror="this.onerror=null;this.src='avatar-default.svg'">
+            <div class="profile-dropdown" id="profileDropdown">
+                <a href="cursos.html">Todos los cursos</a>
+                <a href="perfil.html#mis-cursos">Mis cursos</a>
+                <a href="lista_deseados.html">Lista de deseados</a>
+                <a href="perfil.html">Editar perfil</a>
+                <button type="button" onclick="logout()">Cerrar sesión</button>
+            </div>
+        </div>
+    </div>
+</header>
+<main class="modulo-page fade-in">
+    <section class="modulo-hero">
+        <h1>Módulo 3 - Ejercicio Sesión 4</h1>
+        <p>Pon en práctica lo aprendido. Desglosa y resuelve paso a paso utilizando la Segunda Ley de Newton.</p>
+    </section>
+
+    <div class="ejercicio-wrap">
+        <div class="formula-principal">
+            <span>F = M * A</span>
+        </div>
+
+        <!-- Diagrama decorativo de física -->
+        <div class="fisica-img-wrap">
+            <svg viewBox="0 0 480 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagrama Segunda Ley de Newton">
+                <!-- fondo -->
+                <rect width="480" height="180" rx="14" fill="#f0f6ff"/>
+                <!-- superficie -->
+                <rect x="60" y="130" width="360" height="10" rx="4" fill="#bfdbfe"/>
+                <!-- bloque (masa M) -->
+                <rect x="170" y="90" width="80" height="40" rx="8" fill="#2563eb"/>
+                <text x="210" y="116" text-anchor="middle" font-family="Poppins,sans-serif" font-size="15" font-weight="700" fill="#fff">M</text>
+                <!-- flecha fuerza F -->
+                <line x1="80" y1="110" x2="168" y2="110" stroke="#1d4ed8" stroke-width="3" marker-end="url(#arrow)"/>
+                <text x="120" y="104" text-anchor="middle" font-family="Poppins,sans-serif" font-size="14" font-weight="700" fill="#1d4ed8">F</text>
+                <!-- flecha aceleración a -->
+                <line x1="252" y1="110" x2="380" y2="110" stroke="#f59e0b" stroke-width="3" marker-end="url(#arrow2)"/>
+                <text x="320" y="104" text-anchor="middle" font-family="Poppins,sans-serif" font-size="14" font-weight="700" fill="#b45309">a</text>
+                <!-- etiquetas -->
+                <text x="240" y="30" text-anchor="middle" font-family="Poppins,sans-serif" font-size="18" font-weight="700" fill="#0f172a">Segunda Ley de Newton</text>
+                <text x="240" y="55" text-anchor="middle" font-family="Courier New,monospace" font-size="15" fill="#2563eb">F = m · a</text>
+                <text x="80" y="158" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#64748b">Fuerza (N)</text>
+                <text x="210" y="158" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#64748b">Masa (kg)</text>
+                <text x="360" y="158" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" fill="#64748b">Aceleración (m/s²)</text>
+                <!-- flechas defs -->
+                <defs>
+                    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L8,3 z" fill="#1d4ed8"/>
+                    </marker>
+                    <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+
+        <p class="instruccion">Desglosa y resuelve el ejercicio con lo aprendido en las sesiones anteriores.</p>
+
+        <div class="pasos-grid">
+            <div class="paso">
+                <div class="paso-num">1</div>
+                <div class="paso-body">
+                    <h4>Paso 1: Sustitución de magnitudes a unidades</h4>
+                    <p class="paso-desc">Identifica los valores dados en el problema y sustitúyelos en la fórmula F = m · a, asegurándote de que las magnitudes estén en las unidades correctas del SI.</p>
+                </div>
+            </div>
+            <div class="paso">
+                <div class="paso-num">2</div>
+                <div class="paso-body">
+                    <h4>Paso 2: Simplificación</h4>
+                    <p class="paso-desc">Realiza las operaciones aritméticas necesarias para simplificar la expresión, agrupando términos y reduciendo la ecuación a su forma más sencilla.</p>
+                </div>
+            </div>
+            <div class="paso">
+                <div class="paso-num">3</div>
+                <div class="paso-body">
+                    <h4>Paso 3: Expresión algebraica</h4>
+                    <p class="paso-desc">Escribe la expresión algebraica resultante de forma ordenada, indicando claramente la magnitud desconocida y su relación con las demás variables.</p>
+                </div>
+            </div>
+            <div class="paso">
+                <div class="paso-num">4</div>
+                <div class="paso-body">
+                    <h4>Paso 4: Regreso al valor magnitud</h4>
+                    <p class="paso-desc">Despeja y calcula el valor final. Verifica que el resultado tenga sentido físico y expresa la respuesta con sus unidades correspondientes en el SI.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="sesion-actions">
+            <button type="button" class="btn-modulo btn-modulo-sec" id="btnCompletarEjercicio4" onclick="toggleEjercicioCompletado()">Marcar como completado</button>
+            <p class="sesion-meta" id="ejercicio4Estado">Estado: pendiente</p>
+        </div>
+    </div>
+
+    <section class="progreso-box">
+        <div class="progreso-head">
+            <h3>Progreso del módulo</h3>
+            <span id="progresoModulo3Pct">0%</span>
+        </div>
+        <div class="progreso-bar">
+            <div class="progreso-fill" id="progresoModulo3Fill"></div>
+        </div>
+        <p class="progreso-desc" id="progresoModulo3Desc">0 de 4 sesiones completadas</p>
+    </section>
+
+    <div class="modulo-actions">
+        <a class="btn-modulo btn-modulo-sec" href="modulo3.html">Volver al módulo</a>
+        <a class="btn-modulo btn-modulo-primary" href="nivel1.html">Regresar</a>
+        <button type="button" class="btn-modulo btn-modulo-primary" onclick="irSiguienteSesion()">Siguiente sesión →</button>
+    </div>
+</main>
+    </div>
+</div>
+<script src="app.js" defer></script>
+<script>
+(function() {
+    var CURSO_ID = 'mecanica_nivel1';
+    var MODULO_NUM = 3;
+    var TOTAL_SESIONES = 4;
+    var EJERCICIO_KEY = 'idmc_ejercicio_m3s4';
+
+    window.verificarSesion = function() {
+        loadTopbarAvatar();
+        renderEstado();
+        renderProgreso();
+    };
+
+    function loadTopbarAvatar() {
+        var el = document.getElementById('topbarAvatar');
+        if (!el) return;
+        var avatar = localStorage.getItem('perfilAvatar') || localStorage.getItem('avatar') || localStorage.getItem('userAvatar') || localStorage.getItem('profilePhoto') || localStorage.getItem('profileImage') || localStorage.getItem('avatarUrl');
+        if (typeof aplicarAvatarSeguro === 'function') aplicarAvatarSeguro(el, avatar);
+    }
+
+    function isCompletado() {
+        try { return localStorage.getItem(EJERCICIO_KEY) === '1'; } catch(e) { return false; }
+    }
+
+    function renderEstado() {
+        var ok = isCompletado();
+        var estado = document.getElementById('ejercicio4Estado');
+        var boton = document.getElementById('btnCompletarEjercicio4');
+        if (estado) estado.textContent = ok ? 'Estado: completado' : 'Estado: pendiente';
+        if (boton) boton.textContent = ok ? 'Marcar como pendiente' : 'Marcar como completado';
+    }
+
+    function renderProgreso() {
+        if (typeof estaSesionCompletada !== 'function') return;
+        var completadas = 0;
+        for (var i = 1; i <= TOTAL_SESIONES; i++) { if (estaSesionCompletada(CURSO_ID, MODULO_NUM, i)) completadas++; }
+        var pct = Math.round((completadas / TOTAL_SESIONES) * 100);
+        var pctEl = document.getElementById('progresoModulo3Pct');
+        var fill = document.getElementById('progresoModulo3Fill');
+        var desc = document.getElementById('progresoModulo3Desc');
+        if (pctEl) pctEl.textContent = pct + '%';
+        if (fill) fill.style.width = pct + '%';
+        if (desc) desc.textContent = completadas + ' de ' + TOTAL_SESIONES + ' sesiones completadas';
+    }
+
+    window.toggleEjercicioCompletado = function() {
+        var ok = isCompletado();
+        try { localStorage.setItem(EJERCICIO_KEY, ok ? '0' : '1'); } catch(e) {}
+        renderEstado();
+    };
+
+    window.irSiguienteSesion = function() {
+        if (!isCompletado()) {
+            mostrarModal('Primero debes marcar este ejercicio como completado.'); return;
+        }
+        window.location.href = 'modulo3_sesion5.html';
+    };
+
+    window.logout = function() {
+        ['perfilAvatar','avatar','userAvatar','profilePhoto','profileImage','avatarUrl'].forEach(function(k) { localStorage.removeItem(k); });
+        window.location.href = 'home.html';
+    };
+
+    window.addEventListener('DOMContentLoaded', function() { window.verificarSesion(); });
+})();
+</script>
+</body>
+</html>
