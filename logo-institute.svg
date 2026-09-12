@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <defs>
+    <style>
+      .logo-text-main { font-family: 'Segoe UI', 'Arial', sans-serif; font-weight: 800; font-size: 20px; fill: #1e3a8a; letter-spacing: -0.5px; }
+      .logo-text-sub { font-family: 'Segoe UI', 'Arial', sans-serif; font-weight: 500; font-size: 12px; fill: #64748b; letter-spacing: 1.2px; text-transform: uppercase; }
+    </style>
+  </defs>
+  
+  <!-- Fondo sutil -->
+  <rect width="300" height="300" fill="#fafbfc" rx="20"/>
+  
+  <!-- Ícono geométrico minimalista -->
+  <g transform="translate(150, 90)">
+    <!-- Triángulo superior (soporte) -->
+    <path d="M -25 -5 L 25 -5 L 0 15 Z" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    
+    <!-- Punto de pivote central -->
+    <circle cx="0" cy="15" r="5" fill="#2563eb"/>
+    
+    <!-- Línea izquierda del péndulo -->
+    <line x1="-3" y1="18" x2="-35" y2="65" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Línea derecha del péndulo -->
+    <line x1="3" y1="18" x2="35" y2="65" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/>
+    
+    <!-- Masa izquierda (círculo grande) -->
+    <circle cx="-35" cy="72" r="9" fill="#2563eb"/>
+    <!-- Masa derecha (círculo grande) -->
+    <circle cx="35" cy="72" r="9" fill="#2563eb"/>
+    
+    <!-- Línea base horizontal (movimiento) -->
+    <line x1="-45" y1="88" x2="45" y2="88" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+  </g>
+  
+  <!-- Separador -->
+  <line x1="40" y1="200" x2="260" y2="200" stroke="#e2e8f0" stroke-width="1"/>
+  
+  <!-- Textos -->
+  <text x="150" y="235" text-anchor="middle" class="logo-text-main">IDMC</text>
+  <text x="150" y="260" text-anchor="middle" class="logo-text-sub">Instituto de Mecánica Clásica</text>
+</svg>

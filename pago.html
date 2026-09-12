@@ -399,31 +399,137 @@
           </div>
         </div>
 
-        <div style="text-align:center; padding: 32px 0;">
-          <div style="font-size:2.5rem; margin-bottom:12px;">🚧</div>
-          <h2 style="font-size:1.1rem; font-weight:700; color:#0f172a; margin-bottom:8px;">Pagos próximamente</h2>
-          <p style="font-size:0.85rem; color:#64748b; line-height:1.6;">El sistema de pagos estará disponible muy pronto.<br>¡Gracias por tu paciencia!</p>
+        <p class="pay-method-label">Método de pago</p>
+        <div class="pay-method-box">
+          <div class="mp-icon">MP</div>
+          <div>
+            <div class="mp-name">MercadoPago</div>
+            <div class="mp-desc">Tarjeta, transferencia, efectivo y más</div>
+          </div>
         </div>
+
+        <label style="font-size:0.78rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Correo electrónico</label>
+        <input
+          id="buyerEmail"
+          type="email"
+          autocomplete="email"
+          placeholder="tucorreo@ejemplo.com"
+          style="width:100%;border:1.5px solid #e2e8f0;border-radius:10px;padding:11px 14px;font-family:'Poppins',sans-serif;font-size:0.88rem;color:#1e293b;outline:none;margin-bottom:18px;transition:border-color 0.15s;"
+          onfocus="this.style.borderColor='#2563eb'"
+          onblur="this.style.borderColor='#e2e8f0'"
+        />
+
+        <button class="pay-btn" id="payBtn" type="button" onclick="iniciarPago()">
+          <span class="spinner"></span>
+          <span class="btn-text">Pagar con MercadoPago</span>
+        </button>
+
+        <div class="msg-error" id="msgError"></div>
+
+        <p class="pay-hint">Al hacer clic serás redirigido de forma segura a MercadoPago para completar el pago.</p>
+        <div class="pay-secure-note">🔒 Transacción cifrada y segura</div>
       </div>
 
     </div>
   </div>
 
   <script>
+    var PRODUCT_MAP = {
+      'mecánica clásica nivel i':   'mecanica-clasica-nivel-1',
+      'mecanica clasica nivel i':   'mecanica-clasica-nivel-1',
+      'mecánica clásica nivel 1':   'mecanica-clasica-nivel-1',
+    };
+
     function getQueryParam(name, fallback) {
       var u = new URL(window.location.href);
       return u.searchParams.get(name) || fallback;
     }
 
-    var course = getQueryParam('course', 'Mecánica Clásica Nivel I');
-    var price = Number(getQueryParam('price', '200'));
-    var user = localStorage.getItem('usuario') || 'Estudiante';
+    var course   = getQueryParam('course', 'Mecánica Clásica Nivel I');
+    var price    = Number(getQueryParam('price', '200'));
+    var userName = (localStorage.getItem('usuario') || 'Estudiante').trim();
 
     document.getElementById('courseName').textContent = course;
-    document.getElementById('userName').textContent = user;
+    document.getElementById('userName').textContent   = userName;
     document.getElementById('coursePrice').textContent = '$' + price;
 
-    // Pagos deshabilitados temporalmente
+    var emailInput = document.getElementById('buyerEmail');
+    // Pre-fill email from stored profile
+    (function() {
+      try {
+        var raw = localStorage.getItem('perfilesUsuarios');
+        if (raw) {
+          var perfiles = JSON.parse(raw);
+          var p = perfiles[userName] || {};
+          if (p.emailPerfil) emailInput.value = p.emailPerfil;
+        }
+      } catch (_e) {}
+    })();
+
+    function resolveProductId(courseName) {
+      var key = courseName.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      for (var k in PRODUCT_MAP) {
+        var mapKey = k.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        if (mapKey === key) return PRODUCT_MAP[k];
+      }
+      return null;
+    }
+
+    function showError(msg) {
+      var el = document.getElementById('msgError');
+      el.textContent = msg;
+      el.classList.add('visible');
+    }
+
+    function clearError() {
+      var el = document.getElementById('msgError');
+      el.textContent = '';
+      el.classList.remove('visible');
+    }
+
+    function iniciarPago() {
+      clearError();
+      var email = emailInput.value.trim().toLowerCase();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError('Ingresa un correo electrónico válido para continuar.');
+        emailInput.focus();
+        return;
+      }
+
+      var productId = resolveProductId(course);
+      if (!productId) {
+        showError('Este curso no está disponible para compra en este momento.');
+        return;
+      }
+
+      var btn = document.getElementById('payBtn');
+      btn.disabled = true;
+      btn.classList.add('loading');
+
+      fetch('/api/payments/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: productId, buyerName: userName, buyerEmail: email })
+      })
+      .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
+      .then(function(result) {
+        if (!result.ok || !result.data.checkoutUrl) {
+          throw new Error(result.data.error || 'No se pudo iniciar el pago.');
+        }
+        // Save for the success page
+        localStorage.setItem('checkoutInfo', JSON.stringify({
+          title: course,
+          user: userName,
+          createdAt: Date.now()
+        }));
+        window.location.href = result.data.checkoutUrl;
+      })
+      .catch(function(err) {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        showError(err.message || 'Error al conectar con el servidor de pagos. Intenta nuevamente.');
+      });
+    }
   </script>
 </body>
 </html>

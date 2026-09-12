@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Engranaje principal -->
+  <circle cx="32" cy="32" r="18" fill="none" stroke="#6b7280" stroke-width="2"/>
+  <g fill="#6b7280">
+    <!-- Dientes superior -->
+    <rect x="30" y="6" width="4" height="6" rx="1"/>
+    <!-- Dientes derecha -->
+    <rect x="52" y="30" width="6" height="4" rx="1"/>
+    <!-- Dientes inferior -->
+    <rect x="30" y="52" width="4" height="6" rx="1"/>
+    <!-- Dientes izquierda -->
+    <rect x="6" y="30" width="6" height="4" rx="1"/>
+  </g>
+  <!-- Centro del engranaje -->
+  <circle cx="32" cy="32" r="6" fill="#2563eb"/>
+</svg>

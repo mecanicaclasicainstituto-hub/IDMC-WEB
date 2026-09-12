@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Cerebro -->
+  <g fill="none" stroke="#6b7280" stroke-width="2">
+    <!-- Lóbulo izquierdo superior -->
+    <path d="M 20 32 Q 15 25 18 18 Q 22 12 28 14 Q 32 16 30 22"/>
+    <!-- Lóbulo derecho superior -->
+    <path d="M 44 32 Q 49 25 46 18 Q 42 12 36 14 Q 32 16 34 22"/>
+    <!-- Centro -->
+    <circle cx="32" cy="32" r="8"/>
+  </g>
+  <!-- Decoración central -->
+  <circle cx="32" cy="32" r="4" fill="#2563eb"/>
+  <!-- Lóbulos inferiores -->
+  <g fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round">
+    <path d="M 22 40 Q 20 48 24 54"/>
+    <path d="M 42 40 Q 44 48 40 54"/>
+  </g>
+</svg>

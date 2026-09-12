@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Eje X -->
+  <line x1="12" y1="48" x2="52" y2="48" stroke="#6b7280" stroke-width="2"/>
+  <!-- Eje Y -->
+  <line x1="12" y1="48" x2="12" y2="12" stroke="#6b7280" stroke-width="2"/>
+  
+  <!-- Línea creciente -->
+  <polyline points="18,42 28,32 38,24 48,14" 
+            fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Puntos de la línea -->
+  <circle cx="18" cy="42" r="3" fill="#2563eb"/>
+  <circle cx="28" cy="32" r="3" fill="#2563eb"/>
+  <circle cx="38" cy="24" r="3" fill="#2563eb"/>
+  <circle cx="48" cy="14" r="3" fill="#2563eb"/>
+</svg>

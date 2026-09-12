@@ -80,11 +80,50 @@
   <div class="card">
     <div class="icon-circle">⏳</div>
     <h1>Pago en revisión</h1>
-    <p>Tu pago está siendo procesado por la plataforma de cobros. Esto puede tardar unos minutos. Te notificaremos cuando se confirme el acceso al curso.</p>
-    <a class="btn" href="perfil.html">Ir a mi perfil</a>
+    <p id="pendingMsg">Tu pago está siendo procesado por la plataforma de cobros. Esto puede tardar unos minutos.</p>
+    <a class="btn" id="pendingBtn" href="perfil.html">Ir a mi perfil</a>
     <br>
     <a class="btn-sec" href="cursos.html">Volver a cursos</a>
   </div>
+  <script>
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var order = params.get('order') || '';
+      var token = params.get('token') || '';
+      var paymentId = params.get('payment_id') || params.get('collection_id') || '';
+      var msg = document.getElementById('pendingMsg');
+      var btn = document.getElementById('pendingBtn');
+
+      if (!order || !token) return;
+
+      var statusUrl = '/api/payments/status?order=' + encodeURIComponent(order) +
+        '&token=' + encodeURIComponent(token) +
+        (paymentId ? '&payment_id=' + encodeURIComponent(paymentId) : '');
+
+      var attempts = 0;
+      var maxAttempts = 60;
+      var checkStatus = function() {
+        fetch(statusUrl)
+          .then(function(response) { return response.json(); })
+          .then(function(data) {
+            if (data.status === 'approved' && data.productName) {
+              msg.textContent = 'Tu pago ya fue aprobado. Puedes continuar al curso desde tu perfil.';
+              btn.textContent = 'Ir a mis cursos';
+              btn.href = 'perfil.html#mis-cursos';
+              return;
+            }
+            attempts += 1;
+            if (attempts < maxAttempts) window.setTimeout(checkStatus, 5000);
+          })
+          .catch(function() {
+            attempts += 1;
+            if (attempts < maxAttempts) window.setTimeout(checkStatus, 5000);
+          });
+      };
+
+      checkStatus();
+    })();
+  </script>
 </body>
 </html>
 

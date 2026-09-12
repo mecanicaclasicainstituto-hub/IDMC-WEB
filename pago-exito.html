@@ -93,68 +93,68 @@
       var msg = document.getElementById('successMsg');
       var btn = document.getElementById('successBtn');
 
-      var checkoutInfo = null;
-      try {
-        checkoutInfo = JSON.parse(localStorage.getItem('checkoutInfo') || 'null');
-      } catch (_e) {
-        checkoutInfo = null;
-      }
+      var urlParams  = new URLSearchParams(window.location.search);
+      var orderId    = urlParams.get('order')       || '';
+      var token      = urlParams.get('token')       || '';
+      var paymentId  = urlParams.get('payment_id')  || urlParams.get('collection_id') || '';
 
-      // Expirar checkoutInfo si tiene más de 30 minutos
-      if (checkoutInfo && checkoutInfo.createdAt) {
-        var antiguedad = Date.now() - Number(checkoutInfo.createdAt);
-        if (antiguedad > 30 * 60 * 1000) {
-          localStorage.removeItem('checkoutInfo');
-          checkoutInfo = null;
+      function unlockCourse(courseName, user) {
+        if (!courseName) return;
+        if (typeof agregarCursoAUsuario === 'function') {
+          agregarCursoAUsuario(courseName, user || localStorage.getItem('usuario') || '');
+        }
+        localStorage.removeItem('checkoutInfo');
+        if (msg) {
+          msg.innerHTML = 'Tu pago fue procesado correctamente. El curso <strong>' +
+            String(courseName).replace(/</g, '&lt;') + '</strong> ya fue agregado a tu cuenta.';
+        }
+        if (btn) {
+          btn.textContent = 'Ir a Mis Cursos';
+          btn.href = 'perfil.html#mis-cursos';
         }
       }
 
-      if (!checkoutInfo || !checkoutInfo.title) {
-        msg.innerHTML = 'Tu pago fue procesado. <a href="perfil.html#mis-cursos">Ve a Mis Cursos</a> para ver tus cursos.';
-        btn.href = 'perfil.html#mis-cursos';
-        return;
-      }
-
-      if (typeof agregarCursoAUsuario === 'function') {
-        agregarCursoAUsuario(checkoutInfo.title, checkoutInfo.user || localStorage.getItem('usuario') || '');
-      }
-
-      // Limpiar progreso del curso comprado
-      (function() {
-        var nombre = String(checkoutInfo.title || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        var cursoIds = ['mecanica_nivel1', 'mecanica_nivel2', 'mecanica_nivel3', 'electro_nivel1', 'fluidos_nivel1', 'fluidos_nivel2', 'fluidos_nivel3', 'matematica_nivel1'];
-        var cursoIdEncontrado = '';
-
-        cursoIds.forEach(function(id) {
-          var cfg = { mecanica_nivel1: 'mec\u00e1nica cl\u00e1sica nivel i', mecanica_nivel2: 'mec\u00e1nica cl\u00e1sica nivel ii', mecanica_nivel3: 'mec\u00e1nica cl\u00e1sica nivel iii', electro_nivel1: 'electromagnetismo cl\u00e1sico nivel i', fluidos_nivel1: 'mec\u00e1nica de fluidos i', fluidos_nivel2: 'mec\u00e1nica de fluidos ii', fluidos_nivel3: 'mec\u00e1nica de fluidos iii', matematica_nivel1: 'matem\u00e1tica aplicada a la f\u00edsica e ingenier\u00eda' };
-          if (nombre === cfg[id]) cursoIdEncontrado = id;
-        });
-
-        if (cursoIdEncontrado) {
-          var progressData = JSON.parse(localStorage.getItem('cursoProgresoEstado') || '{}');
-          var sessionKeys = Object.keys(progressData.sesionesCompletadas || {});
-          var pattern = '^' + cursoIdEncontrado.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&') + '\\\\|';
-          var regex = new RegExp(pattern);
-
-          sessionKeys.forEach(function(k) {
-            if (regex.test(k)) delete progressData.sesionesCompletadas[k];
-          });
-
-          localStorage.setItem('cursoProgresoEstado', JSON.stringify(progressData));
+      function showPending() {
+        if (msg) {
+          msg.innerHTML = 'El pago todavía no aparece como aprobado. No se ha desbloqueado ningún curso. Puedes volver a tu perfil y revisar el estado más tarde.';
         }
-      })();
-
-      if (msg) {
-        msg.innerHTML = 'Tu pago fue procesado correctamente. El curso <strong>' + String(checkoutInfo.title).replace(/</g, '&lt;') + '</strong> ya fue agregado a tu cuenta.';
-      }
-      if (btn) {
-        btn.textContent = 'Continuar al curso';
-        btn.href = typeof getCursoContinuarUrl === 'function'
-          ? getCursoContinuarUrl(checkoutInfo.title)
-          : 'perfil.html#mis-cursos';
+        if (btn) {
+          btn.textContent = 'Ir a mi perfil';
+          btn.href = 'perfil.html';
+        }
       }
 
-      localStorage.removeItem('checkoutInfo');
+      // Access is granted only after the server confirms the Mercado Pago status.
+      if (orderId && token) {
+        var statusUrl = '/api/payments/status?order=' + encodeURIComponent(orderId) +
+          '&token=' + encodeURIComponent(token) +
+          (paymentId ? '&payment_id=' + encodeURIComponent(paymentId) : '');
+
+        var attempts = 0;
+        var maxAttempts = 5;
+        var checkStatus = function() {
+          fetch(statusUrl)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              if (data.status === 'approved' && data.productName) {
+                unlockCourse(data.productName, localStorage.getItem('usuario') || '');
+                return;
+              }
+              attempts += 1;
+              if (attempts < maxAttempts) window.setTimeout(checkStatus, 3000);
+              else showPending();
+            })
+            .catch(function() {
+              attempts += 1;
+              if (attempts < maxAttempts) window.setTimeout(checkStatus, 3000);
+              else showPending();
+            });
+        };
+
+        checkStatus();
+      } else {
+        showPending();
+      }
     })();
   </script>
 </body>

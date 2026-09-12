@@ -179,40 +179,41 @@
         .btn-ver-perfil-pub {
             display: inline-flex; align-items: center; gap: 7px;
             text-decoration: none;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: #fff; border: none; border-radius: 20px;
-            padding: 10px 20px; font-size: 0.88rem; font-weight: 600;
+            background: #fff;
+            color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 9px;
+            padding: 9px 16px; font-size: 0.82rem; font-weight: 600;
             cursor: pointer; font-family: Poppins, sans-serif;
-            box-shadow: 0 4px 14px rgba(37,99,235,0.3);
-            transition: box-shadow 0.18s, transform 0.15s;
+            box-shadow: 0 2px 6px rgba(15,23,42,0.06);
+            transition: background 0.18s, border-color 0.18s, box-shadow 0.18s;
         }
-        .btn-ver-perfil-pub:hover { box-shadow: 0 6px 20px rgba(37,99,235,0.42); transform: translateY(-1px); }
+        .btn-ver-perfil-pub:hover { background: #eff6ff; border-color: #93c5fd; box-shadow: 0 4px 10px rgba(37,99,235,0.12); }
         .btn-editar-perfil {
             display: inline-flex; align-items: center; gap: 6px;
-            background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0;
-            border-radius: 20px; padding: 9px 18px; font-size: 0.88rem;
+            background: #2563eb; color: #fff; border: 1px solid #2563eb;
+            border-radius: 9px; padding: 8px 14px; font-size: 0.82rem;
             font-weight: 600; cursor: pointer; font-family: Poppins, sans-serif;
-            transition: background 0.15s;
+            box-shadow: 0 3px 8px rgba(37,99,235,0.18);
+            transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
         }
-        .btn-editar-perfil:hover { background: #e2e8f0; }
+        .btn-editar-perfil:hover { background: #1d4ed8; border-color: #1d4ed8; box-shadow: 0 5px 12px rgba(37,99,235,0.24); }
         .btn-guardar-perfil {
             display: none; align-items: center; gap: 6px;
-            background: linear-gradient(135deg, #16a34a, #15803d);
-            color: #fff; border: none; border-radius: 20px;
-            padding: 9px 20px; font-size: 0.88rem; font-weight: 600;
+            background: #16a34a;
+            color: #fff; border: 1px solid #16a34a; border-radius: 9px;
+            padding: 8px 16px; font-size: 0.82rem; font-weight: 600;
             cursor: pointer; font-family: Poppins, sans-serif;
-            box-shadow: 0 3px 10px rgba(22,163,74,0.25);
-            transition: box-shadow 0.15s;
+            box-shadow: 0 3px 8px rgba(22,163,74,0.18);
+            transition: background 0.15s, border-color 0.15s;
         }
-        .btn-guardar-perfil:hover { box-shadow: 0 5px 14px rgba(22,163,74,0.38); }
+        .btn-guardar-perfil:hover { background: #15803d; border-color: #15803d; }
         .btn-cancelar-edicion {
             display: none; align-items: center; gap: 6px;
             background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3;
-            border-radius: 20px; padding: 9px 16px; font-size: 0.88rem;
+            border-radius: 9px; padding: 8px 14px; font-size: 0.82rem;
             font-weight: 600; cursor: pointer; font-family: Poppins, sans-serif;
-            transition: background 0.15s;
+            transition: background 0.15s, border-color 0.15s;
         }
-        .btn-cancelar-edicion:hover { background: #ffe4e6; }
+        .btn-cancelar-edicion:hover { background: #ffe4e6; border-color: #fda4af; }
         .perfil-edit-btns { display: flex; gap: 8px; align-items: center; }
 
         /* Los botones dentro de perfil-top-actions no deben heredar grid-area: action */
@@ -220,7 +221,6 @@
         .perfil-top-actions .btn-ver-perfil-pub {
             grid-area: unset !important;
             margin-top: 0;
-            padding: unset;
         }
         /* En modo vista: inputs se ven como texto */
         .perfil-box.view-mode input[type="text"],
@@ -325,11 +325,11 @@
 
                             <!-- Acciones arriba -->
                             <div class="perfil-top-actions">
-                                <button class="btn-ver-perfil-pub" onclick="irMiPerfilCompleto()">👤 Ver mi perfil público</button>
+                                <button class="btn-ver-perfil-pub" onclick="irMiPerfilCompleto()">Ver mi perfil público</button>
                                 <div class="perfil-edit-btns">
-                                    <button class="btn-editar-perfil" id="btnEditarPerfil" onclick="activarEdicion()">✏️ Editar perfil</button>
-                                    <button class="btn-guardar-perfil" id="btnGuardarPerfil" onclick="guardarPerfil()">💾 Guardar cambios</button>
-                                    <button class="btn-cancelar-edicion" id="btnCancelarEdicion" onclick="cancelarEdicion()">✕ Cancelar</button>
+                                    <button class="btn-editar-perfil" id="btnEditarPerfil" onclick="activarEdicion()">Editar perfil</button>
+                                    <button class="btn-guardar-perfil" id="btnGuardarPerfil" onclick="guardarPerfil()">Guardar cambios</button>
+                                    <button class="btn-cancelar-edicion" id="btnCancelarEdicion" onclick="cancelarEdicion()">Cancelar</button>
                                 </div>
                             </div>
 
