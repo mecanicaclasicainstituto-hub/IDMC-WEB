@@ -514,7 +514,9 @@
       .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
       .then(function(result) {
         if (!result.ok || !result.data.checkoutUrl) {
-          throw new Error(result.data.error || 'No se pudo iniciar el pago.');
+          var baseMsg = result.data.error || 'No se pudo iniciar el pago.';
+          var fullMsg = result.data.detail ? (baseMsg + ' (' + result.data.detail + ')') : baseMsg;
+          throw new Error(fullMsg);
         }
         // Save for the success page
         localStorage.setItem('checkoutInfo', JSON.stringify({

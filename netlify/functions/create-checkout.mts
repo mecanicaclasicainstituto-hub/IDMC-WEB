@@ -120,9 +120,13 @@ export default async (req: Request) => {
 
     return Response.json({ checkoutUrl: preference.init_point }, { status: 201 });
   } catch (error) {
-    console.error("No se pudo crear el checkout", error instanceof Error ? error.message : error);
+    const detail = error instanceof Error ? error.message : String(error);
+    console.error("No se pudo crear el checkout", detail);
     await db.update(orders).set({ status: "failed", updatedAt: new Date() }).where(eq(orders.id, order.id));
-    return Response.json({ error: "No se pudo iniciar el pago. Intenta nuevamente." }, { status: 502 });
+    return Response.json(
+      { error: "No se pudo iniciar el pago. Intenta nuevamente.", detail },
+      { status: 502 },
+    );
   }
 };
 
