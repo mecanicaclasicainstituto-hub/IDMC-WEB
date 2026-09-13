@@ -910,6 +910,7 @@ button:hover {
 .banner-mate      { background: linear-gradient(135deg, #78350f 0%, #d97706 60%, #fbbf24 100%); }
 .banner-calculo   { background: linear-gradient(135deg, #14532d 0%, #16a34a 60%, #4ade80 100%); }
 .banner-neumatica { background: linear-gradient(135deg, #134e4a 0%, #0d9488 60%, #5eead4 100%); }
+.banner-electroneumatica { background: linear-gradient(135deg, #7c2d12 0%, #ea580c 60%, #fdba74 100%); }
 
 /* CONTENEDOR DE CONTACTO */
 .contact-box {

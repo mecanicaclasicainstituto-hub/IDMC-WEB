@@ -286,6 +286,7 @@
                         <option value="Matemática Básica">
                         <option value="Cálculo Vectorial">
                         <option value="Neumática Básica">
+                        <option value="Electroneumática">
                     </datalist>
                     <button type="button" onclick="irCursoDesdeBuscador()">Ir</button>
                 </div>
@@ -334,6 +335,10 @@
                         </div>
                         <div class="filtro-item">
                             <label><input type="checkbox" class="filtro-cat" value="neumatica"> Neumática</label>
+                            <span class="filtro-count">1</span>
+                        </div>
+                        <div class="filtro-item">
+                            <label><input type="checkbox" class="filtro-cat" value="electroneumatica"> Electroneumática</label>
                             <span class="filtro-count">1</span>
                         </div>
                     </div>
@@ -545,6 +550,20 @@
                     <p>Fundamentos de sistemas neumáticos: componentes, circuitos, válvulas y actuadores de aire comprimido.</p>
                     <p class="curso-precio">Precio por definir</p>
                     <button class="btn-adquirir" onclick="window.location.href='curso_neumatica_basica.html'">Ver detalles</button>
+                    <p class="proximamente-label">Disponible pronto</p>
+                </div>
+
+                <!-- ELECTRONEUMÁTICA -->
+                <div class="curso-card visible" data-categoria="electroneumatica" data-nivel="1" data-gratuito="false">
+                    <span class="curso-lock-badge">&#128274; De pago</span>
+                    <div class="curso-img-banner banner-electroneumatica">
+                        <span class="banner-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="54" height="54"><path d="M5 12h5"/><path d="M12 5c0 0 5 2.5 5 7s-5 7-5 7"/><circle cx="19" cy="12" r="2"/><polyline points="7 6 10 12 6 12 9 18"/></svg></span>
+                        <span class="banner-label">Electroneumática</span>
+                    </div>
+                    <h2>Electroneumática</h2>
+                    <p>Integración de circuitos neumáticos con control eléctrico: relevadores, electroválvulas y automatismos secuenciales.</p>
+                    <p class="curso-precio">Precio por definir</p>
+                    <button class="btn-adquirir" onclick="window.location.href='curso_electroneumatica.html'">Ver detalles</button>
                     <p class="proximamente-label">Disponible pronto</p>
                 </div>
 

@@ -316,6 +316,7 @@
                         <button class="tab-button active" onclick="showTab('perfil', this)">Mi Perfil</button>
                         <button class="tab-button" onclick="showTab('cursos', this)">Mis Cursos</button>
                         <button class="tab-button" onclick="showTab('certificados', this)">Certificados</button>
+                        <button class="tab-button" onclick="showTab('insignias', this)">Insignias</button>
                         <button class="tab-button" onclick="showTab('amigos', this)">Amigos</button>
                     </div>
 
@@ -444,6 +445,12 @@
 
                     <div id="certificados-tab" class="tab-content" style="display:none;">
                         <div class="cursos-box" id="certificadosWrap">
+                            <p>Cargando...</p>
+                        </div>
+                    </div>
+
+                    <div id="insignias-tab" class="tab-content" style="display:none;">
+                        <div class="cursos-box" id="insigniasWrap">
                             <p>Cargando...</p>
                         </div>
                     </div>
@@ -778,6 +785,10 @@ function verificarPerfil() {
             const buttons = document.querySelectorAll('.tab-button');
             if (buttons[1]) showTab('cursos', buttons[1]);
         }
+        if (window.location.hash === '#mis-insignias') {
+            const buttons = document.querySelectorAll('.tab-button');
+            if (buttons[3]) showTab('insignias', buttons[3]);
+        }
     }
 }
 
@@ -797,9 +808,92 @@ function showTab(tab, button) {
     if (tab === 'certificados') {
         renderCertificados();
     }
+    if (tab === 'insignias') {
+        renderInsignias();
+    }
     if (tab === 'amigos') {
         renderAmigos();
     }
+}
+
+function firmaInsignia(texto) {
+    var h = 0x811c9dc5;
+    for (var i = 0; i < texto.length; i++) {
+        h ^= texto.charCodeAt(i);
+        h = Math.imul(h, 0x01000193);
+    }
+    return (h >>> 0).toString(16);
+}
+
+function medallaInsigniaSvg(idSuffix) {
+    return '<svg width="40" height="40" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        '<defs><linearGradient id="mg' + idSuffix + '" x1="0" y1="0" x2="1" y2="1">' +
+            '<stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#c8952e"/>' +
+        '</linearGradient></defs>' +
+        '<path d="M14 24 L7 43 L24 35 L41 43 L34 24" fill="#60a5fa"/>' +
+        '<circle cx="24" cy="19" r="15" fill="url(#mg' + idSuffix + ')" stroke="#8a5a12" stroke-width="1.4"/>' +
+        '<path d="M24 10.5l2.47 5.02 5.53.8-4 3.9.94 5.5L24 22.98l-4.94 2.74.94-5.5-4-3.9 5.53-.8z" fill="#fff"/>' +
+        '</svg>';
+}
+
+function renderInsignias() {
+    var wrap = document.getElementById('insigniasWrap');
+    if (!wrap) return;
+
+    var CURSO_ID = 'mecanica_nivel1';
+    var CURSO_NOMBRE = 'Mecánica Clásica Nivel I';
+    var nombre = (localStorage.getItem('nombreCompleto') || localStorage.getItem('nombre') || localStorage.getItem('usuario') || 'Estudiante').trim();
+
+    var INSIGNIAS_DEF = [
+        { modulo: 1, nombre: '¿Qué es la mecánica clásica?', sesiones: 1 },
+        { modulo: 2, nombre: 'Introducción a la Mecánica Clásica', sesiones: 9 },
+        { modulo: 3, nombre: 'Sistema Internacional de Unidades', sesiones: 9 }
+    ];
+
+    var hoy = new Date();
+    var fechaISO = hoy.getFullYear() + '-' + String(hoy.getMonth() + 1).padStart(2, '0') + '-' + String(hoy.getDate()).padStart(2, '0');
+
+    wrap.innerHTML =
+        '<p style="font-weight:700; margin-bottom:16px;">Tus insignias de competencia:</p>' +
+        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px;">' +
+        INSIGNIAS_DEF.map(function(def) {
+            var completo = true;
+            for (var s = 1; s <= def.sesiones; s++) {
+                if (typeof estaSesionCompletada !== 'function' || !estaSesionCompletada(CURSO_ID, def.modulo, s)) { completo = false; break; }
+            }
+
+            if (!completo) {
+                return '<div style="border:1px dashed #cbd5e1;border-radius:14px;padding:18px;text-align:center;background:#f8fafc;">' +
+                    '<span style="font-size:2rem;opacity:0.4;">🔒</span>' +
+                    '<div style="font-weight:700;color:#94a3b8;margin-top:6px;">Módulo ' + def.modulo + '</div>' +
+                    '<div style="font-size:0.8rem;color:#94a3b8;">' + escapeHtml(def.nombre) + '</div>' +
+                    '<div style="font-size:0.76rem;color:#cbd5e1;margin-top:6px;">Completa el módulo para desbloquear</div>' +
+                    '</div>';
+            }
+
+            var payload = CURSO_ID + '|' + def.modulo + '|' + nombre + '|' + fechaISO + '|IDMC-INSIGNIA-2026';
+            var sig = firmaInsignia(payload);
+            var verifyUrl = new URL('verificar-insignia.html', window.location.href);
+            verifyUrl.searchParams.set('curso', CURSO_NOMBRE);
+            verifyUrl.searchParams.set('modulo', def.modulo);
+            verifyUrl.searchParams.set('titulo', def.nombre);
+            verifyUrl.searchParams.set('nombre', nombre);
+            verifyUrl.searchParams.set('fecha', fechaISO);
+            verifyUrl.searchParams.set('sig', sig);
+
+            var qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(verifyUrl.toString());
+
+            return '<div style="border:1px solid #c8a95a;border-radius:14px;padding:18px;text-align:center;background:#fffdf5;">' +
+                medallaInsigniaSvg('p' + def.modulo) +
+                '<div style="font-weight:700;color:#92400e;margin-top:6px;">Módulo ' + def.modulo + ' completado</div>' +
+                '<div style="font-size:0.8rem;color:#a16207;margin-bottom:10px;">' + escapeHtml(def.nombre) + '</div>' +
+                '<img src="' + qrSrc + '" alt="QR insignia módulo ' + def.modulo + '" width="120" height="120" style="border-radius:8px;background:#fff;padding:6px;border:1px solid #eee;">' +
+                '<div style="margin-top:8px;">' +
+                    '<a href="' + verifyUrl.toString() + '" target="_blank" rel="noopener" style="font-size:0.78rem;color:#2563eb;text-decoration:none;font-weight:600;">Ver / compartir insignia →</a>' +
+                '</div>' +
+            '</div>';
+        }).join('') +
+        '</div>';
 }
 
 function renderCertificados() {
